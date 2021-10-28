@@ -4,53 +4,20 @@ using UnityEngine;
 
 public class CameraControl : MonoBehaviour
 {
-    ProceduralGeneration PCG;
+    public Transform target;
+    [Range(1, 10)]
+    public float smoothFactor;
 
-    public List<Transform> targets;
-    public Vector3 offset;
-
-    void Start()
+    private void FixedUpdate()
     {
-        PCG = FindObjectOfType<ProceduralGeneration>();
-
-    }
-    void LateUpdate()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            targets = GetTargets();
-            if (targets.Count == 0)
-                return;
-            Vector3 centerPoint = GetCenterPoint();
-            Vector3 newPosition = centerPoint + offset;
-            transform.position = newPosition;
-        }
+        Follow();
     }
 
-    Vector3 GetCenterPoint()
+    void Follow()
     {
-        if(targets.Count == 1)
-        {
-            return targets[0].position;
-        }
-
-        var bounds = new Bounds(targets[0].position, Vector3.zero);
-        for(int i=0; i < targets.Count; i++)
-        {
-            bounds.Encapsulate(targets[i].position);
-        }
-        return bounds.center;
-    }
-
-    List<Transform> GetTargets()
-    {
-        List<Transform> targetsToEncapsulate = new List<Transform>();
-        foreach (Transform tile in PCG.transform)
-        {
-            targetsToEncapsulate.Add(tile);
-        }
-
-        return targetsToEncapsulate;
+        Vector2 targetPosition = new Vector2(target.position.x, target.position.y);
+        Vector2 smoothedPosition = Vector2.Lerp(transform.position, targetPosition, smoothFactor * Time.fixedDeltaTime);
+        transform.position = smoothedPosition;
     }
 }
 

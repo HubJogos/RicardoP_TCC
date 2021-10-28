@@ -1,16 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class ProceduralGeneration : MonoBehaviour
 {
-    [SerializeField] int mapWidthMultiplier;
+    [Header("TerrainGen")]
     [SerializeField] int repeatNum;
     [SerializeField] GameObject ground;//referencia ao prefab do tile do chão
+    [SerializeField] float smoothness, seed;
     Vector2 direction;
     public int width, height;
-
     public GameObject startingPos;
+
+    [Header("CaveGen")]
+    [Range(0,1)]
+    [SerializeField] float modifier;
     void Start()
     {
         //Generate();
@@ -31,30 +36,38 @@ public class ProceduralGeneration : MonoBehaviour
             Generate(direction);
 
         }
+        if (Input.GetMouseButtonDown(1))//quando pressionado o botão direito
+        {
+            smoothness = Random.RandomRange(1, 100);
+            seed = Random.RandomRange(1, 100);
+        }
     }
 
-    // Update is called once per frame
+    
     void Generate(Vector2 direction)
     {
-        width = Mathf.Abs(Mathf.FloorToInt(direction.x)*mapWidthMultiplier);
+        width = Mathf.Abs(Mathf.FloorToInt(direction.x));
         height = Mathf.Abs(Mathf.FloorToInt(direction.y));
 
-        int minHeight = 1;
-        int maxHeight = height;
 
+        int perlinHeight;
         int repeatValue = 0;    
 
         for (int i = -width/2; i < width/2; i++)
         {
+            int minHeight = height - 2;
+            int maxHeight = height + 2;
+            perlinHeight = Mathf.RoundToInt(Mathf.PerlinNoise(i / smoothness, seed) * height/2);
+            perlinHeight += height / 2;
             if (repeatValue == 0)
             {
                 height = Random.Range(minHeight, maxHeight);
-                GeneratePlatform(i, height);
+                GeneratePlatform(i, perlinHeight);
                 repeatValue = repeatNum;
             }
             else
             {
-                GeneratePlatform(i, height);
+                GeneratePlatform(i, perlinHeight);
                 repeatValue--;
             }
         }
@@ -64,7 +77,12 @@ public class ProceduralGeneration : MonoBehaviour
     {
         for (int j = 0; j < y; j++)
         {
-            SpawnObject(ground, x, j);
+            int caveValue = Mathf.RoundToInt(Mathf.PerlinNoise((x * modifier) + seed, (j * modifier) + seed));
+            if (caveValue < 1)
+            {
+                SpawnObject(ground, x, j);
+            }
+            
         }
     }
 
