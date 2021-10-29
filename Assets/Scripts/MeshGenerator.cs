@@ -4,26 +4,26 @@ using UnityEngine;
 
 public class MeshGenerator : MonoBehaviour
 {
-    public SquareGrid squareGrid;
+    public SquareGrid squareGrid;//define grid onde os quadrados base serão colocados
     List<Vector3> vertices;
     List<int> triangles;
 
-    Dictionary<int, List<Triangle>> triangleDictionary = new Dictionary<int, List<Triangle>>();
+    Dictionary<int, List<Triangle>> triangleDictionary = new Dictionary<int, List<Triangle>>();//"lista" de todos os triangulos existentes
     List<List<int>> outlines = new List<List<int>>();
     HashSet<int> checkedVertices = new HashSet<int>();
-    public MeshFilter caveMesh;
+    public MeshFilter caveMesh;//objeto onde ficarão as meshes de fato
 
     public void GenerateMesh(int[,] map, float squareSize)
     {
         triangleDictionary.Clear();
         outlines.Clear();
-        checkedVertices.Clear();
+        checkedVertices.Clear();//remove quaisquer dados pré-existentes
 
 
-        squareGrid = new SquareGrid(map, squareSize);
+        squareGrid = new SquareGrid(map, squareSize);//cria nova grid
 
         vertices = new List<Vector3>();
-        triangles = new List<int>();
+        triangles = new List<int>();//novas listas de triângulos e vértices
 
         for (int i = 0; i < squareGrid.squares.GetLength(0); i++)
         {
@@ -34,59 +34,59 @@ public class MeshGenerator : MonoBehaviour
         }
 
         Mesh mesh = new Mesh();
-        caveMesh.mesh = mesh;
+        caveMesh.mesh = mesh;//aplica meshes no editor
 
         //o que realmente gera as meshes in-game
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
         mesh.RecalculateNormals();
-        Generate2DColliders();
+        Generate2DColliders();//gera colisores nas paredes
     }
 
     void Generate2DColliders()
     {
 
-        EdgeCollider2D[] currentColliders = gameObject.GetComponents<EdgeCollider2D>();
+        EdgeCollider2D[] currentColliders = gameObject.GetComponents<EdgeCollider2D>();//cria novos colisores de aresta
         for (int i =0; i< currentColliders.Length; i++)
         {
-            Destroy(currentColliders[i]);
+            Destroy(currentColliders[i]);//destroi colisores pré-existentes
         }
-        CalculateMeshOutlines();
+        CalculateMeshOutlines();//calcula arestas
 
-        foreach(List<int> outline in outlines)
+        foreach(List<int> outline in outlines)//para cada aresta
         {
-            EdgeCollider2D edgeCollider = gameObject.AddComponent<EdgeCollider2D>();
-            Vector2[] edgePoints = new Vector2[outline.Count];
+            EdgeCollider2D edgeCollider = gameObject.AddComponent<EdgeCollider2D>();//cria colisor
+            Vector2[] edgePoints = new Vector2[outline.Count];//vetor para a posição dos vértices das arestas
 
             for (int i=0; i<outline.Count; i++)
             {
-                edgePoints[i] = new Vector2(vertices[outline[i]].x, vertices[outline[i]].z);
+                edgePoints[i] = new Vector2(vertices[outline[i]].x, vertices[outline[i]].z);//marca posição vértices das arestas
             }
-            edgeCollider.points = edgePoints;
+            edgeCollider.points = edgePoints;//repassa vértices para determinar colisores de fato
         }
-    }
+    }//gera colisores nas paredes complexas do mapa
 
     void CalculateMeshOutlines()
     {
 
-        for (int vertexIndex = 0; vertexIndex < vertices.Count; vertexIndex++)
+        for (int vertexIndex = 0; vertexIndex < vertices.Count; vertexIndex++)//para cada vértice
         {
-            if (!checkedVertices.Contains(vertexIndex))
+            if (!checkedVertices.Contains(vertexIndex))//se vértice ainda não foi verificado
             {
-                int newOutlineVertex = GetConnectedOutlineVertex(vertexIndex);
-                if (newOutlineVertex != -1)
+                int newOutlineVertex = GetConnectedOutlineVertex(vertexIndex);//recebe novo vértice conectado ao vértice em questao
+                if (newOutlineVertex != -1)//se vértice pertence a aresta conhecida
                 {
                     checkedVertices.Add(vertexIndex);
 
-                    List<int> newOutline = new List<int>();
-                    newOutline.Add(vertexIndex);
-                    outlines.Add(newOutline);
-                    FollowOutline(newOutlineVertex, outlines.Count - 1);
-                    outlines[outlines.Count - 1].Add(vertexIndex);
+                    List<int> newOutline = new List<int>();//nova aresta
+                    newOutline.Add(vertexIndex);//adiciona outline com o ponto
+                    outlines.Add(newOutline);//adiciona outline aos outros outlines das arestas existentes
+                    FollowOutline(newOutlineVertex, outlines.Count - 1);//com o ponto em questão, traça outline até novo vértice conectado, pertencente a aresta
+                    outlines[outlines.Count - 1].Add(vertexIndex);//adiciona outline a lista de outlines
                 }
             }
         }
-    }
+    }//"traça" as linhas entre os pontos das arestas do mapa
     void TriangulateSquare(Square square)
     {
         switch (square.configuration)
@@ -174,7 +174,7 @@ public class MeshGenerator : MonoBehaviour
 
     int GetConnectedOutlineVertex(int vertexIndex)
     {
-        List<Triangle> trianglesContainingVertex = triangleDictionary[vertexIndex];//lista de triangulo que contém o vértice
+        List<Triangle> trianglesContainingVertex = triangleDictionary[vertexIndex];//lista de triangulos que contém o vértice
 
         for (int i = 0; i < trianglesContainingVertex.Count; i++)//para cada triangulo que possui esse vértice
         {
@@ -194,7 +194,7 @@ public class MeshGenerator : MonoBehaviour
         }
 
         return -1;//senão, vértice checado não pertence aos vértices da aresta do mapa
-    }//busca próximo vértice na aresta do mapa
+    }//busca próximo vértice pertencente a aresta do mapa
 
     bool IsOutlineEdge(int vertexA, int vertexB)
     {
@@ -260,7 +260,7 @@ public class MeshGenerator : MonoBehaviour
     }
 
     //para cada bloco de mapa temos 4 "control nodes", um em cada canto, e 4 "nodes"
-    //cada um é o ponto intermediário da aresta entre control nodes, usamos eles para
+    //cada node é o ponto intermediário da aresta entre control nodes, usamos eles para
     //gerar as meshes de mapa
     public class SquareGrid
     {
