@@ -3,7 +3,11 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Enemy
+  - Weapon
+  - NPC
+  - DialogueTrigger
   layers:
   - Default
   - TransparentFX
@@ -13,9 +17,9 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
+  - Obstacle
+  - Targets
+  - Minimap
   - 
   - 
   - 
@@ -41,9 +45,18 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Background
-    uniqueID: 2139828677
+  - name: Layer 1
+    uniqueID: 2425651459
     locked: 0
-  - name: Platforms
-    uniqueID: 2645212329
+  - name: Layer 2
+    uniqueID: 4250941897
+    locked: 0
+  - name: Layer 3
+    uniqueID: 4189426099
+    locked: 0
+  - name: Background
+    uniqueID: 4105454321
+    locked: 0
+  - name: Player
+    uniqueID: 3654314417
     locked: 0
