@@ -42,6 +42,8 @@ public class MapGenAutomata : MonoBehaviour
             SmoothMap();
         }
 
+        ProcessMap();
+
         MeshGenerator meshGen = GetComponent<MeshGenerator>();
         meshGen.GenerateMesh(map, 1);
         
@@ -127,7 +129,7 @@ public class MapGenAutomata : MonoBehaviour
                     map[tile.tileX, tile.tileY] = 0;
                 }
             }
-            Debug.Log(wallRegion);
+            
         }
 
         
@@ -138,7 +140,7 @@ public class MapGenAutomata : MonoBehaviour
 
         foreach (List<Coord> roomRegion in roomRegions)//Para cada uma
         {
-            if (roomRegions.Count < minRegionSize)//deleta regiões muito pequenas
+            if (roomRegion.Count < minRegionSize)//deleta regiões muito pequenas
             {
                 foreach (Coord tile in roomRegion)
                 {
@@ -148,14 +150,16 @@ public class MapGenAutomata : MonoBehaviour
             else
             {
                 remainingRooms.Add(new Room(roomRegion, map));//se forem de tamanho adequado, são adicionadas na lista de salas
+                
             }
         }
+        Debug.Log(remainingRooms.Count);
         remainingRooms.Sort();//ordena salas da maior para a menor
         remainingRooms[0].isMainRoom = true;//maior sala se torna a principal
         remainingRooms[0].isAccessibleFromMain = true;
+        
 
-
-        //ConnectClosestRoom(remainingRooms);//com esse trecho comentado, programa executa, sem comentar unity trava
+        ConnectClosestRoom(remainingRooms);//com esse trecho comentado, programa executa, sem comentar unity trava
 
 
 
@@ -235,10 +239,7 @@ public class MapGenAutomata : MonoBehaviour
         return x >= 0 && x < width && y >= 0 && y < height;
     }//auxiliar, determina se coordenadas estão dentro do mapa
 
-
-
-    //eu(ricardo) acredito que o problema em questão está em algum lugar abaixo, levando em consideração que são as funções que constroem as conexões das salas
-
+    
     void ConnectClosestRoom(List<Room> allRooms, bool forceAcessToMain = false)//com lista de todas as salas
     {
         List<Room> roomListA = new List<Room>();
