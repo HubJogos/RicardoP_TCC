@@ -10,13 +10,14 @@ public class MapGenAutomata : MonoBehaviour
     public int smooth = 5;//grau de suavização dos quadrados gerados
     public int minRegionSize = 50;//tamanho mínimo das regiões geradas (exclui o que estiver abaixo)
 
+    public string input;
     public string seed;
     public bool useRandomSeed;
 
 
     [Range(0,100)]
     public int randomFillPercent;//porcentagem de terreno/parede
-    int[,] map;//matriz do mapa
+    public int[,] map;//matriz do mapa
 
     private void Start()
     {
@@ -30,6 +31,25 @@ public class MapGenAutomata : MonoBehaviour
         }
     }//somente detecta input do mouse para gerar novamente
 
+    #region EnemyPlacement
+    /*
+    void GenerateEnemies(int amount)
+    {
+        List<List<Coord>> availableLocations = new List<List<Coord>>();
+        availableLocations = GetRegions(0);//referencia aos tiles andáveis no mapa para a colocação dos inimigos
+
+        for(int i = 0; i < amount; i++)
+        {
+
+        }
+    }
+    */
+    #endregion
+
+    #region ObjectGeneration
+    #endregion
+
+    #region MapGeneration
     void GenerateMap()
     {
         map = new int[width, height];
@@ -43,6 +63,28 @@ public class MapGenAutomata : MonoBehaviour
         }
 
         ProcessMap();
+
+        //salvando mapa em forma de matriz
+        input = "Assets/seed_" + seed + ".txt";
+        if (File.Exists(input))
+        {
+            File.Delete(input);
+        }//deleta se arquivo existe
+        using (TextWriter tw = new StreamWriter(input))
+        {
+
+            for (int j = 0; j < height; j++)
+            {
+                for (int i = 0; i < width; i++)
+                {
+                    tw.Write(map[i, j]);
+                }
+                tw.WriteLine();
+            }
+        }
+        
+
+        //
 
         MeshGenerator meshGen = GetComponent<MeshGenerator>();
         meshGen.GenerateMesh(map, 1);
@@ -153,7 +195,6 @@ public class MapGenAutomata : MonoBehaviour
                 
             }
         }
-        Debug.Log(remainingRooms.Count);
         remainingRooms.Sort();//ordena salas da maior para a menor
         remainingRooms[0].isMainRoom = true;//maior sala se torna a principal
         remainingRooms[0].isAccessibleFromMain = true;
@@ -239,7 +280,6 @@ public class MapGenAutomata : MonoBehaviour
         return x >= 0 && x < width && y >= 0 && y < height;
     }//auxiliar, determina se coordenadas estão dentro do mapa
 
-    
     void ConnectClosestRoom(List<Room> allRooms, bool forceAcessToMain = false)//com lista de todas as salas
     {
         List<Room> roomListA = new List<Room>();
@@ -495,4 +535,5 @@ public class MapGenAutomata : MonoBehaviour
             return otherRoom.roomSize.CompareTo(roomSize);
         }
     }//definição do que é uma sala e métodos de set e compare com seus atributos
+    #endregion
 }
