@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using System.IO;
 using UnityEngine;
+using Newtonsoft.Json;
 
 public class MapGenAutomata : MonoBehaviour
 {
@@ -64,28 +65,16 @@ public class MapGenAutomata : MonoBehaviour
 
         ProcessMap();
 
-        //salvando mapa em forma de matriz
-        input = "Assets/seed_" + seed + ".txt";
-        if (File.Exists(input))
+        //salvando mapa em forma de JSON
+        string json = JsonConvert.SerializeObject(map);
+        input = "Assets/map_" + seed + ".json";
+        using (var sw = new StreamWriter(input))
         {
-            File.Delete(input);
-        }//deleta se arquivo existe
-        using (TextWriter tw = new StreamWriter(input))
-        {
-
-            for (int j = 0; j < height; j++)
-            {
-                for (int i = 0; i < width; i++)
-                {
-                    tw.Write(map[i, j]);
-                }
-                tw.WriteLine();
-            }
+            sw.Write(json);
+            sw.Flush();
+            sw.Close();
         }
-        
-
         //
-
         MeshGenerator meshGen = GetComponent<MeshGenerator>();
         meshGen.GenerateMesh(map, 1);
         
