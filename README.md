@@ -15,8 +15,8 @@ assim que é gerado
 
 ## Cenas
 Existem seis cenas no diretório, sendo "SampleScene" a que iniciou com o projeto, não possuindo funcionalidades.
-1- Preload : cena com um objeto que permanece ao longo das outras cenas, futuramente usado para carregar efeitos sonoros, sistema de save/load, entre outros
-2- MainMenu : cena contendo menu inicial e de opções, incompleto pois o sistema de save/load ainda não foi concluido
-3- Game : cena básica de implementação de mecânicas
-4- MapGeneration : única cena onde o mapa é gerado proceduralmente
-5- PlacementTesting : cena teste para a colocação de objetos
+- Preload : cena com um objeto que permanece ao longo das outras cenas, futuramente usado para carregar efeitos sonoros, sistema de save/load, entre outros
+- MainMenu : cena contendo menu inicial e de opções, incompleto pois o sistema de save/load ainda não foi concluido
+- Game : cena básica de implementação de mecânicas
+- MapGeneration : única cena onde o mapa é gerado proceduralmente
+- PlacementTesting : cena teste para a colocação de objetos
