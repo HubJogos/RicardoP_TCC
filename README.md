@@ -5,11 +5,11 @@ O projeto contém diversos pacotes, usados para implementar as funções visuais
 Os scripts estão todos contidos na pasta "Assets/Scripts", onde são separados por categoria.
 
 ## Os scripts relevantes para a geração são:
-- DamagePlayer.cs : onde é gerenciada a matriz de mortes do jogdor
+- PlayerScript.cs : onde são gerenciadas todas as mecânicas do jogador, juntamente com todos seus dados
 - MapScripts/MapGenAutomata.cs : onde o mapa é de fato gerado, contendo as funções de conexão, aleatoriedade, entre outras. Também é o script que salva a matriz do mapa 
 assim que é gerado
 - MapScripts/MeshGenerator.cs : gera as meshes do mapa, definindo colisores
-- MapScripts/DataGenerator.cs : o que irá gerar outros dados sobre o jogo, como tempo gasto, objetos coletados, inimigos derrotados, dano recebido, etc.
+- MapScripts/DataGenerator.cs : o único script que salva os dados de geração
 - MapScripts/PoissonSampling.cs : um método de colocação de objetos de forma procedural, ainda em implementação
 - MapScripts/TestPlacement.cs : script para ajudar na visualização do funcionamento de "PoissonSampling"
 
