@@ -5,23 +5,21 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    public PlayerHealthManager healthManager;//references to use healthbar
+    public PlayerScript playerScript;//references to use healthbar
     public Slider healthBar;
     public Text hpText;
     public Slider ammoCounter;
-    public TopDownShooting shootControls;
     void Start()
     {
-        healthManager = FindObjectOfType<PlayerHealthManager>();
-        shootControls = FindObjectOfType<TopDownShooting>();
+        playerScript = FindObjectOfType<PlayerScript>();
     }
 
     void Update()
     {
-        ammoCounter.maxValue = shootControls.maxAmmo;
-        ammoCounter.value = shootControls.currentAmmo;
-        healthBar.maxValue = healthManager.maxHealth;
-        healthBar.value = healthManager.currentHealth;//controls updating of healthbar
-        hpText.text = "HP: " + healthManager.maxHealth + "/" + healthManager.currentHealth;
+        ammoCounter.maxValue = playerScript.maxAmmo;
+        ammoCounter.value = playerScript.currentAmmo;
+        healthBar.maxValue = playerScript.maxHealth;
+        healthBar.value = playerScript.currentHealth;//controls updating of healthbar
+        hpText.text = "HP: " + playerScript.maxHealth + "/" + playerScript.currentHealth;
     }
 }

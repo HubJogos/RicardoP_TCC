@@ -8,14 +8,14 @@ public class PlayerData{
     public int health;
     public float[] position;
 
-    public PlayerData(PlayerHealthManager playerHealth, PlayerStats stats)
+    public PlayerData(PlayerScript script)
     {
-        level = stats.playerLevel;
-        health = playerHealth.currentHealth;
+        level = script.playerLevel;
+        health = script.currentHealth;
         position = new float[3];
-        position[0] = playerHealth.transform.position.x;
-        position[1] = playerHealth.transform.position.y;
-        position[2] = playerHealth.transform.position.z;
+        position[0] = script.transform.position.x;
+        position[1] = script.transform.position.y;
+        position[2] = script.transform.position.z;
     }
 
 

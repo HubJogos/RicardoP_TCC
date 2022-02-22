@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System;
 using System.IO;
 using UnityEngine;
-using Newtonsoft.Json;
 
 public class MapGenAutomata : MonoBehaviour
 {
@@ -11,17 +10,26 @@ public class MapGenAutomata : MonoBehaviour
     public int smooth = 5;//grau de suavização dos quadrados gerados
     public int minRegionSize = 50;//tamanho mínimo das regiões geradas (exclui o que estiver abaixo)
 
-    public string input;
+    string input;
     public string seed;
     public bool useRandomSeed;
 
 
     [Range(0,100)]
     public int randomFillPercent;//porcentagem de terreno/parede
+    [Range(0, 100)]
+    public int enemyDensity;
+    public int maxEnemies, currentEnemies = 0;
+    public int minEnemyDistance;
+    public GameObject enemy;
+    public GameObject[] enemies;
+    public Vector2[] enemyPositions;
     public int[,] map;//matriz do mapa
 
     private void Start()
     {
+        enemies = new GameObject[maxEnemies];
+        enemyPositions = new Vector2[maxEnemies];
         GenerateMap();
     }//gera mapa on startup
     private void Update()
@@ -30,22 +38,7 @@ public class MapGenAutomata : MonoBehaviour
         {
             GenerateMap();
         }
-    }//somente detecta input do mouse para gerar novamente
-
-    #region EnemyPlacement
-    /*
-    void GenerateEnemies(int amount)
-    {
-        List<List<Coord>> availableLocations = new List<List<Coord>>();
-        availableLocations = GetRegions(0);//referencia aos tiles andáveis no mapa para a colocação dos inimigos
-
-        for(int i = 0; i < amount; i++)
-        {
-
-        }
-    }
-    */
-    #endregion
+    }//somente detecta input do teclado para gerar novamente
 
     #region ObjectGeneration
     #endregion
@@ -66,18 +59,62 @@ public class MapGenAutomata : MonoBehaviour
         ProcessMap();
 
         //salvando mapa em forma de JSON
-        string json = JsonConvert.SerializeObject(map);
+        /*
+        string mapJson = JsonConvert.SerializeObject(map);
         input = "Assets/map_" + seed + ".json";
         using (var sw = new StreamWriter(input))
         {
-            sw.Write(json);
+            sw.Write(mapJson);
             sw.Flush();
             sw.Close();
         }
-        //
+        */
         MeshGenerator meshGen = GetComponent<MeshGenerator>();
         meshGen.GenerateMesh(map, 1);
-        
+
+
+        #region EnemyPlacement
+        //generating enemies
+        System.Random randomizeEnemies = new System.Random(seed.GetHashCode());//pseudo random number generator
+        foreach (List<Coord> region in GetRegions(0))//recebe os tiles vazios
+        {
+            foreach(Coord tile in region)//para cada tile vazio
+            {
+                if (randomizeEnemies.Next(0, 100) < enemyDensity && currentEnemies < maxEnemies)//confere se inimigo deve ser inserido
+                {
+                    bool canSpawn = true;
+                    if (!enemies[0])
+                    {
+                        GameObject go = Instantiate(enemy, new Vector2(tile.tileX - width / 2, tile.tileY - height / 2), Quaternion.identity) as GameObject;//instancia inimigo, problema no posicionamento
+                        enemies[0] = go;//coloca no array de referencia
+                        enemyPositions[0] = new Vector2(Mathf.FloorToInt(go.transform.position.x + width/2), Mathf.FloorToInt(go.transform.position.y + height/2));
+                        currentEnemies = 1;//inicia contador
+                    }
+                    else
+                    {
+                        for(int i=0; i < currentEnemies; i++)//compara distancia a todos os inimigos instanciados
+                        {
+                            if (Vector2.Distance(enemies[i].transform.position, new Vector2(tile.tileX - width / 2, tile.tileY - height / 2)) < minEnemyDistance)
+                            {
+                                canSpawn = false;
+                                break;
+                            }
+                        }
+                        //se está em uma distância razoavel do inimigo anterior
+                        if(canSpawn){
+                            GameObject go = Instantiate(enemy, new Vector2(tile.tileX - width / 2, tile.tileY - height / 2), Quaternion.identity) as GameObject;//instancia inimigo, problema no posicionamento
+                            enemies[currentEnemies] = go;//coloca no array de referencia
+                            enemyPositions[currentEnemies] = go.transform.position;
+                            currentEnemies++;//incrementa contador
+                        }
+                    }
+                }
+            }
+        }
+        #endregion
+
+
+
     }
 
     void RandomFillMap()

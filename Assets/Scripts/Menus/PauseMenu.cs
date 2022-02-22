@@ -7,13 +7,11 @@ public class PauseMenu : MonoBehaviour
 {
     public static bool GameIsPaused = false;
     public GameObject pauseMenuUI;
-    public PlayerHealthManager playerHealthManager;
-    public PlayerStats stats;
+    public PlayerScript script;
 
     void Start()
     {
-        stats = FindObjectOfType<PlayerStats>();
-        playerHealthManager = FindObjectOfType<PlayerHealthManager>();
+        script = FindObjectOfType<PlayerScript>();
     }
     void Update()
     {
@@ -44,21 +42,21 @@ public class PauseMenu : MonoBehaviour
     }
     public void SavePlayer()
     {
-        SaveSystem.SavePlayer(playerHealthManager, stats);
+        SaveSystem.SavePlayer(script);
     }
 
     public void LoadPlayer()
     {
         PlayerData data = SaveSystem.LoadPlayer();
-        stats.playerLevel = data.level;
-        playerHealthManager.currentHealth = data.health;
+        script.playerLevel = data.level;
+        script.currentHealth = data.health;
 
         Vector3 position;
         position.x = data.position[0];
         position.y = data.position[1];
         position.z = data.position[2];
 
-        stats.transform.position = position;
+        script.transform.position = position;
 
     }
 

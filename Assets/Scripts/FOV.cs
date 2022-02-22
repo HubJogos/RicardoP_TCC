@@ -49,7 +49,7 @@ public class FOV : MonoBehaviour
         {
             Transform target = targetsInViewRadius[i].transform;
             Vector3 dirToTarget = (target.position - transform.position).normalized;
-            if(Vector2.Angle(GetComponent<TopDownShooting>().shootDirection, dirToTarget) < viewAngle / 2)
+            if(Vector2.Angle(GetComponent<PlayerScript>().shootDirection, dirToTarget) < viewAngle / 2)
             {
                 float distToTarget = Vector2.Distance(transform.position, target.position);
 
@@ -64,7 +64,7 @@ public class FOV : MonoBehaviour
     {
         if (!angleIsGlobal)
         {
-            angleInDegrees += GetComponent<TopDownShooting>().angle - 90f;//usando rotação do corpo do personagem, deve funcionar com mouse
+            angleInDegrees += GetComponent<PlayerScript>().angle - 90f;//usando rotação do corpo do personagem, deve funcionar com mouse
         }
         return new Vector3(Mathf.Cos(angleInDegrees * Mathf.Deg2Rad), Mathf.Sin(angleInDegrees * Mathf.Deg2Rad));
     }
@@ -78,7 +78,7 @@ public class FOV : MonoBehaviour
 
         for (int i = 0; i< stepCount; i++)
         {
-            float angle = GetComponent<TopDownShooting>().angle - 90f - viewAngle / 2 + stepAngleSize * i;
+            float angle = GetComponent<PlayerScript>().angle - 90f - viewAngle / 2 + stepAngleSize * i;
             ViewCastInfo newViewCast = ViewCast(angle);
             
             if (i > 0)

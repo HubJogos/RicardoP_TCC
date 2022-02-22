@@ -9,7 +9,7 @@ public class DaggerPickup : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            FindObjectOfType<TopDownShooting>().PickUpAmmo();
+            FindObjectOfType<PlayerScript>().PickUpAmmo();
             Destroy(gameObject);
         }
     }
