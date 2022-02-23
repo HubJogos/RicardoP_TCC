@@ -36,7 +36,6 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] private float flashLength = 0f;
     private float flashCounter = 0f;
     private SpriteRenderer playerSprite;
-    [HideInInspector][SerializeField] int[,] deathMatrix;
 
     public float waitToDamage = 2f;//time to wait before dealing another instance of damage
     public bool isTouching;//detects if player came into contact
@@ -75,12 +74,21 @@ public class PlayerScript : MonoBehaviour
     public int currentAmmo;
     #endregion
 
-    MapGenAutomata mapReference;//referencia ao mapa
+    #region MapVariables
+    MapGenAutomata mapReference;//referencia ao gerador
+    public int[,] pathing;
+    int currPlayerX, currPlayerY;
+    int playerX, playerY;
+    #endregion
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         mapReference = FindObjectOfType<MapGenAutomata>();
+
+        playerX = Mathf.FloorToInt(transform.position.x + mapReference.width / 2);//conversão da posição global para a posição no mapa do jogador
+        playerY = Mathf.FloorToInt(transform.position.y + mapReference.height / 2);
+
         attackCounter = attackTime;
 
         currentHealth = maxHealth;//makes sure current health can't be greater than max health
@@ -98,6 +106,7 @@ public class PlayerScript : MonoBehaviour
         currentAmmo = maxAmmo;
     }
 
+
     void Update()//atualiza comandos de movimento o mais rápido possível
     {
         moveX = Input.GetAxisRaw("Horizontal");//receives directional inputs
@@ -113,7 +122,7 @@ public class PlayerScript : MonoBehaviour
         {
             canRoll = false;
             rb.velocity = new Vector2(moveX, moveY).normalized * rollSpeed;
-        }        
+        }//gerencia troca de movimentos de rolamento/caminhada  
 
         if (moveX == 1 || moveX == -1 || moveY == 1 || moveY == -1)
         {
@@ -228,6 +237,13 @@ public class PlayerScript : MonoBehaviour
 
                 waitToDamage = 2f;//resets counter
             }
+        }//controla recepção de dano ao permanecer tocando um inimigo
+
+        playerX = Mathf.FloorToInt(transform.position.x + mapReference.width / 2);//conversão da posição global para a posição no mapa do jogador
+        playerY = Mathf.FloorToInt(transform.position.y + mapReference.height / 2);
+        if(playerX != currPlayerX || playerY != currPlayerY)//se mudar de posição
+        {
+            UpdatePathing();
         }
 
         animator.SetFloat("moveX", rb.velocity.x);//sets movement animation variables to animate correctly
@@ -316,13 +332,14 @@ public class PlayerScript : MonoBehaviour
             damageTextInstance.transform.GetChild(0).GetComponent<TextMeshPro>().SetText(enemyDamage.ToString());
             damageTextInstance.transform.GetChild(0).GetComponent<TextMeshPro>().color = new Color32(200, 100, 100, 255);//red
 
-            if (currentHealth <= 0)
-            {
-                WaitToRestart();
-                SceneManager.LoadScene(SceneManager.GetActiveScene().name);//reloads current scene when timer reaches 0
-            }
+            gameObject.SetActive(false);//desativa player
+            FindObjectOfType<DataGenerator>().SaveIntoJson();//gera dados
+            WaitToRestart();
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);//reloads current scene when timer reaches 0
+            
         }
     }//se colide com inimigo, recebe dano
+
 
     private void OnCollisionStay2D(Collision2D other)//detects if player remains in contact with an enemy
     {
@@ -346,5 +363,16 @@ public class PlayerScript : MonoBehaviour
         flashActive = true;//begins flashing player
         flashCounter = flashLength;//resets health timer
         currentHealth -= damageTaken;//decreases health
+    }
+
+    public void UpdatePathing()
+    {
+        if (pathing == null)
+        {
+            pathing = mapReference.map;
+        }
+        currPlayerX = playerX;//usado para verificar mudanças na posição
+        currPlayerY = playerY;
+        pathing[playerX, playerY]--;//decrementa posição do jogador
     }
 }

@@ -10,7 +10,6 @@ public class MapGenAutomata : MonoBehaviour
     public int smooth = 5;//grau de suavização dos quadrados gerados
     public int minRegionSize = 50;//tamanho mínimo das regiões geradas (exclui o que estiver abaixo)
 
-    string input;
     public string seed;
     public bool useRandomSeed;
 
@@ -57,18 +56,6 @@ public class MapGenAutomata : MonoBehaviour
         }
 
         ProcessMap();
-
-        //salvando mapa em forma de JSON
-        /*
-        string mapJson = JsonConvert.SerializeObject(map);
-        input = "Assets/map_" + seed + ".json";
-        using (var sw = new StreamWriter(input))
-        {
-            sw.Write(mapJson);
-            sw.Flush();
-            sw.Close();
-        }
-        */
         MeshGenerator meshGen = GetComponent<MeshGenerator>();
         meshGen.GenerateMesh(map, 1);
 
