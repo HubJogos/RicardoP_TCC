@@ -9,20 +9,23 @@ public class DataGenerator : MonoBehaviour
 {
 
     [SerializeField]
-    private MapData mapData;
     float startTime;
+    Vector2 deathPos;
     MapGenAutomata mapReference;
     PlayerScript playerScript;
-    public int[,] deathMatrix;
+    public PlayerData playerData;
     private void Start()
     {
         playerScript = FindObjectOfType<PlayerScript>();
         mapReference = FindObjectOfType<MapGenAutomata>();
         startTime = Time.time;
+
+        
     }
 
     public void OnTriggerEnter2D(Collider2D other)
     {
+
         if (other.gameObject.CompareTag("Player"))
         {
             SaveIntoJson();
@@ -30,84 +33,55 @@ public class DataGenerator : MonoBehaviour
     }
     public void SaveIntoJson()
     {
-        Generation genData = new Generation(mapReference.map);
-
-        //reads death map matrix
-        string input = "Assets/mapData_" + mapReference.seed + ".json";
-        if (File.Exists(input))//se já existe arquivo de dados
-        {
-            mapData = JsonConvert.DeserializeObject<MapData>(File.ReadAllText(input));//usa o existente
-            File.Delete(input);//deleta para salvar corretamente
-        }
-        else//senão, quer dizer que nunca morreu nesse mapa, então usa o mapa gerado
-        {
-            deathMatrix = mapReference.map;
-        }
-        if (playerScript.currentHealth <= 0)//se função foi chamada quando player morreu, decrementa posição
-        {
-            deathMatrix[Mathf.FloorToInt(transform.position.x + mapReference.height / 2),
-            Mathf.FloorToInt(transform.position.y + mapReference.width / 2)]--;//decrementa na posição da morte
-        }
-
-        Combat combatData = new Combat(mapReference.enemyPositions, deathMatrix);
-        Exploration expData = new Exploration((Time.time - startTime), playerScript.pathing);
-
-        mapData = new MapData(genData, combatData, expData);
         
+        
+        //reads death map matrix
+        string dataPath = "Assets/PlayerData_" + mapReference.seed + ".json";
+        if (File.Exists(dataPath))//se já existe arquivo de dados
+        {
+            File.Delete(dataPath);//deleta para salvar corretamente
+        }
+        if (playerScript.currentHealth <= 0)//se função foi chamada quando player morreu
+        {
+            deathPos = new Vector2(Mathf.FloorToInt(playerScript.transform.position.x + mapReference.height / 2), Mathf.FloorToInt(playerScript.transform.position.y + mapReference.width / 2));//decrementa na posição da morte
+        }//receives any pre-existing combat data to increment, if none exist, initializes a new one
 
-        string json = JsonConvert.SerializeObject(mapData, Formatting.None);
-        using (var sw = new StreamWriter(input))
+        playerData = new PlayerData((Time.time - startTime), playerScript.percentItemsCollected, playerScript.totalLifeLost, deathPos, playerScript.precision, playerScript.percentEnemiesDefeated, mapReference.enemyPositions, playerScript.pathing);
+        
+        string json = JsonConvert.SerializeObject(playerData, Formatting.Indented);
+        using (var sw = new StreamWriter(dataPath))
         {
             sw.Write(json);
             sw.Flush();
             sw.Close();
         }
-        //
     }
 
+
 }
+
 
 [System.Serializable]
-public class MapData
-{
-    public Generation generation;
-    public Combat combat;
-    public Exploration exploration;
-
-    public MapData(Generation genData, Combat combatData, Exploration expData)
-    {
-        generation = genData;
-        combat = combatData;
-        exploration = expData;
-    }
-    
-}
-
-public class Generation
-{
-    public int[,] map;//mapa gerado
-    public Generation(int[,] matrix)
-    {
-        map = matrix;
-    }
-}
-public class Combat
-{    
-    public Vector2[] enemyPos;//posição dos inimigos
-    public int[,] deathPos;//posição das mortes
-    public Combat(Vector2[] posList, int[,] deathMatrix)
-    {
-        enemyPos = posList;
-        deathPos = deathMatrix;
-    }
-}
-public class Exploration
+public class PlayerData
 {
     public float timeSpent;//tempo gasto
+    public float percentItemsCollected;
+    public int totalLifeLost;
+    public Vector2 deathPos;//posição das mortes
+    public float precision;
+    public float percentEnemiesDefeated;
+    public Vector2[] enemyPos;//posição dos inimigos
     public int[,] playerPath;//caminho percorrido
-    public Exploration(float time, int[,] pathing)
+    
+    public PlayerData(float time, float percent, int lifeLost, Vector2 deathPosition, float attackPercent, float enemyPercent, Vector2[] posList, int[,] pathing)
     {
         timeSpent = time;
+        percentItemsCollected = percent;
+        totalLifeLost = lifeLost;
+        deathPos = deathPosition;
+        precision = attackPercent;
+        percentEnemiesDefeated = enemyPercent;
+        enemyPos = posList;
         playerPath = pathing;
     }
 }
@@ -117,15 +91,18 @@ public class Exploration
      * -matriz de geração (mapa salvo em formato binário)(feito)
      * -posição de objetos
      * 
-     * Dados de Exploração: (tentando mensurar "aproveitamento" do jogador)
-     * -caminho percorrido (comparar com caminho mínima A*?) (feito)
-     * -itens coletados (ou porcentagem de itens coletados?)
-     * -tempo gasto na fase (feito)
-     * 
-     * Dados de Combate: (tentando mensurar habilidade do jogador)
-     * -posição das mortes do jogador (feito)
-     * -posicionamento de inimigos (feito)
-     * -vida perdida
-     * -inimigos derrotados (ou porcentagem de inimigos derrotados?)
-     * -precisão? (métrica de ataques que resultam em acerto)
+     * Dados do Jogador
+         * Dados de Exploração: (tentando mensurar "aproveitamento" do jogador)
+         * -caminho percorrido (comparar com caminho mínima A*?) (feito)
+         * -porcentagem de itens coletados (feito)                  (playerScript possui variáveis para o total de itens gerados e coletados)
+         *
+         * -tempo gasto na fase (feito)
+         * 
+         * Dados de Combate: (tentando mensurar habilidade do jogador)
+         * -posição das mortes do jogador (feito)
+         * -posicionamento de inimigos (feito)
+         * -vida perdida (feito)
+         * -porcentagem de inimigos derrotados (feito)              (playerScript possui variáveis para o total de inimigos gerados e derrotados)
+         *
+         * -precisão? (métrica de ataques que resultam em acerto)
      */

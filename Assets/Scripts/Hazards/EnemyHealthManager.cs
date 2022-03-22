@@ -64,13 +64,14 @@ public class EnemyHealthManager : MonoBehaviour
     }
     public void HurtEnemy(int damage)
     {
+        PlayerScript playerScript = FindObjectOfType<PlayerScript>();
+        playerScript.successfulAttacks++;
         flashActive = true;//starts flashing when taking damage
         flashCounter = flashLength;
         currentHealth -= damage;//decreases health
         if (currentHealth <= 0)
         {
-            PlayerScript giveExp = FindObjectOfType<PlayerScript>();
-            giveExp.currentExp += experienceGiven;//updates player experience
+            playerScript.DefeatEnemy(experienceGiven);
             DropAmmo();
             Destroy(gameObject);//kills enemy
         }
@@ -80,6 +81,7 @@ public class EnemyHealthManager : MonoBehaviour
         for(int i = heldAmmo; i>=0; i--)
         {
             Instantiate(daggerDrop, transform.position, Quaternion.identity);
+            FindObjectOfType<PlayerScript>().itemsGenerated++;
         }
     }
 }

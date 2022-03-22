@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using System.IO;
 using UnityEngine;
+using Newtonsoft.Json;
 
 public class MapGenAutomata : MonoBehaviour
 {
@@ -56,6 +57,15 @@ public class MapGenAutomata : MonoBehaviour
         }
 
         ProcessMap();
+
+        string json = JsonConvert.SerializeObject(map, Formatting.None);
+        using (var sw = new StreamWriter("Assets/genData_" + seed + ".json"))
+        {
+            sw.Write(json);
+            sw.Flush();
+            sw.Close();
+        }
+
         MeshGenerator meshGen = GetComponent<MeshGenerator>();
         meshGen.GenerateMesh(map, 1);
 
@@ -400,7 +410,7 @@ public class MapGenAutomata : MonoBehaviour
     {
         for(int x=-r; x <= r; x++)
         {
-            for (int y = -r; y <= r; y++)//partindo de um ponto central, projetando um raio r em torno dele:
+            for (int y = -r; y <= r; y++)//partindo do ponto central do tile, projetando um raio r em torno dele:
             {
                 if(x*x + y*y <= r * r)//se está dentro do circulo
                 {

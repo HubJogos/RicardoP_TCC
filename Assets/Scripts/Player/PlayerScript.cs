@@ -32,6 +32,7 @@ public class PlayerScript : MonoBehaviour
     [Header("Health Variables")]
     public int maxHealth;
     public int currentHealth;
+    public int totalLifeLost = 0;
     private bool flashActive;//variable to flash player when hit
     [SerializeField] private float flashLength = 0f;
     private float flashCounter = 0f;
@@ -59,6 +60,9 @@ public class PlayerScript : MonoBehaviour
     public int damage = 2;
     public GameObject damageTextPrefab;
     public string textToDisplay;
+    public float attacksAttempted=0;
+    public float successfulAttacks=0;
+    public float precision=0;
     #endregion
 
     #region ShootingVariables
@@ -75,10 +79,16 @@ public class PlayerScript : MonoBehaviour
     #endregion
 
     #region MapVariables
+    [Header ("Map Variables")]
     MapGenAutomata mapReference;//referencia ao gerador
-    public int[,] pathing;
+    [HideInInspector] public int[,] pathing;
     int currPlayerX, currPlayerY;
     int playerX, playerY;
+    public float percentItemsCollected;
+    public float itemsCollected;
+    [HideInInspector] public float itemsGenerated;
+    [HideInInspector] public float percentEnemiesDefeated;
+    public float enemiesDefeated;
     #endregion
     void Start()
     {
@@ -149,6 +159,8 @@ public class PlayerScript : MonoBehaviour
             {
                 attackCounter = attackTime;//resets attack timer
                 isAttacking = true;//sets attack variables
+                attacksAttempted++;
+                precision = successfulAttacks / attacksAttempted;
                 animator.SetBool("IsAttacking", true);
             }
         }//regulates attacking
@@ -250,6 +262,9 @@ public class PlayerScript : MonoBehaviour
         animator.SetFloat("moveY", rb.velocity.y);
         animator.SetFloat("mousePosX", mouseDirection.x);//variáveis direcionais de ataque
         animator.SetFloat("mousePosY", mouseDirection.y);//ataca na direção do mouse, não do movimento
+
+        percentItemsCollected = itemsCollected / itemsGenerated;
+        percentEnemiesDefeated = enemiesDefeated / mapReference.currentEnemies;
     }
     void FixedUpdate()//60 vezes por segundo, atualiza os comandos de mirar e atirar
     {
@@ -303,8 +318,16 @@ public class PlayerScript : MonoBehaviour
         {
             currentAmmo++;
         }
+        itemsCollected++;
+        
 
     }//incrementa munição
+    public void DefeatEnemy(int exp)
+    {
+        currentExp += exp;//updates player experience
+        enemiesDefeated++;
+        
+    }
 
     public void OnTriggerEnter2D(Collider2D other)//causa dano ao inimigo quando trigger ocorre
     {
@@ -332,10 +355,13 @@ public class PlayerScript : MonoBehaviour
             damageTextInstance.transform.GetChild(0).GetComponent<TextMeshPro>().SetText(enemyDamage.ToString());
             damageTextInstance.transform.GetChild(0).GetComponent<TextMeshPro>().color = new Color32(200, 100, 100, 255);//red
 
-            gameObject.SetActive(false);//desativa player
-            FindObjectOfType<DataGenerator>().SaveIntoJson();//gera dados
-            WaitToRestart();
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);//reloads current scene when timer reaches 0
+            if (currentHealth <= 0) {
+                gameObject.SetActive(false);//desativa player
+                FindObjectOfType<DataGenerator>().SaveIntoJson();//gera dados
+                WaitToRestart();
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);//reloads current scene when timer reaches 0
+            }
+            
             
         }
     }//se colide com inimigo, recebe dano
@@ -363,6 +389,7 @@ public class PlayerScript : MonoBehaviour
         flashActive = true;//begins flashing player
         flashCounter = flashLength;//resets health timer
         currentHealth -= damageTaken;//decreases health
+        totalLifeLost += damageTaken;
     }
 
     public void UpdatePathing()
