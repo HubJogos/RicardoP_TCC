@@ -3,59 +3,118 @@ using System.Collections.Generic;
 using System;
 using System.IO;
 using UnityEngine;
-using Newtonsoft.Json;
+using UnityEngine.SceneManagement;
 
 public class DataGenerator : MonoBehaviour
 {
 
     [SerializeField]
     float startTime;
-    Vector2 deathPos;
+    Scene activeScene;
+    bool done = false;
+    bool doneGen = false;
+    bool victory = false;
+    public int deathCounter = 0;
+    public int continues = 0;
+
     MapGenAutomata mapReference;
     PlayerScript playerScript;
     public PlayerData playerData;
-    private void Start()
+    private void FixedUpdate()
     {
-        playerScript = FindObjectOfType<PlayerScript>();
-        mapReference = FindObjectOfType<MapGenAutomata>();
-        startTime = Time.time;
-
         
-    }
-
-    public void OnTriggerEnter2D(Collider2D other)
-    {
-
-        if (other.gameObject.CompareTag("Player"))
+        activeScene = SceneManager.GetActiveScene();
+        if (activeScene.name == "Preload")
         {
-            SaveIntoJson();
+            SceneManager.LoadScene("Game");
         }
+        if (activeScene.name=="Game" && !done)
+        {
+            if (FindObjectOfType<PlayerScript>() != null)
+            {
+                playerScript = FindObjectOfType<PlayerScript>();
+            }
+            startTime = Time.time;
+            done = true;
+        }
+
+        if (activeScene.name == "MapGeneration")
+        {
+            if (!doneGen)
+            {
+                if (FindObjectOfType<PlayerScript>() != null)
+                {
+                    playerScript = FindObjectOfType<PlayerScript>();
+                }
+                if (FindObjectOfType<MapGenAutomata>() != null)
+                {
+                    mapReference = FindObjectOfType<MapGenAutomata>();
+                }
+            }//executa 1 vez só pra referenciar objetos relevantes
+            if (playerScript.currentHealth <= 0)
+            {
+                playerScript.gameObject.SetActive(false);//desativa player
+                SaveAsCSV();//gera dados
+            }
+            doneGen = true;
+        }
+            
     }
-    public void SaveIntoJson()
+    IEnumerator WaitToRestart()
+    {
+        yield return new WaitForSeconds(2);
+    }//auxiliar para reiniciar o jogo
+
+    public void SaveAsCSV()
     {
         
         
         //reads death map matrix
-        string dataPath = "Assets/PlayerData_" + mapReference.seed + ".json";
+        string dataPath = Application.dataPath + "/Data/Player/PlayerData_" + mapReference.seed + ".csv";
         if (File.Exists(dataPath))//se já existe arquivo de dados
         {
             File.Delete(dataPath);//deleta para salvar corretamente
         }
         if (playerScript.currentHealth <= 0)//se função foi chamada quando player morreu
         {
-            deathPos = new Vector2(Mathf.FloorToInt(playerScript.transform.position.x + mapReference.height / 2), Mathf.FloorToInt(playerScript.transform.position.y + mapReference.width / 2));//decrementa na posição da morte
+            //deathPos = new Vector2(Mathf.FloorToInt(playerScript.transform.position.x + mapReference.height / 2), Mathf.FloorToInt(playerScript.transform.position.y + mapReference.width / 2));//decrementa na posição da morte
+        }
+        else
+        {
+            victory = true;
         }//receives any pre-existing combat data to increment, if none exist, initializes a new one
 
-        playerData = new PlayerData((Time.time - startTime), playerScript.percentItemsCollected, playerScript.totalLifeLost, deathPos, playerScript.precision, playerScript.percentEnemiesDefeated, mapReference.enemyPositions, playerScript.pathing);
-        
-        string json = JsonConvert.SerializeObject(playerData, Formatting.Indented);
-        using (var sw = new StreamWriter(dataPath))
-        {
-            sw.Write(json);
-            sw.Flush();
-            sw.Close();
-        }
+        //deaths, continues
+        playerData = new PlayerData(playerScript.totalLifeLost, 
+            playerScript.currentExp, 
+            (Time.time - startTime), 
+            playerScript.steps, 
+            playerScript.precision, 
+            playerScript.percentKills, 
+            playerScript.percentItemsCollected, 
+            playerScript.ammoPickupRate, 
+            victory);
+
+
+        TextWriter tw =  new StreamWriter(dataPath, true);
+        tw.WriteLine(playerData.totalLifeLost + "," + 
+            playerData.expGain + "," + 
+            playerData.timeSpent.ToString().Replace(",",".") + "," + 
+            playerData.steps + "," + 
+            playerData.precision.ToString().Replace(",", ".") + "," + 
+            playerData.percentKills.ToString().Replace(",", ".") + "," + 
+            playerData.percentItemsCollected.ToString().Replace(",", ".") + "," +
+            playerData.percentAmmo.ToString().Replace(",", ".") + "," + 
+            victory + "," +
+            mapReference.seed.ToString().Replace(",","."));
+        tw.Close();
+
+        WaitToRestart();
+        SceneManager.LoadScene("Game");//reloads town scene
+        done = false;
+        doneGen = false;
     }
+
 
 
 }
@@ -64,33 +123,48 @@ public class DataGenerator : MonoBehaviour
 [System.Serializable]
 public class PlayerData
 {
-    public float timeSpent;
-    //treasures found
-    public float percentItemsCollected;
     public int totalLifeLost;
-    //experiência ganha
+    public int expGain;
+    public float timeSpent;
+    public int steps;
     //número de mortes
     //número de continues
-    public Vector2 deathPos;
-    //ataques realizados
-    //munição recuperada
     public float precision;
-    public float percentEnemiesDefeated;
+    public float percentKills;
+    public float percentItemsCollected;
+    public float percentAmmo;
+    public bool victorious;
+
+
+
+    /*
+    public Vector2 deathPos;//remove these 3 or save differently
     public Vector2[] enemyPos;
-    //terminou fase?
     public int[,] playerPath;
-    //somatório de passos, medindo o quanto se moveu
+    */
     
-    public PlayerData(float time, float percent, int lifeLost, Vector2 deathPosition, float attackPercent, float enemyPercent, Vector2[] posList, int[,] pathing)
-    {
-        timeSpent = time;
-        percentItemsCollected = percent;
-        totalLifeLost = lifeLost;
+    public PlayerData(int _totalLifeLost, int _expGain, float _timeSpent, int _steps, float _precision, float _percentKills, float _percentItemsCollected, float _percentAmmo, bool _victorious)
+    {//deaths, continues
+
+        totalLifeLost = _totalLifeLost;
+        expGain = _expGain;
+        timeSpent = _timeSpent;
+        steps = _steps;
+        //deaths
+        //continues
+        precision = _precision;
+        percentKills = _percentKills;
+        percentItemsCollected = _percentItemsCollected;
+        percentAmmo = _percentAmmo;
+        victorious = _victorious;
+
+
+
+        /*
         deathPos = deathPosition;
-        precision = attackPercent;
-        percentEnemiesDefeated = enemyPercent;
         enemyPos = posList;
         playerPath = pathing;
+        */
     }
 }
 
@@ -101,7 +175,7 @@ public class PlayerData
      * 
      * Dados do Jogador
          * Dados de Exploração: (tentando mensurar "aproveitamento" do jogador)
-         * -caminho percorrido (comparar com caminho mínima A*?) (feito)
+         * -caminho percorrido (feito)
          * -porcentagem de itens coletados (feito)                  (playerScript possui variáveis para o total de itens gerados e coletados)
          *
          * -tempo gasto na fase (feito)

@@ -772,10 +772,6 @@
       <Project>{369AA10D-E3D8-D47C-A171-9FDA71A0A698}</Project>
       <Name>Assembly-CSharp</Name>
     </ProjectReference>
-    <ProjectReference Include="V_Animation.csproj">
-      <Project>{CC6E4CE6-62D3-625D-A50E-C5F60AFF7808}</Project>
-      <Name>V_Animation</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

@@ -13,13 +13,13 @@ public class DaggerToss : MonoBehaviour
         if (other.gameObject.CompareTag("Enemy"))
         {
             other.gameObject.GetComponent<EnemyHealthManager>().heldAmmo++;
+            other.gameObject.GetComponent<EnemyHealthManager>().HurtEnemy(2);//causa 2 de dano ao acertar inimigo
             Destroy(gameObject);
         }
 
         if (!other.gameObject.CompareTag("Player") && !other.gameObject.CompareTag("Enemy"))
         {
             Instantiate(daggerDrop, transform.position, Quaternion.identity);
-            FindObjectOfType<PlayerScript>().itemsGenerated++;
             Destroy(gameObject);
         }
 

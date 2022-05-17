@@ -131,6 +131,7 @@ GameObject:
   m_Component:
   - component: {fileID: 461567150}
   - component: {fileID: 461567151}
+  - component: {fileID: 461567152}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -164,3 +165,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eaf79a6a2ebd094e8a3599deba44858, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &461567152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 461567149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0c47c6d6b8e0440833f300e8be369a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startTime: 0
+  playerData:
+    timeSpent: 0
+    percentItemsCollected: 0
+    totalLifeLost: 0
+    deathPos: {x: 0, y: 0}
+    precision: 0
+    percentEnemiesDefeated: 0
+    enemyPos: []

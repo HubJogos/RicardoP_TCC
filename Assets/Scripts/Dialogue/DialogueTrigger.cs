@@ -7,9 +7,11 @@ public class DialogueTrigger : MonoBehaviour
 {
     public Dialogue dialogue;
     public GameObject interactionText;
+    bool done = false;
 
     public void TriggerDialogue()
     {
+        
         FindObjectOfType<DialogueManager>().StartDialogue(dialogue);
     }
 
@@ -28,6 +30,7 @@ public class DialogueTrigger : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
+            
             if (Input.GetKeyDown(KeyCode.E))
             {
                 TriggerDialogue();

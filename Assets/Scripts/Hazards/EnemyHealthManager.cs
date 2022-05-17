@@ -89,16 +89,18 @@ public class EnemyHealthManager : MonoBehaviour
         if (currentHealth <= 0)
         {
             playerScript.DefeatEnemy(experienceGiven);
-            DropAmmo();
+            if (heldAmmo > 0)
+            {
+                DropAmmo();
+            }
             Destroy(gameObject);//kills enemy
         }
     }
     public void DropAmmo()
     {
-        for(int i = heldAmmo; i>=0; i--)
+        for(int i = heldAmmo; i>0; i--)
         {
             Instantiate(daggerDrop, transform.position, Quaternion.identity);
-            FindObjectOfType<PlayerScript>().itemsGenerated++;
         }
     }
 }

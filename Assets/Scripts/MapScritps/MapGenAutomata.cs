@@ -12,35 +12,55 @@ public class MapGenAutomata : MonoBehaviour
     public int minRegionSize = 50;//tamanho mínimo das regiões geradas (exclui o que estiver abaixo)
     public string seed;
     public bool useRandomSeed;
-
-
     [Range(0,100)]
     public int randomFillPercent;//porcentagem de terreno/parede
+    [HideInInspector] public int[,] map;//matriz do mapa
+    //public GameObject playerPrefab;
+
+    //geração de inimigos
     [Range(0, 100)]
     public int enemyDensity;
     public int maxEnemies, currentEnemies = 0;
-    public int minEnemyDistance;
+    [HideInInspector] public int minEnemyDistance;
     public GameObject enemyPrefab;
-    public GameObject[] enemies;
-    public Vector2[] enemyPositions;
-    public int[,] map;//matriz do mapa
+    [HideInInspector] public GameObject[] enemies;
+    [HideInInspector] public Vector2[] enemyPositions;
+
+    //geração de itens
+    [Range(0, 100)]
+    public int itemDensity;
+    public int maxItems, currentItems = 0;
+    [HideInInspector] public int minItemDistance;
+    public GameObject coinPrefab;
+    [HideInInspector] public GameObject[] items;
+    [HideInInspector] public Vector2[] itemPositions;
+    public GameObject playerPrefab;
+    public GameObject endStagePrefab;
+    GameObject endStage;
+    GameObject player;
+    bool canSpawnEnd = false;
+    bool canSpawnPlayer = false;
+    public GenData genData;
+    //geração de armadilhas
+    //lista com os tiles dos corredores, provavelmente um List<coord>
+    //bool corredor tem armadilha, aleatorizar
+    //armazenar posição das armadilhas em vetor
 
     private void Start()
     {
+        
         enemies = new GameObject[maxEnemies];
         enemyPositions = new Vector2[maxEnemies];
+
+        items = new GameObject[maxItems];
+        itemPositions = new Vector2[maxItems];
+
+        
         GenerateMap();
     }//gera mapa on startup
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            GenerateMap();
-        }
-    }//somente detecta input do teclado para gerar novamente
 
 
-    #region MapGeneration
+    
     void GenerateMap()
     {
         map = new int[width, height];
@@ -55,18 +75,53 @@ public class MapGenAutomata : MonoBehaviour
 
         ProcessMap();
 
-        string json = JsonConvert.SerializeObject(map, Formatting.None);
-        using (var sw = new StreamWriter("Assets/genData_" + seed + ".json"))
-        {
-            sw.Write(json);
-            sw.Flush();
-            sw.Close();
-        }
+        
 
         MeshGenerator meshGen = GetComponent<MeshGenerator>();
         meshGen.GenerateMesh(map, 1);
 
-        
+        #region PlayerPlacement
+        if (player != null)
+        {
+            Destroy(player);
+        }
+        while (!canSpawnPlayer)
+        {
+            
+            int x = Mathf.FloorToInt(UnityEngine.Random.Range(1, width - 1));
+            int y = Mathf.FloorToInt(UnityEngine.Random.Range(1, height - 1));
+            if (map[x, y] == 0)
+            {
+                canSpawnPlayer = true;
+            }
+            if (canSpawnPlayer)
+            {
+                player = Instantiate(playerPrefab, new Vector2(x - (width/2), y - (height / 2)),Quaternion.identity) as GameObject;
+            }
+        }
+        #endregion
+
+        #region ExitPlacement
+        if (endStage != null)
+        {
+            Destroy(endStage);
+        }
+        while (!canSpawnEnd)
+        {
+
+            int x = Mathf.FloorToInt(UnityEngine.Random.Range(1, width - 1));
+            int y = Mathf.FloorToInt(UnityEngine.Random.Range(1, height - 1));
+            if (map[x, y] == 0)
+            {
+                canSpawnEnd = true;
+            }
+            if (canSpawnEnd)
+            {
+                endStage = Instantiate(endStagePrefab, new Vector2(x - (width / 2), y - (height / 2)), Quaternion.identity) as GameObject;
+            }
+        }
+        #endregion
+
         #region EnemyPlacement
         //generating enemies
         System.Random randomizeEnemies = new System.Random(seed.GetHashCode());//pseudo random number generator
@@ -79,7 +134,7 @@ public class MapGenAutomata : MonoBehaviour
                     bool canSpawn = true;
                     if (!enemies[0])
                     {
-                        GameObject go = Instantiate(enemyPrefab, new Vector2(tile.tileX - width / 2, tile.tileY - height / 2), Quaternion.identity) as GameObject;//instancia inimigo, problema no posicionamento
+                        GameObject go = Instantiate(enemyPrefab, new Vector2(tile.tileX+1 - (width / 2), tile.tileY+1 - (height / 2)), Quaternion.identity) as GameObject;//instancia inimigo, problema no posicionamento
                         enemies[0] = go;//coloca no array de referencia
                         enemyPositions[0] = new Vector2(Mathf.FloorToInt(go.transform.position.x + width/2), Mathf.FloorToInt(go.transform.position.y + height/2));
                         currentEnemies = 1;//inicia contador
@@ -107,9 +162,75 @@ public class MapGenAutomata : MonoBehaviour
         }
         #endregion
 
-    
+        #region ItemPlacement
+        //generating Items
+        
+        float randItems = UnityEngine.Random.value;
+        System.Random randomizeItems = new System.Random(randItems.ToString().GetHashCode());//pseudo random number generator
+        foreach (List<Coord> region in GetRegions(0))//recebe os tiles vazios
+        {
+            foreach (Coord tile in region)//para cada tile vazio
+            {
+                if (randomizeItems.Next(0, 100) < itemDensity && currentItems < maxItems)//confere se item deve ser inserido
+                {
+                    bool canSpawn = true;
+                    if (items[0] == null)
+                    {
+                        GameObject go = Instantiate(coinPrefab, new Vector2(tile.tileX+1 - (width / 2), tile.tileY+1 - (height / 2)), Quaternion.identity) as GameObject;//instancia item
+                        items[0] = go;//coloca no array de referencia
+                        itemPositions[0] = new Vector2(Mathf.FloorToInt(go.transform.position.x + width / 2), Mathf.FloorToInt(go.transform.position.y + height / 2));
+                        currentItems = 1;//inicia contador
+                    }
+                    else
+                    {
+                        for (int i = 0; i < currentItems; i++)//compara distancia a todos os itens instanciados
+                        {
+                            if (Vector2.Distance(items[i].transform.position, new Vector2(tile.tileX - width / 2, tile.tileY - height / 2)) < minItemDistance)
+                            {
+                                canSpawn = false;
+                                break;
+                            }
+                        }
+                        //se está em uma distância razoavel do inimigo anterior
+                        if (canSpawn)
+                        {
+                            GameObject go = Instantiate(coinPrefab, new Vector2(tile.tileX - width / 2, tile.tileY - height / 2), Quaternion.identity) as GameObject;//instancia item
+                            items[currentItems] = go;//coloca no array de referencia
+                            itemPositions[currentItems] = go.transform.position;
+                            currentItems++;//incrementa contador
+                        }
+                    }
+                }
+            }
+        }
+        #endregion
+
+        genData = new GenData(player.transform.position, endStage.transform.position, itemPositions, enemyPositions);
+
+        //saving map data
+        string path = Application.dataPath + "/Data/Gen/genData_" + seed + ".json";
+        string json = JsonUtility.ToJson(genData, true);
+        using (var sw = new StreamWriter(path))
+        {
+            sw.Write(json);
+            sw.Flush();
+            sw.Close();
+        }
+        //writes map matrix at end of file
+        TextWriter tw = new StreamWriter(Application.dataPath + "/Data/Map/map_" + seed + ".json", true);
+        for (int i = map.GetLength(1); i >0; i--)
+        {
+            tw.WriteLine();
+            for (int j = 0; j < map.GetLength(0); j++)
+            {
+                tw.Write(map[j, map.GetLength(1)-i]);
+            }
+        }
+        tw.Close();
+
 
     }
+    #region MapGenFunctions
     void RandomFillMap()
     {
         if (useRandomSeed)
@@ -286,7 +407,6 @@ public class MapGenAutomata : MonoBehaviour
     {
         public int tileX;
         public int tileY;
-
         public Coord(int x, int y)
         {
             tileX = x;
@@ -294,7 +414,6 @@ public class MapGenAutomata : MonoBehaviour
         }
     }//definição de coordenadas de um tile
     
-
     bool IsInMapRange(int x, int y)
     {
         return x >= 0 && x < width && y >= 0 && y < height;
@@ -400,6 +519,7 @@ public class MapGenAutomata : MonoBehaviour
         foreach(Coord c in line)//para cada tile por onde a linha passa
         {
             DrawCircle(c, 1);//abre corredor
+            //receber tiles do corredor em uma lista de corredores
         }
     }//usa DrawCircle para criar passagens entre as salas
 
@@ -416,6 +536,7 @@ public class MapGenAutomata : MonoBehaviour
                     if(IsInMapRange(drawX, drawY))//se está dentro do mapa
                     {
                         map[drawX, drawY] = 0;//abre tile
+                        //retornar tiles abertos
                     }
                 }
             }
@@ -511,7 +632,7 @@ public class MapGenAutomata : MonoBehaviour
                 {
                     for (int y = tile.tileY - 1; y <= tile.tileY + 1; y++)
                     {
-                        if(x==tile.tileX || y == tile.tileY)
+                        if((x==tile.tileX || y == tile.tileY) && x < map.GetLength(0) && y < map.GetLength(1))
                         {
                             if (map[x, y] == 1)
                             {
@@ -556,4 +677,20 @@ public class MapGenAutomata : MonoBehaviour
         }
     }//definição do que é uma sala e métodos de set e compare com seus atributos
     #endregion
+
+    [System.Serializable]
+    public class GenData
+    {
+        public Vector2 playerStart;
+        public Vector2 exitDoor;
+        public Vector2[] itemPositions;
+        public Vector2[] enemyPositions;
+        public GenData(Vector2 _playerStart, Vector2 _exitDoor, Vector2[] _itemPositions, Vector2[] _enemyPositions)
+        {
+            playerStart = _playerStart;
+            exitDoor = _exitDoor;
+            itemPositions = _itemPositions;
+            enemyPositions = _enemyPositions;
+        }
+    }
 }

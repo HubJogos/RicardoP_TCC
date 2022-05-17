@@ -64,95 +64,56 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\2D Fantasy Character Pack\animate.cs" />
-    <Compile Include="Assets\CodeMonkey\Assets.cs" />
-    <Compile Include="Assets\CodeMonkey\CMDebug.cs" />
-    <Compile Include="Assets\CodeMonkey\MonoBehaviours\CameraFollow.cs" />
-    <Compile Include="Assets\CodeMonkey\MonoBehaviours\CameraFollowSetup.cs" />
-    <Compile Include="Assets\CodeMonkey\MonoBehaviours\ComponentActions.cs" />
-    <Compile Include="Assets\CodeMonkey\MonoBehaviours\PositionRendererSorter.cs" />
-    <Compile Include="Assets\CodeMonkey\Utils\Button_Sprite.cs" />
-    <Compile Include="Assets\CodeMonkey\Utils\Button_UI.cs" />
-    <Compile Include="Assets\CodeMonkey\Utils\FunctionPeriodic.cs" />
-    <Compile Include="Assets\CodeMonkey\Utils\FunctionTimer.cs" />
-    <Compile Include="Assets\CodeMonkey\Utils\FunctionUpdater.cs" />
-    <Compile Include="Assets\CodeMonkey\Utils\UI_Bar.cs" />
-    <Compile Include="Assets\CodeMonkey\Utils\UI_BarMultiple.cs" />
-    <Compile Include="Assets\CodeMonkey\Utils\UI_Sprite.cs" />
-    <Compile Include="Assets\CodeMonkey\Utils\UI_TextComplex.cs" />
-    <Compile Include="Assets\CodeMonkey\Utils\UtilsClass.cs" />
-    <Compile Include="Assets\CodeMonkey\Utils\World_Bar.cs" />
-    <Compile Include="Assets\CodeMonkey\Utils\World_Mesh.cs" />
-    <Compile Include="Assets\CodeMonkey\Utils\World_Sprite.cs" />
     <Compile Include="Assets\Scripts\CameraController.cs" />
-    <Compile Include="Assets\Scripts\DaggerToss.cs" />
     <Compile Include="Assets\Scripts\DestroyOnAnimationEnd.cs" />
     <Compile Include="Assets\Scripts\Dialogue\Dialogue.cs" />
     <Compile Include="Assets\Scripts\Dialogue\DialogueManager.cs" />
+    <Compile Include="Assets\Scripts\Dialogue\DialogueTextObject.cs" />
     <Compile Include="Assets\Scripts\Dialogue\DialogueTrigger.cs" />
     <Compile Include="Assets\Scripts\FOV.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\Hazards\EnemyHealthManager.cs" />
     <Compile Include="Assets\Scripts\Hazards\EnemyStats.cs" />
-    <Compile Include="Assets\Scripts\Hazards\WalkTowardsPlayer.cs" />
+    <Compile Include="Assets\Scripts\Items\CoinPickup.cs" />
     <Compile Include="Assets\Scripts\Items\DaggerPickup.cs" />
+    <Compile Include="Assets\Scripts\Items\DaggerToss.cs" />
     <Compile Include="Assets\Scripts\Items\Interactable.cs" />
     <Compile Include="Assets\Scripts\MapScritps\AreaTransitions.cs" />
     <Compile Include="Assets\Scripts\MapScritps\DataGenerator.cs" />
+    <Compile Include="Assets\Scripts\MapScritps\EndStage.cs" />
     <Compile Include="Assets\Scripts\MapScritps\MapGenAutomata.cs" />
     <Compile Include="Assets\Scripts\MapScritps\MeshGenerator.cs" />
     <Compile Include="Assets\Scripts\MapScritps\MinimapScript.cs" />
-    <Compile Include="Assets\Scripts\MapScritps\PoissonSampling.cs" />
-    <Compile Include="Assets\Scripts\MapScritps\TestPlacement.cs" />
+    <Compile Include="Assets\Scripts\MapScritps\NextScene.cs" />
     <Compile Include="Assets\Scripts\Menus\InventoryUI.cs" />
     <Compile Include="Assets\Scripts\Menus\MainMenu.cs" />
     <Compile Include="Assets\Scripts\Menus\PauseMenu.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerScript.cs" />
-    <Compile Include="Assets\Scripts\Save System\PlayerData.cs" />
-    <Compile Include="Assets\Scripts\Save System\SaveSystem.cs" />
     <Compile Include="Assets\Scripts\UIManager.cs" />
-    <Compile Include="Assets\_\Stuff\GridPathfinding\BinaryTree.cs" />
-    <Compile Include="Assets\_\Stuff\GridPathfinding\GridPathfinding.cs" />
-    <Compile Include="Assets\_\Stuff\GridPathfinding\LastMoveTo.cs" />
-    <Compile Include="Assets\_\Stuff\GridPathfinding\MapPos.cs" />
-    <Compile Include="Assets\_\Stuff\GridPathfinding\PathNode.cs" />
-    <Compile Include="Assets\_\Stuff\GridPathfinding\PathQueue.cs" />
-    <Compile Include="Assets\_\Stuff\GridPathfinding\PathRoute.cs" />
-    <Compile Include="Assets\_\Stuff\GridPathfinding\UnitMovement.cs" />
-    <Compile Include="Assets\_\Stuff\Scripts\AnimatedWalker.cs" />
-    <Compile Include="Assets\_\Stuff\Scripts\Blood_Handler.cs" />
-    <Compile Include="Assets\_\Stuff\Scripts\Dirt_Handler.cs" />
-    <Compile Include="Assets\_\Stuff\Scripts\FullscreenPlayMode.cs" />
-    <Compile Include="Assets\_\Stuff\Scripts\GameAssets.cs" />
-    <Compile Include="Assets\_\Stuff\Scripts\Generic_Mesh_Script.cs" />
-    <Compile Include="Assets\_\Stuff\Scripts\ScreenshotHandler.cs" />
-    <Compile Include="Assets\_\Stuff\Scripts\SetSpriteSorting.cs" />
-    <Compile Include="Assets\_\Stuff\Scripts\Shoot_Flash.cs" />
-    <Compile Include="Assets\_\Stuff\Scripts\Sound_Manager.cs" />
-    <Compile Include="Assets\_\Stuff\Scripts\SpriteAnimator.cs" />
-    <Compile Include="Assets\_\Stuff\Scripts\UVVectors.cs" />
-    <Compile Include="Assets\_\Stuff\Scripts\V_UnitSkeleton_Composite_Walker.cs" />
-    <Compile Include="Assets\_\Stuff\Scripts\V_UnitSkeleton_Composite_Weapon.cs" />
-    <Compile Include="Assets\_\Stuff\Scripts\WeaponTracer.cs" />
-    <Compile Include="Assets\_\Stuff\V_ObjectSystem\V_IActiveInactive.cs" />
-    <Compile Include="Assets\_\Stuff\V_ObjectSystem\V_IDestroySelf.cs" />
-    <Compile Include="Assets\_\Stuff\V_ObjectSystem\V_IHasWorldPosition.cs" />
-    <Compile Include="Assets\_\Stuff\V_ObjectSystem\V_IObjectActiveLogic.cs" />
-    <Compile Include="Assets\_\Stuff\V_ObjectSystem\V_IObjectTransform.cs" />
-    <Compile Include="Assets\_\Stuff\V_ObjectSystem\V_IObjectTransformBody.cs" />
-    <Compile Include="Assets\_\Stuff\V_ObjectSystem\V_Main.cs" />
-    <Compile Include="Assets\_\Stuff\V_ObjectSystem\V_Object.cs" />
-    <Compile Include="Assets\_\Stuff\V_ObjectSystem\V_ObjectLogic_SkeletonUpdater.cs" />
-    <Compile Include="Assets\_\Stuff\V_ObjectSystem\V_ObjectTransform.cs" />
-    <Compile Include="Assets\_\Stuff\V_ObjectSystem\V_ObjectTransformBody.cs" />
-    <Compile Include="Assets\_\Stuff\V_ObjectSystem\V_ObjectTransform_LateUpdate.cs" />
-    <Compile Include="Assets\_\Stuff\V_ObjectSystem\V_TimeScaleManager.cs" />
+    <Compile Include="Assets\_\Base\BaseScripts\CharacterPathfindingMovementHandler.cs" />
+    <Compile Include="Assets\_\Pathfinding\Scripts\Grid.cs" />
+    <Compile Include="Assets\_\Pathfinding\Scripts\MeshUtils.cs" />
+    <Compile Include="Assets\_\Pathfinding\Scripts\PathNode.cs" />
+    <Compile Include="Assets\_\Pathfinding\Scripts\Pathfinding.cs" />
+    <Compile Include="Assets\_\Pathfinding\Scripts\PathfindingDebugStepVisual.cs" />
+    <Compile Include="Assets\_\Pathfinding\Scripts\PathfindingVisual.cs" />
+    <Compile Include="Assets\_\Pathfinding\Scripts\Testing.cs" />
+    <Compile Include="Assets\_\Stuff\CodeMonkey\Utils\Button_Sprite.cs" />
+    <Compile Include="Assets\_\Stuff\CodeMonkey\Utils\Button_UI.cs" />
+    <Compile Include="Assets\_\Stuff\CodeMonkey\Utils\FunctionPeriodic.cs" />
+    <Compile Include="Assets\_\Stuff\CodeMonkey\Utils\FunctionTimer.cs" />
+    <Compile Include="Assets\_\Stuff\CodeMonkey\Utils\FunctionUpdater.cs" />
+    <Compile Include="Assets\_\Stuff\CodeMonkey\Utils\UI_Bar.cs" />
+    <Compile Include="Assets\_\Stuff\CodeMonkey\Utils\UI_BarMultiple.cs" />
+    <Compile Include="Assets\_\Stuff\CodeMonkey\Utils\UI_TextComplex.cs" />
+    <Compile Include="Assets\_\Stuff\CodeMonkey\Utils\UtilsClass.cs" />
+    <Compile Include="Assets\_\Stuff\CodeMonkey\Utils\World_Mesh.cs" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Mobile.cginc" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF SSD.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface-Mobile.shader" />
-    <None Include="Assets\CodeMonkey\README.txt" />
     <None Include="Assets\JsonDotNet\link.xml" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface.shader" />
     <None Include="Assets\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
@@ -823,12 +784,7 @@
       <HintPath>C:/Users/ricar/OneDrive/Documentos/Unity Projects/2d Top Down/2d Top Down/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="V_Animation.csproj">
-      <Project>{CC6E4CE6-62D3-625D-A50E-C5F60AFF7808}</Project>
-      <Name>V_Animation</Name>
-    </ProjectReference>
-  </ItemGroup>
+  <ItemGroup></ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

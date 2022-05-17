@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    public PlayerScript playerScript;//references to use healthbar
+    [HideInInspector]public PlayerScript playerScript;//references to use healthbar
     public Slider healthBar;
     public Text hpText;
     public Slider ammoCounter;

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class PlayerScript : MonoBehaviour
 {
@@ -32,19 +32,17 @@ public class PlayerScript : MonoBehaviour
     [Header("Health Variables")]
     public int maxHealth;
     public int currentHealth;
-    public int totalLifeLost = 0;
     private bool flashActive;//variable to flash player when hit
     [SerializeField] private float flashLength = 0f;
     private float flashCounter = 0f;
     private SpriteRenderer playerSprite;
-
-    public float waitToDamage = 2f;//time to wait before dealing another instance of damage
-    public bool isTouching;//detects if player came into contact
+    [HideInInspector] public float waitToDamage = 2f;//time to wait before dealing another instance of damage
+    [HideInInspector] public bool isTouching;//detects if player came into contact
     #endregion
 
     #region DashVariables
     [Header("Dash Variables")]
-    [SerializeField] private float rollSpeed;
+    private float rollSpeed;
     [SerializeField] private float defaultRollSpeed = 1000f;
     [HideInInspector] public bool canRoll = true;
     [SerializeField] private float dashTime = .25f;//time player must wait between dashes
@@ -60,9 +58,6 @@ public class PlayerScript : MonoBehaviour
     public int damage = 2;
     public GameObject damageTextPrefab;
     public string textToDisplay;
-    public float attacksAttempted=0;
-    public float successfulAttacks=0;
-    public float precision=0;
     #endregion
 
     #region ShootingVariables
@@ -78,26 +73,47 @@ public class PlayerScript : MonoBehaviour
     public int currentAmmo;
     #endregion
 
-    #region MapVariables
-    [Header ("Map Variables")]
+    #region DataVariables
+    [Header ("Data Variables")]
     MapGenAutomata mapReference;//referencia ao gerador
     [HideInInspector] public int[,] pathing;
     int currPlayerX, currPlayerY;
     int playerX, playerY;
     public float percentItemsCollected;
-    public float itemsCollected;
+    [HideInInspector] public float itemsCollected;
+    float ammoPickup=0;
+    public float ammoPickupRate=0;
+    float shotsFired = 0;
     [HideInInspector] public float itemsGenerated;
-    [HideInInspector] public float percentEnemiesDefeated;
-    public float enemiesDefeated;
+    [HideInInspector] public float attacksAttempted = 0;
+    [HideInInspector] public float successfulAttacks = 0;
+    public float precision = 0;
+    public int totalLifeLost = 0;
+    public int rollsAttempted;
+    public int rollsMade;
+    public float percentKills;
+    [HideInInspector] public float enemiesDefeated;
+    public int steps = 0;
+    public int coins = 0;
+    Scene activeScene;
+
+    
     #endregion
     void Start()
     {
+        cam = Camera.main;
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        mapReference = FindObjectOfType<MapGenAutomata>();
+        activeScene = SceneManager.GetActiveScene();
+        if (activeScene.name == "MapGeneration")
+        {
+            mapReference = FindObjectOfType<MapGenAutomata>();
 
-        playerX = Mathf.FloorToInt(transform.position.x + mapReference.width / 2);//conversão da posição global para a posição no mapa do jogador
-        playerY = Mathf.FloorToInt(transform.position.y + mapReference.height / 2);
+            itemsGenerated = mapReference.currentItems;
+            playerX = Mathf.FloorToInt(transform.position.x + mapReference.width / 2);//conversão da posição global para a posição no mapa do jogador
+            playerY = Mathf.FloorToInt(transform.position.y + mapReference.height / 2);
+        }
+        
 
         attackCounter = attackTime;
 
@@ -133,44 +149,17 @@ public class PlayerScript : MonoBehaviour
             canRoll = false;
             rb.velocity = new Vector2(moveX, moveY).normalized * rollSpeed;
         }//gerencia troca de movimentos de rolamento/caminhada  
-
-        if (moveX == 1 || moveX == -1 || moveY == 1 || moveY == -1)
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            animator.SetFloat("lastMoveX", moveX);//required for correcting idle direction
-            animator.SetFloat("lastMoveY", moveY);
-        }//idle looking direction
-
-        if (isAttacking)
-        {
-            canRoll = false;
-            rb.velocity = Vector2.zero;//blocks movement when attacking
-            attackCounter -= Time.deltaTime;//counts down attack timer
-            if (attackCounter <= 0)
+            if (canRoll)
             {
-                animator.SetBool("IsAttacking", false);
-                isAttacking = false;//resets attack
-                canRoll = true;
+                canRoll = false;
+                isRolling = true;
+                rollsMade++;
+                animator.SetBool("IsRolling", true);
+                rollSpeed = defaultRollSpeed;
             }
-        }//regulates attack timer
-
-        if (Input.GetKeyDown(KeyCode.Mouse0))//attack button is set to left mouse button
-        {
-            if (!isAttacking)//checks if player is not attacking already
-            {
-                attackCounter = attackTime;//resets attack timer
-                isAttacking = true;//sets attack variables
-                attacksAttempted++;
-                precision = successfulAttacks / attacksAttempted;
-                animator.SetBool("IsAttacking", true);
-            }
-        }//regulates attacking
-
-        if (canRoll && Input.GetKeyDown(KeyCode.Space))
-        {
-            canRoll = false;
-            isRolling = true;
-            animator.SetBool("IsRolling", true);
-            rollSpeed = defaultRollSpeed;
+            rollsAttempted++;
         }//starts rolling
         if (!canRoll)
         {
@@ -199,6 +188,36 @@ public class PlayerScript : MonoBehaviour
                 animator.SetBool("IsRolling", false);
             }//stops rolling animation
         }//actually does the rolling part
+        if (moveX == 1 || moveX == -1 || moveY == 1 || moveY == -1)
+        {
+            animator.SetFloat("lastMoveX", moveX);//required for correcting idle direction
+            animator.SetFloat("lastMoveY", moveY);
+        }//idle look direction
+
+        if (isAttacking)
+        {
+            canRoll = false;
+            rb.velocity = Vector2.zero;//blocks movement when attacking
+            attackCounter -= Time.deltaTime;//counts down attack timer
+            if (attackCounter <= 0)
+            {
+                animator.SetBool("IsAttacking", false);
+                isAttacking = false;//resets attack
+                canRoll = true;
+            }
+        }//regulates attack timer
+        if (Input.GetKeyDown(KeyCode.Mouse0))//attack button is set to left mouse button
+        {
+            if (!isAttacking)//checks if player is not attacking already
+            {
+                attackCounter = attackTime;//resets attack timer
+                isAttacking = true;//sets attack variables
+                attacksAttempted++;
+                
+                animator.SetBool("IsAttacking", true);
+            }
+        }//regulates attacking
+
         if (flashActive)
         {
             if (flashCounter > flashLength * .99f)//flashes player in and out
@@ -236,7 +255,6 @@ public class PlayerScript : MonoBehaviour
             }
             flashCounter -= Time.deltaTime;//counts down on flash times
         }//controls flashing when taking damage
-
         if (isTouching)
         {
             waitToDamage -= Time.deltaTime;//counts down damage instance timer
@@ -250,22 +268,28 @@ public class PlayerScript : MonoBehaviour
                 waitToDamage = 2f;//resets counter
             }
         }//controla recepção de dano ao permanecer tocando um inimigo
-
-        playerX = Mathf.FloorToInt(transform.position.x + mapReference.width / 2);//conversão da posição global para a posição no mapa do jogador
-        playerY = Mathf.FloorToInt(transform.position.y + mapReference.height / 2);
-        if(playerX != currPlayerX || playerY != currPlayerY)//se mudar de posição
-        {
-            UpdatePathing();
-        }
-
+        
         animator.SetFloat("moveX", rb.velocity.x);//sets movement animation variables to animate correctly
         animator.SetFloat("moveY", rb.velocity.y);
         animator.SetFloat("mousePosX", mouseDirection.x);//variáveis direcionais de ataque
         animator.SetFloat("mousePosY", mouseDirection.y);//ataca na direção do mouse, não do movimento
 
-        percentItemsCollected = itemsCollected / itemsGenerated;
-        percentEnemiesDefeated = enemiesDefeated / mapReference.currentEnemies;
+        if (activeScene.name == "MapGeneration")
+        {
+            precision = successfulAttacks / attacksAttempted;
+            ammoPickupRate = ammoPickup / shotsFired;
+            percentItemsCollected = itemsCollected / itemsGenerated;
+            percentKills = enemiesDefeated / mapReference.currentEnemies;
+            playerX = Mathf.FloorToInt(transform.position.x + mapReference.width / 2);//conversão da posição global para a posição no mapa do jogador
+            playerY = Mathf.FloorToInt(transform.position.y + mapReference.height / 2);
+            if (playerX != currPlayerX || playerY != currPlayerY)//se mudar de posição
+            {
+                UpdatePathing();
+            }
+        }//controla dados do jogador no mapa gerado
+        
     }
+
     void FixedUpdate()//60 vezes por segundo, atualiza os comandos de mirar e atirar
     {
         mousePosition = cam.ScreenToWorldPoint(Input.mousePosition);
@@ -308,6 +332,8 @@ public class PlayerScript : MonoBehaviour
             GameObject projectile = Instantiate(projectilePrefab, transform.position, Quaternion.Euler(0, 0, angle));
             Rigidbody2D projectileRb = projectile.GetComponent<Rigidbody2D>();
             projectileRb.AddForce(new Vector2(shootDirection.x, shootDirection.y) * projectileForce, ForceMode2D.Impulse);
+            attacksAttempted++;
+            shotsFired++;
         }
 
     }//dispara projétil
@@ -318,10 +344,14 @@ public class PlayerScript : MonoBehaviour
         {
             currentAmmo++;
         }
-        itemsCollected++;
-        
-
+        ammoPickup++;
     }//incrementa munição
+    public void GetCoin()
+    {
+        coins++;
+        itemsCollected++;
+    }
+
     public void DefeatEnemy(int exp)
     {
         currentExp += exp;//updates player experience
@@ -340,11 +370,6 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    IEnumerator WaitToRestart()
-    {
-        yield return new WaitForSeconds(2);
-    }//auxiliar para reiniciar o jogo
-
     public void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.CompareTag("Enemy"))
@@ -353,19 +378,9 @@ public class PlayerScript : MonoBehaviour
             HurtPlayer(enemyDamage);//causa dano na colisão
             GameObject damageTextInstance = Instantiate(damageTextPrefab, other.transform);
             damageTextInstance.transform.GetChild(0).GetComponent<TextMeshPro>().SetText(enemyDamage.ToString());
-            damageTextInstance.transform.GetChild(0).GetComponent<TextMeshPro>().color = new Color32(200, 100, 100, 255);//red
-
-            if (currentHealth <= 0) {
-                gameObject.SetActive(false);//desativa player
-                FindObjectOfType<DataGenerator>().SaveIntoJson();//gera dados
-                WaitToRestart();
-                SceneManager.LoadScene(SceneManager.GetActiveScene().name);//reloads current scene when timer reaches 0
-            }
-            
-            
+            damageTextInstance.transform.GetChild(0).GetComponent<TextMeshPro>().color = new Color32(200, 100, 100, 255);//red            
         }
     }//se colide com inimigo, recebe dano
-
 
     private void OnCollisionStay2D(Collision2D other)//detects if player remains in contact with an enemy
     {
@@ -401,5 +416,6 @@ public class PlayerScript : MonoBehaviour
         currPlayerX = playerX;//usado para verificar mudanças na posição
         currPlayerY = playerY;
         pathing[playerX, playerY]--;//decrementa posição do jogador
+        steps++;
     }
 }
