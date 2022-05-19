@@ -132,6 +132,7 @@ GameObject:
   - component: {fileID: 461567150}
   - component: {fileID: 461567151}
   - component: {fileID: 461567152}
+  - component: {fileID: 461567153}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -178,11 +179,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startTime: 0
+  deathCounter: 0
+  continues: 0
   playerData:
-    timeSpent: 0
-    percentItemsCollected: 0
     totalLifeLost: 0
-    deathPos: {x: 0, y: 0}
+    expGain: 0
+    timeSpent: 0
+    steps: 0
     precision: 0
-    percentEnemiesDefeated: 0
-    enemyPos: []
+    percentKills: 0
+    percentItemsCollected: 0
+    percentAmmo: 0
+    victorious: 0
+--- !u!114 &461567153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 461567149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d0fa7cbe78eeb844a988c899cd7253d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  quest:
+    isActive: 0
+    title: 
+    description: 
+    expReward: 0
+    healthImprovement: 0
+    goal:
+      goalType: 0
+      requiredAmount: 0
+      currentAmount: 0

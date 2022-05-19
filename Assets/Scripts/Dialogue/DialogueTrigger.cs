@@ -7,12 +7,20 @@ public class DialogueTrigger : MonoBehaviour
 {
     public Dialogue dialogue;
     public GameObject interactionText;
-    bool done = false;
+    DialogueManager dialogueManager;
+    void Start()
+    {
+        dialogueManager = FindObjectOfType<DialogueManager>();
+    }
 
     public void TriggerDialogue()
     {
+        if (gameObject.GetComponentInParent<QuestGiver>())
+        {
+            dialogueManager.questGiver = gameObject.GetComponentInParent<QuestGiver>();
+        }
         
-        FindObjectOfType<DialogueManager>().StartDialogue(dialogue);
+        dialogueManager.StartDialogue(dialogue);
     }
 
     void OnTriggerStay2D(Collider2D other)

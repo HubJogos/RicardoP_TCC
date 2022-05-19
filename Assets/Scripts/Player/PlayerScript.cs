@@ -79,28 +79,36 @@ public class PlayerScript : MonoBehaviour
     [HideInInspector] public int[,] pathing;
     int currPlayerX, currPlayerY;
     int playerX, playerY;
+
     public float percentItemsCollected;
     [HideInInspector] public float itemsCollected;
+    [HideInInspector] public float itemsGenerated;
+
     float ammoPickup=0;
     public float ammoPickupRate=0;
     float shotsFired = 0;
-    [HideInInspector] public float itemsGenerated;
     [HideInInspector] public float attacksAttempted = 0;
     [HideInInspector] public float successfulAttacks = 0;
     public float precision = 0;
     public int totalLifeLost = 0;
+
     public int rollsAttempted;
     public int rollsMade;
+
     public float percentKills;
     [HideInInspector] public float enemiesDefeated;
     public int steps = 0;
     public int coins = 0;
     Scene activeScene;
 
+    public QuestTracker tracker;
+
     
     #endregion
     void Start()
     {
+        tracker = FindObjectOfType<QuestTracker>();
+        
         cam = Camera.main;
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
@@ -139,6 +147,7 @@ public class PlayerScript : MonoBehaviour
         moveY = Input.GetAxisRaw("Vertical");
         mousePosition = cam.ScreenToWorldPoint(Input.mousePosition);//recebe posição do mouse na tela
         mouseDirection = -((Vector2)transform.position - mousePosition).normalized;//calcula vetor direcional do ataque, com valor absoluto = 1
+
 
         if (!isRolling)
         {
@@ -324,6 +333,7 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+    
     public void Shoot()
     {
         if (currentAmmo > 0)
@@ -348,6 +358,17 @@ public class PlayerScript : MonoBehaviour
     }//incrementa munição
     public void GetCoin()
     {
+        if(tracker.quest.goal.goalType == QuestGoal.GoalType.Gather && tracker.quest.isActive)
+        {
+            tracker.quest.goal.Gathered();
+            if (tracker.quest.goal.IsReached())
+            {
+                currentExp += tracker.quest.expReward;
+                maxHealth += tracker.quest.healthImprovement;
+                currentHealth = maxHealth;
+                tracker.quest.Complete();
+            }
+        }
         coins++;
         itemsCollected++;
     }
@@ -356,7 +377,11 @@ public class PlayerScript : MonoBehaviour
     {
         currentExp += exp;//updates player experience
         enemiesDefeated++;
-        
+        if (tracker.quest.goal.goalType == QuestGoal.GoalType.Kill && tracker.quest.isActive)
+        {
+            tracker.quest.goal.EnemyKilled();
+        }
+
     }
 
     public void OnTriggerEnter2D(Collider2D other)//causa dano ao inimigo quando trigger ocorre

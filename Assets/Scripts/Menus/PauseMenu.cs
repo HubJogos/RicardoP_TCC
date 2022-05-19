@@ -7,12 +7,7 @@ public class PauseMenu : MonoBehaviour
 {
     public static bool GameIsPaused = false;
     public GameObject pauseMenuUI;
-    public PlayerScript script;
 
-    void Start()
-    {
-        script = FindObjectOfType<PlayerScript>();
-    }
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -66,7 +61,7 @@ public class PauseMenu : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         Time.timeScale = 1f;
     }
-    public void GoToMainMenu()
+    public void ReturnToTown()
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene(1);

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3426627581277845170}
   - component: {fileID: 3426627581277845169}
   - component: {fileID: 3426627581277845168}
+  - component: {fileID: 7140114498231377536}
   m_Layer: 0
   m_Name: WarriorDaveNPC
   m_TagString: NPC
@@ -131,6 +132,25 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 7
+--- !u!114 &7140114498231377536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3426627581277845183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc977a4f551ead64aa5f34ad76a68315, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  quest:
+    isActive: 0
+    title: Gather Gold
+    description: Go through the portal and grab 5 coins.
+    expReward: 50
+    healthImprovement: 10
+  player: {fileID: 0}
 --- !u!1 &3426627581926679956
 GameObject:
   m_ObjectHideFlags: 0

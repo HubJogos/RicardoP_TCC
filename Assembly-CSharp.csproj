@@ -89,6 +89,10 @@
     <Compile Include="Assets\Scripts\Menus\MainMenu.cs" />
     <Compile Include="Assets\Scripts\Menus\PauseMenu.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerScript.cs" />
+    <Compile Include="Assets\Scripts\Quest\Quest.cs" />
+    <Compile Include="Assets\Scripts\Quest\QuestGiver.cs" />
+    <Compile Include="Assets\Scripts\Quest\QuestGoal.cs" />
+    <Compile Include="Assets\Scripts\Quest\QuestTracker.cs" />
     <Compile Include="Assets\Scripts\UIManager.cs" />
     <Compile Include="Assets\_\Base\BaseScripts\CharacterPathfindingMovementHandler.cs" />
     <Compile Include="Assets\_\Pathfinding\Scripts\Grid.cs" />
