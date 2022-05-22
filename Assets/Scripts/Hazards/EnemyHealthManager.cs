@@ -22,7 +22,11 @@ public class EnemyHealthManager : MonoBehaviour
     void Start()
     {
         playerRef = FindObjectOfType<PlayerScript>();
-        anim = GetComponent<Animator>();
+        if (GetComponent<Animator>())
+        {
+            anim = GetComponent<Animator>();
+        }
+        
         rb = GetComponent<Rigidbody2D>();
         currentHealth = maxHealth;
         enemySprite = GetComponent<SpriteRenderer>();
@@ -67,17 +71,19 @@ public class EnemyHealthManager : MonoBehaviour
             }
             flashCounter -= Time.deltaTime;//counts down flash timer
         }//controls flashing when taking damage
-        if (rb.velocity.x != 0 || rb.velocity.y != 0)
+        if (anim)
         {
-            anim.SetBool("isMoving", true);//activates moving animations
-            anim.SetFloat("moveX", (playerRef.transform.position.x - transform.position.x));//controls movement animation variables
-            anim.SetFloat("moveY", (playerRef.transform.position.y - transform.position.y));
+            if (rb.velocity.x != 0 || rb.velocity.y != 0)
+            {
+                anim.SetBool("isMoving", true);//activates moving animations
+                anim.SetFloat("moveX", (playerRef.transform.position.x - transform.position.x));//controls movement animation variables
+                anim.SetFloat("moveY", (playerRef.transform.position.y - transform.position.y));
+            }
+            else
+            {
+                anim.SetBool("isMoving", false);
+            }
         }
-        else
-        {
-            anim.SetBool("isMoving", false);
-        }
-        
     }
     public void HurtEnemy(int damage)
     {

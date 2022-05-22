@@ -381,18 +381,17 @@ MonoBehaviour:
   currentAmmo: 7
   percentItemsCollected: 0
   itemsCollected: 0
-  ammoPickupRate: 0
   itemsGenerated: 0
+  ammoPickupRate: 0
   attacksAttempted: 0
   successfulAttacks: 0
   precision: 0
   totalLifeLost: 0
-  rollsAttempted: 0
-  rollsMade: 0
   percentKills: 0
   enemiesDefeated: 0
   steps: 0
   coins: 0
+  tracker: {fileID: 0}
 --- !u!1 &689617983942694790
 GameObject:
   m_ObjectHideFlags: 0
@@ -2616,7 +2615,6 @@ GameObject:
   - component: {fileID: 7017997527084089117}
   - component: {fileID: 7017997527084089090}
   - component: {fileID: 7017997527084089091}
-  - component: {fileID: 7017997527084089088}
   m_Layer: 0
   m_Name: HUD
   m_TagString: Untagged
@@ -2723,20 +2721,6 @@ MonoBehaviour:
   healthBar: {fileID: 7017997526692388428}
   hpText: {fileID: 7017997526336938982}
   ammoCounter: {fileID: 7017997527138711877}
---- !u!114 &7017997527084089088
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7017997527084089089}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f54a5da593f314a4fb5f459af4a37f32, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  pauseMenuUI: {fileID: 0}
-  script: {fileID: 0}
 --- !u!1 &7017997527114329616
 GameObject:
   m_ObjectHideFlags: 0

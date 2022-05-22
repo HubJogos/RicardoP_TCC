@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="Assets\2D Fantasy Character Pack\animate.cs" />
     <Compile Include="Assets\Scripts\CameraController.cs" />
+    <Compile Include="Assets\Scripts\Continue.cs" />
     <Compile Include="Assets\Scripts\DestroyOnAnimationEnd.cs" />
     <Compile Include="Assets\Scripts\Dialogue\Dialogue.cs" />
     <Compile Include="Assets\Scripts\Dialogue\DialogueManager.cs" />
@@ -72,11 +73,15 @@
     <Compile Include="Assets\Scripts\Dialogue\DialogueTrigger.cs" />
     <Compile Include="Assets\Scripts\FOV.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
+    <Compile Include="Assets\Scripts\Hazards\Canon.cs" />
     <Compile Include="Assets\Scripts\Hazards\EnemyHealthManager.cs" />
+    <Compile Include="Assets\Scripts\Hazards\EnemyProjectile.cs" />
     <Compile Include="Assets\Scripts\Hazards\EnemyStats.cs" />
+    <Compile Include="Assets\Scripts\Hazards\MoveStraightToPlayer.cs" />
     <Compile Include="Assets\Scripts\Items\CoinPickup.cs" />
     <Compile Include="Assets\Scripts\Items\DaggerPickup.cs" />
     <Compile Include="Assets\Scripts\Items\DaggerToss.cs" />
+    <Compile Include="Assets\Scripts\Items\HealthUpgradePickup.cs" />
     <Compile Include="Assets\Scripts\Items\Interactable.cs" />
     <Compile Include="Assets\Scripts\MapScritps\AreaTransitions.cs" />
     <Compile Include="Assets\Scripts\MapScritps\DataGenerator.cs" />
@@ -88,11 +93,14 @@
     <Compile Include="Assets\Scripts\Menus\InventoryUI.cs" />
     <Compile Include="Assets\Scripts\Menus\MainMenu.cs" />
     <Compile Include="Assets\Scripts\Menus\PauseMenu.cs" />
+    <Compile Include="Assets\Scripts\Menus\Tutorial.cs" />
+    <Compile Include="Assets\Scripts\Player\PersistentStats.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerScript.cs" />
     <Compile Include="Assets\Scripts\Quest\Quest.cs" />
     <Compile Include="Assets\Scripts\Quest\QuestGiver.cs" />
     <Compile Include="Assets\Scripts\Quest\QuestGoal.cs" />
     <Compile Include="Assets\Scripts\Quest\QuestTracker.cs" />
+    <Compile Include="Assets\Scripts\Questionario.cs" />
     <Compile Include="Assets\Scripts\UIManager.cs" />
     <Compile Include="Assets\_\Base\BaseScripts\CharacterPathfindingMovementHandler.cs" />
     <Compile Include="Assets\_\Pathfinding\Scripts\Grid.cs" />

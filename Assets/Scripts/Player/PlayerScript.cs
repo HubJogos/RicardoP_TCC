@@ -20,6 +20,7 @@ public class PlayerScript : MonoBehaviour
 
     #region PlayerStats
     [Header("Player Stats")]
+    PersistentStats stats;
     public int playerLevel = 1;
     public int maxLevel = 99;
     public int currentExp;
@@ -92,9 +93,6 @@ public class PlayerScript : MonoBehaviour
     public float precision = 0;
     public int totalLifeLost = 0;
 
-    public int rollsAttempted;
-    public int rollsMade;
-
     public float percentKills;
     [HideInInspector] public float enemiesDefeated;
     public int steps = 0;
@@ -107,6 +105,7 @@ public class PlayerScript : MonoBehaviour
     #endregion
     void Start()
     {
+        stats = FindObjectOfType<PersistentStats>();
         tracker = FindObjectOfType<QuestTracker>();
         
         cam = Camera.main;
@@ -124,14 +123,17 @@ public class PlayerScript : MonoBehaviour
         
 
         attackCounter = attackTime;
+        maxHealth = stats.maxHealth;
+        currentExp = stats.currentExp;
+        playerLevel = stats.playerLevel;
 
         currentHealth = maxHealth;//makes sure current health can't be greater than max health
         playerSprite = GetComponent<SpriteRenderer>();
 
         levelText.text = "Level: " + playerLevel;//sets screen text for player level
         expToLevelUp = new int[maxLevel];
-        expToLevelUp[1] = baseExp;
-        for (int i = 2; i < expToLevelUp.Length; i++)
+        expToLevelUp[0] = baseExp;
+        for (int i = 1; i < expToLevelUp.Length; i++)
         {
             expToLevelUp[i] = Mathf.FloorToInt(expToLevelUp[i - 1] * 1.1f);//sets experience thresholds for leveling up
         }
@@ -164,11 +166,9 @@ public class PlayerScript : MonoBehaviour
             {
                 canRoll = false;
                 isRolling = true;
-                rollsMade++;
                 animator.SetBool("IsRolling", true);
                 rollSpeed = defaultRollSpeed;
             }
-            rollsAttempted++;
         }//starts rolling
         if (!canRoll)
         {
@@ -333,7 +333,16 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
-    
+    void LevelUp()
+    {
+        UpgradeHealth(10);
+        stats.currentExp = stats.currentExp-expToLevelUp[playerLevel];
+        currentExp = stats.currentExp;
+        stats.playerLevel++;
+        playerLevel = stats.playerLevel;
+        levelText.text = "Level: " + playerLevel;
+        Debug.Log(expToLevelUp[playerLevel] +","+ currentExp);
+    }
     public void Shoot()
     {
         if (currentAmmo > 0)
@@ -356,6 +365,20 @@ public class PlayerScript : MonoBehaviour
         }
         ammoPickup++;
     }//incrementa munição
+    void GetExp(int amount)
+    {
+        stats.currentExp += amount;
+        currentExp = stats.currentExp;
+        if (currentExp >= expToLevelUp[playerLevel]){
+            LevelUp();
+        }
+    }
+    public void UpgradeHealth(int amount)
+    {
+        stats.maxHealth += amount;
+        maxHealth = stats.maxHealth;
+        currentHealth = maxHealth;
+    }//incrementa munição
     public void GetCoin()
     {
         if(tracker.quest.goal.goalType == QuestGoal.GoalType.Gather && tracker.quest.isActive)
@@ -363,10 +386,10 @@ public class PlayerScript : MonoBehaviour
             tracker.quest.goal.Gathered();
             if (tracker.quest.goal.IsReached())
             {
-                currentExp += tracker.quest.expReward;
-                maxHealth += tracker.quest.healthImprovement;
-                currentHealth = maxHealth;
+                GetExp(tracker.quest.expReward);
+                UpgradeHealth(tracker.quest.healthImprovement);
                 tracker.quest.Complete();
+                FindObjectOfType<DataGenerator>().completedQuests++;
             }
         }
         coins++;
@@ -375,11 +398,19 @@ public class PlayerScript : MonoBehaviour
 
     public void DefeatEnemy(int exp)
     {
-        currentExp += exp;//updates player experience
+        isTouching = false;
+        GetExp(exp);
         enemiesDefeated++;
         if (tracker.quest.goal.goalType == QuestGoal.GoalType.Kill && tracker.quest.isActive)
         {
             tracker.quest.goal.EnemyKilled();
+            if (tracker.quest.goal.IsReached())
+            {
+                GetExp(tracker.quest.expReward);
+                UpgradeHealth(tracker.quest.healthImprovement);
+                tracker.quest.Complete();
+                FindObjectOfType<DataGenerator>().completedQuests++;
+            }
         }
 
     }
@@ -407,14 +438,6 @@ public class PlayerScript : MonoBehaviour
         }
     }//se colide com inimigo, recebe dano
 
-    private void OnCollisionStay2D(Collision2D other)//detects if player remains in contact with an enemy
-    {
-        if (other.gameObject.CompareTag("Enemy"))
-        {
-            isTouching = true;
-
-        }
-    }
 
     public void OnCollisionExit2D(Collision2D other)//resets "touching" status
     {
@@ -430,6 +453,10 @@ public class PlayerScript : MonoBehaviour
         flashCounter = flashLength;//resets health timer
         currentHealth -= damageTaken;//decreases health
         totalLifeLost += damageTaken;
+        if (currentHealth <= 0)
+        {
+            FindObjectOfType<Continue>().GameOverScreen();
+        }
     }
 
     public void UpdatePathing()

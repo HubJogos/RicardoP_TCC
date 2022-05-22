@@ -133,6 +133,7 @@ GameObject:
   - component: {fileID: 461567151}
   - component: {fileID: 461567152}
   - component: {fileID: 461567153}
+  - component: {fileID: 461567154}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -179,18 +180,41 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startTime: 0
+  doneGen: 0
+  foundSecret: 0
   deathCounter: 0
   continues: 0
+  completedQuests: 0
+  interactions: 0
   playerData:
     totalLifeLost: 0
     expGain: 0
     timeSpent: 0
     steps: 0
+    deaths: 0
+    continues: 0
     precision: 0
     percentKills: 0
     percentItemsCollected: 0
     percentAmmo: 0
+    interactions: 0
+    percentQuests: 0
     victorious: 0
+    foundSecret: 0
+    finalPosition: {x: 0, y: 0}
+  genData:
+    width: 0
+    height: 0
+    playerStart: {x: 0, y: 0}
+    exitDoor: {x: 0, y: 0}
+    itemPositions: []
+    enemyPositions: []
+    seed: 
+  finalPosition: {x: 0, y: 0}
+  playerStartPos: 
+  exitDoorPos: 
+  itemPositions: 
+  enemyPositions: 
 --- !u!114 &461567153
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -213,3 +237,18 @@ MonoBehaviour:
       goalType: 0
       requiredAmount: 0
       currentAmount: 0
+--- !u!114 &461567154
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 461567149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26bae95d37db1d844884edb3ecf652d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerLevel: 1
+  currentExp: 0
+  maxHealth: 50

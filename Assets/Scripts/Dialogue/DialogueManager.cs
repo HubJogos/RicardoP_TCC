@@ -68,6 +68,7 @@ public class DialogueManager : MonoBehaviour
             return;
         }
         string sentence = sentences.Dequeue();
+        FindObjectOfType<DataGenerator>().interactions++;
         StopAllCoroutines();
         StartCoroutine(TypeSentence(sentence));
     }

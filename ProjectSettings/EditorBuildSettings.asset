@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MapGeneration.unity
     guid: ed3bab40edef65c429c6d3b31992346f
+  - enabled: 1
+    path: Assets/Scenes/Questionario.unity
+    guid: e1bf3324ef2ec16419b5ff31d7194589
   m_configObjects: {}

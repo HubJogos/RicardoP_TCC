@@ -243,6 +243,7 @@ public class MeshGenerator : MonoBehaviour
             {
                 points[i].vertexIndex = vertices.Count;
                 vertices.Add(points[i].position);
+                
             }
         }
     }//marca posição global dos vértices de cada mesh gerada
