@@ -9,6 +9,7 @@ public class Quest
 
     public string title;
     public string description;
+    public string tracker;
     public int expReward;
     public int healthImprovement;
 

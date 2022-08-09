@@ -19,7 +19,9 @@ public class DialogueTrigger : MonoBehaviour
         {
             dialogueManager.questGiver = gameObject.GetComponentInParent<QuestGiver>();
         }
-        
+        else dialogueManager.questGiver = null;
+
+
         dialogueManager.StartDialogue(dialogue);
     }
 

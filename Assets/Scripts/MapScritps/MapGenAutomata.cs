@@ -11,26 +11,28 @@ public class MapGenAutomata : MonoBehaviour
     public int smooth = 5;//grau de suavização dos quadrados gerados
     public int minRegionSize = 50;//tamanho mínimo das regiões geradas (exclui o que estiver abaixo)
     public string seed;
-    public bool useRandomSeed;
     [Range(0, 100)]
     public int randomFillPercent;//porcentagem de terreno/parede
     [HideInInspector] public int[,] map;//matriz do mapa
-    //public GameObject playerPrefab;
 
     //geração de inimigos
     [Range(0, 100)]
     public int enemyDensity;
-    public int maxEnemies, currentEnemies = 0;
-    public int minEnemyDistance;
+    [Range(0, 100)]
+    public int itemDensity;
+    public int maxEnemies;
+    public int maxItems, currentItems = 0;
+    [HideInInspector] public int currentEnemies = 0;
+    [HideInInspector] public int minEnemyDistance;
     public GameObject enemyPrefab;
     public GameObject enemyPrefab2;
     [HideInInspector] public GameObject[] enemies;
     [HideInInspector] public Vector2[] enemyPositions;
+    [HideInInspector] public float averageEnemyDistance;
+    [HideInInspector] public float averageItemDistance;
 
     //geração de itens
-    [Range(0, 100)]
-    public int itemDensity;
-    public int maxItems, currentItems = 0;
+    
     [HideInInspector] public int minItemDistance;
     public GameObject coinPrefab;
     [HideInInspector] public GameObject[] items;
@@ -42,10 +44,12 @@ public class MapGenAutomata : MonoBehaviour
     bool canSpawnEnd = false;
     bool canSpawnPlayer = false;
     public GenData genData;
+    System.Random pseudoRandom;
 
     private void Start()
     {
-
+        seed = Time.time.ToString();//usado para aleatorizar seed
+        pseudoRandom = new System.Random(seed.GetHashCode());//pseudo random number generator
         enemies = new GameObject[maxEnemies];
         enemyPositions = new Vector2[maxEnemies];
 
@@ -88,8 +92,8 @@ public class MapGenAutomata : MonoBehaviour
             while (!canSpawnPlayer)
             {
 
-                int x = Mathf.FloorToInt(UnityEngine.Random.Range(1, width - 1));
-                int y = Mathf.FloorToInt(UnityEngine.Random.Range(1, height - 1));
+                int x = Mathf.FloorToInt(pseudoRandom.Next(0, width - 1));
+                int y = Mathf.FloorToInt(pseudoRandom.Next(0, height - 1));
                 if (map[x, y] == 0)
                 {
                     canSpawnPlayer = true;
@@ -111,8 +115,8 @@ public class MapGenAutomata : MonoBehaviour
         while (!canSpawnEnd)
         {
 
-            int x = Mathf.FloorToInt(UnityEngine.Random.Range(1, width - 1));
-            int y = Mathf.FloorToInt(UnityEngine.Random.Range(1, height - 1));
+            int x = Mathf.FloorToInt(pseudoRandom.Next(0, width - 1));
+            int y = Mathf.FloorToInt(pseudoRandom.Next(0, height - 1));
             if (map[x, y] == 0)
             {
                 canSpawnEnd = true;
@@ -126,12 +130,11 @@ public class MapGenAutomata : MonoBehaviour
 
         #region EnemyPlacement
         //generating enemies
-        System.Random randomizeEnemies = new System.Random(seed.GetHashCode());//pseudo random number generator
         foreach (List<Coord> region in GetRegions(0))//recebe os tiles vazios
         {
             foreach (Coord tile in region)//para cada tile vazio
             {
-                if (randomizeEnemies.Next(0, 100) < enemyDensity && currentEnemies < maxEnemies)//confere se inimigo deve ser inserido
+                if (pseudoRandom.Next(0, 100) < enemyDensity && currentEnemies < maxEnemies)//confere se inimigo deve ser inserido
                 {
                     bool canSpawn = true;
                     if (!enemies[0])
@@ -179,13 +182,11 @@ public class MapGenAutomata : MonoBehaviour
         #region ItemPlacement
         //generating Items
 
-        float randItems = UnityEngine.Random.value;
-        System.Random randomizeItems = new System.Random(randItems.ToString().GetHashCode());//pseudo random number generator
         foreach (List<Coord> region in GetRegions(0))//recebe os tiles vazios
         {
             foreach (Coord tile in region)//para cada tile vazio
             {
-                if (randomizeItems.Next(0, 100) < itemDensity && currentItems < maxItems)//confere se item deve ser inserido
+                if (pseudoRandom.Next(0, 100) < itemDensity && currentItems < maxItems)//confere se item deve ser inserido
                 {
                     bool canSpawn = true;
                     if (items[0] == null)
@@ -218,18 +219,31 @@ public class MapGenAutomata : MonoBehaviour
             }
         }
         #endregion
+        float distSum = 0;
+        for (int i = 0; i < enemies.Length; i++)
+        {
+            for (int j = 0; j < enemies.Length; j++)
+            {
+                distSum += Vector2.Distance(enemies[i].transform.position, enemies[j].transform.position);
+            }
+        }
+        averageEnemyDistance = distSum / (enemies.Length * enemies.Length);
 
-
+        float distSumItem = 0;
+        for (int i = 0; i < items.Length; i++)
+        {
+            for (int j = 0; j < items.Length; j++)
+            {
+                distSum += Vector2.Distance(items[i].transform.position, items[j].transform.position);
+            }
+        }
+        averageItemDistance = distSumItem / (items.Length * items.Length);
 
     }
     #region MapGenFunctions
     void RandomFillMap()
     {
-        if (useRandomSeed)
-        {
-            seed = Time.time.ToString();//usado para aleatorizar seed
-        }
-        System.Random pseudoRandom = new System.Random(seed.GetHashCode());//pseudo random number generator
+        
 
         for (int i = 0; i < width; i++)
         {
@@ -333,7 +347,7 @@ public class MapGenAutomata : MonoBehaviour
         remainingRooms[0].isAccessibleFromMain = true;
 
 
-        ConnectClosestRoom(remainingRooms);//com esse trecho comentado, programa executa, sem comentar unity trava
+        ConnectClosestRoom(remainingRooms);
 
 
 

@@ -9,11 +9,13 @@ public class QuestGiver : MonoBehaviour
     public GameObject questWindow;
     public Text titleText;
     public Text descriptionText;
+    public Text trackerText;
     public Text expText;
     public Text healthText;
 
     public GameObject acceptButtonMage;
     public GameObject acceptButtonWarrior;
+    QuestTracker tracker;
 
     public void OpenQuestWindow()
     {
@@ -38,6 +40,15 @@ public class QuestGiver : MonoBehaviour
     {
         questWindow.SetActive(false);
         quest.isActive = true;
-        FindObjectOfType<QuestTracker>().quest = quest;
+        tracker = FindObjectOfType<QuestTracker>();
+        if (!tracker.quest[0].isActive)
+        {
+            tracker.quest[0] = quest;
+        }
+        else if(tracker.quest[0].goal != quest.goal) tracker.quest[1] = quest;
+    }
+    public void RefuseQuest()
+    {
+        questWindow.SetActive(false);
     }
 }

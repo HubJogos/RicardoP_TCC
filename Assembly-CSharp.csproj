@@ -99,6 +99,7 @@
     <Compile Include="Assets\Scripts\Quest\Quest.cs" />
     <Compile Include="Assets\Scripts\Quest\QuestGiver.cs" />
     <Compile Include="Assets\Scripts\Quest\QuestGoal.cs" />
+    <Compile Include="Assets\Scripts\Quest\QuestHUD.cs" />
     <Compile Include="Assets\Scripts\Quest\QuestTracker.cs" />
     <Compile Include="Assets\Scripts\Questionario.cs" />
     <Compile Include="Assets\Scripts\UIManager.cs" />

@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Analytics;
 
 public class DataGenerator : MonoBehaviour
 {
@@ -30,15 +31,24 @@ public class DataGenerator : MonoBehaviour
     PlayerScript playerScript;
     public PlayerData playerData;
     public GenData genData;
+    public QuestionData questionData;
     public Vector2 finalPosition;
 
     public string playerStartPos;
     public string exitDoorPos;
     public string itemPositions;
     public string enemyPositions;
+
+    Questionario questionario;
+    bool doneQuestion = false;
     
     private void FixedUpdate()
     {
+        if (FindObjectOfType<Questionario>() && !doneQuestion)
+        {
+            questionario = FindObjectOfType<Questionario>();
+            doneQuestion = true;
+        }
         percentQuests = completedQuests / totalQuests;
         activeScene = SceneManager.GetActiveScene();
         if (activeScene.name == "Preload")
@@ -83,11 +93,11 @@ public class DataGenerator : MonoBehaviour
 
     public void SaveAsCSV()
     {
-        string dataPath = Application.dataPath + "/Data/" + mapReference.seed + "/playerData.csv";
-        if (File.Exists(dataPath))//se já existe arquivo de dados
+        if(questionario != null)
         {
-            File.Delete(dataPath);//deleta para salvar corretamente
+            questionData = new QuestionData(questionario.answers);
         }
+
         if (playerScript.currentHealth <= 0)//se função foi chamada quando player morreu
         {
             victory = false;
@@ -168,6 +178,7 @@ public class PlayerData
         foundSecret = _foundSecret;
         finalPosition = _finalPosition;
     }
+    
 }
 
 [System.Serializable]
@@ -191,4 +202,16 @@ public class GenData
         seed = _seed;
     }
 }
-
+[System.Serializable]
+public class QuestionData
+{
+    string[] answers;
+    public QuestionData(string[] _answers)
+    {
+        answers = new string[_answers.Length];
+        for(int i = 0; i < _answers.Length; i++)
+        {
+            answers[i] = _answers[i];
+        }
+    }
+}

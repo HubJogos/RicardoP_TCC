@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using UnityEngine.Analytics;
 
 public class PlayerScript : MonoBehaviour
 {
@@ -341,7 +342,6 @@ public class PlayerScript : MonoBehaviour
         stats.playerLevel++;
         playerLevel = stats.playerLevel;
         levelText.text = "Level: " + playerLevel;
-        Debug.Log(expToLevelUp[playerLevel] +","+ currentExp);
     }
     public void Shoot()
     {
@@ -381,15 +381,18 @@ public class PlayerScript : MonoBehaviour
     }//incrementa munição
     public void GetCoin()
     {
-        if(tracker.quest.goal.goalType == QuestGoal.GoalType.Gather && tracker.quest.isActive)
+        for(int i = 0; i < tracker.quest.Length; i++)
         {
-            tracker.quest.goal.Gathered();
-            if (tracker.quest.goal.IsReached())
+            if (tracker.quest[i].goal.goalType == QuestGoal.GoalType.Gather && tracker.quest[i].isActive)
             {
-                GetExp(tracker.quest.expReward);
-                UpgradeHealth(tracker.quest.healthImprovement);
-                tracker.quest.Complete();
-                FindObjectOfType<DataGenerator>().completedQuests++;
+                tracker.quest[i].goal.Gathered();
+                if (tracker.quest[i].goal.IsReached())
+                {
+                    GetExp(tracker.quest[i].expReward);
+                    UpgradeHealth(tracker.quest[i].healthImprovement);
+                    tracker.quest[i].Complete();
+                    FindObjectOfType<DataGenerator>().completedQuests++;
+                }
             }
         }
         coins++;
@@ -401,15 +404,18 @@ public class PlayerScript : MonoBehaviour
         isTouching = false;
         GetExp(exp);
         enemiesDefeated++;
-        if (tracker.quest.goal.goalType == QuestGoal.GoalType.Kill && tracker.quest.isActive)
+        for (int i = 0; i < tracker.quest.Length; i++)
         {
-            tracker.quest.goal.EnemyKilled();
-            if (tracker.quest.goal.IsReached())
+            if (tracker.quest[i].goal.goalType == QuestGoal.GoalType.Kill && tracker.quest[i].isActive)
             {
-                GetExp(tracker.quest.expReward);
-                UpgradeHealth(tracker.quest.healthImprovement);
-                tracker.quest.Complete();
-                FindObjectOfType<DataGenerator>().completedQuests++;
+                tracker.quest[i].goal.EnemyKilled();
+                if (tracker.quest[i].goal.IsReached())
+                {
+                    GetExp(tracker.quest[i].expReward);
+                    UpgradeHealth(tracker.quest[i].healthImprovement);
+                    tracker.quest[i].Complete();
+                    FindObjectOfType<DataGenerator>().completedQuests++;
+                }
             }
         }
 

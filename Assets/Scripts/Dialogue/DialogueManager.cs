@@ -43,7 +43,7 @@ public class DialogueManager : MonoBehaviour
                 questButtonWarrior.SetActive(true);
                 questButtonMage.SetActive(false);
             }
-            FindObjectOfType<QuestTracker>().quest = questGiver.quest;
+
         }
 
         interactionText.SetActive(false);

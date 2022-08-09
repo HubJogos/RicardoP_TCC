@@ -4,6 +4,6 @@ using UnityEngine;
 
 public class QuestTracker : MonoBehaviour
 {
-    public Quest quest;
+    public Quest[] quest = new Quest[2];
 
 }

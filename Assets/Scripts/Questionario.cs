@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using System.Runtime.InteropServices;
+using UnityEngine.Analytics;
 public class Questionario : MonoBehaviour
 {
+    [DllImport("__Internal")]
+    private static extern int AddNumbers(int x, int y);
     DataGenerator dataGen;
     public GameObject[] questions;
     int activeQuestion;
     
     string url = "https://docs.google.com/forms/u/0/d/e/1FAIpQLSeTWlIZjBk9SPzWS3e6JbhDtIf1UdTbiTv2EUxs2FHQ2DP3Qg/formResponse";
-    string[] answers;
+    public string[] answers;
     private void Start()
     {
         dataGen = FindObjectOfType<DataGenerator>();
@@ -20,6 +24,38 @@ public class Questionario : MonoBehaviour
     public void Send()
     {
         StartCoroutine(Post(dataGen));
+        Analytics.CustomEvent("LifeLost", new Dictionary<string, object> { { "TotalLifeLost", dataGen.playerData.totalLifeLost } });
+        Analytics.CustomEvent("Level", new Dictionary<string, object> { { "PlayerLevel", dataGen.playerData.playerLevel } });
+        Analytics.CustomEvent("Time", new Dictionary<string, object> { { "TimeSpent", Mathf.FloorToInt(dataGen.playerData.timeSpent).ToString() } });
+        Analytics.CustomEvent("Steps", new Dictionary<string, object> { { "Steps", dataGen.playerData.steps } });
+        Analytics.CustomEvent("Deaths", new Dictionary<string, object> { { "DeathCounter", dataGen.playerData.deaths } });
+        Analytics.CustomEvent("Continues", new Dictionary<string, object> { { "Continues", dataGen.playerData.continues } });
+        Analytics.CustomEvent("Precision", new Dictionary<string, object> { { "Precision", dataGen.playerData.precision } });
+        Analytics.CustomEvent("KilledEnemies", new Dictionary<string, object> { { "PercentKills", dataGen.playerData.percentKills } });
+        Analytics.CustomEvent("ItemsCollected", new Dictionary<string, object> { { "PercentItemsCollected", dataGen.playerData.percentItemsCollected } });
+        Analytics.CustomEvent("AmmoRecovered", new Dictionary<string, object> { { "PercentAmmo", dataGen.playerData.percentAmmo } });
+        Analytics.CustomEvent("Interactions", new Dictionary<string, object> { { "Interactions", dataGen.playerData.interactions } });
+        Analytics.CustomEvent("QuestCompletion", new Dictionary<string, object> { { "PercentQuests", dataGen.playerData.percentQuests } });
+        Analytics.CustomEvent("Victorious", new Dictionary<string, object> { { "Victorious", dataGen.playerData.victorious } });
+        Analytics.CustomEvent("FoundSecret", new Dictionary<string, object> { { "FoundSecret", dataGen.playerData.foundSecret } });
+        Analytics.CustomEvent("FinalPosition", new Dictionary<string, object> { { "FinalPosition", dataGen.playerData.finalPosition } });
+
+        Analytics.CustomEvent("MapWidth", new Dictionary<string, object> { { "Width", dataGen.genData.width } });
+        Analytics.CustomEvent("MapHeight", new Dictionary<string, object> { { "Height", dataGen.genData.height } });
+        Analytics.CustomEvent("PlayerPos", new Dictionary<string, object> { { "StartingPos", dataGen.playerStartPos } }); 
+        Analytics.CustomEvent("ExitDoorPos", new Dictionary<string, object> { { "ExitPos", dataGen.exitDoorPos } });
+        Analytics.CustomEvent("ItemPositions", new Dictionary<string, object> { { "ItemPositions", dataGen.itemPositions } });
+        Analytics.CustomEvent("EnemyPositions", new Dictionary<string, object> { { "EnemyPositions", dataGen.enemyPositions } }); 
+        Analytics.CustomEvent("Seed", new Dictionary<string, object> { { "Seed", dataGen.genData.seed } });
+
+        Analytics.CustomEvent("MapSize", new Dictionary<string, object> { { "MapSize", answers[0] } });
+        Analytics.CustomEvent("Complexity", new Dictionary<string, object> { { "Complexity", answers[1] } });
+        Analytics.CustomEvent("EnemyAmount", new Dictionary<string, object> { { "EnemyAmount", answers[2] } });
+        Analytics.CustomEvent("EnemyDensity", new Dictionary<string, object> { { "EnemyDensity", answers[3] } });
+        Analytics.CustomEvent("InteractionAmount", new Dictionary<string, object> { { "InteractionAmount", answers[4] } });
+        Analytics.CustomEvent("ConversationMaterial", new Dictionary<string, object> { { "ConversationMaterial", answers[5] } });
+        Analytics.CustomEvent("Difficulty", new Dictionary<string, object> { { "Difficulty", answers[6] } });
+        Analytics.CustomEvent("Fun", new Dictionary<string, object> { { "Fun", answers[7] } });
     }
     public void QuitGame()
     {
@@ -32,6 +68,7 @@ public class Questionario : MonoBehaviour
         
         WWWForm form = new WWWForm();
         //player data to forms
+        
         form.AddField("entry.2005760843", data.playerData.totalLifeLost);//lifelost
         form.AddField("entry.1108869829", data.playerData.playerLevel);//exp
         form.AddField("entry.1204426239", Mathf.FloorToInt(data.playerData.timeSpent).ToString());//time
@@ -56,7 +93,7 @@ public class Questionario : MonoBehaviour
         form.AddField("entry.1933815164", data.itemPositions);//itemPos
         form.AddField("entry.592241768", data.enemyPositions);//EnemyPos
         form.AddField("entry.364457296", data.genData.seed);//seed
-
+        
         //playerInput
         form.AddField("entry.777965021", answers[0]);//mapSize
         form.AddField("entry.1009410047", answers[1]);//complexity
@@ -67,6 +104,10 @@ public class Questionario : MonoBehaviour
         form.AddField("entry.1282593994", answers[6]);//difficulty
         form.AddField("entry.1313662470", answers[7]);//fun
 
+        
+        
+
+
         UnityWebRequest www = UnityWebRequest.Post(url, form);
         yield return www.SendWebRequest();
     }
@@ -74,7 +115,6 @@ public class Questionario : MonoBehaviour
     public void Answer()
     {
         answers[activeQuestion] = questions[activeQuestion].GetComponentInChildren<Slider>().value.ToString();
-        Debug.Log(answers[activeQuestion]);
 
         questions[activeQuestion].SetActive(false);
         activeQuestion += 1;
