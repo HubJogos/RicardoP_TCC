@@ -11,6 +11,7 @@ public class MapGenAutomata : MonoBehaviour
     public int smooth = 5;//grau de suavização dos quadrados gerados
     public int minRegionSize = 50;//tamanho mínimo das regiões geradas (exclui o que estiver abaixo)
     public string seed;
+    public bool useRandomSeed = false;
     [Range(0, 100)]
     public int randomFillPercent;//porcentagem de terreno/parede
     [HideInInspector] public int[,] map;//matriz do mapa
@@ -43,12 +44,15 @@ public class MapGenAutomata : MonoBehaviour
     public GameObject player;
     bool canSpawnEnd = false;
     bool canSpawnPlayer = false;
-    public GenData genData;
+    //public GenData genData;
     System.Random pseudoRandom;
 
     private void Start()
     {
-        seed = Time.time.ToString();//usado para aleatorizar seed
+        if (useRandomSeed)
+        {
+            seed = Time.time.ToString();//usado para aleatorizar seed
+        }
         pseudoRandom = new System.Random(seed.GetHashCode());//pseudo random number generator
         enemies = new GameObject[maxEnemies];
         enemyPositions = new Vector2[maxEnemies];
@@ -76,7 +80,6 @@ public class MapGenAutomata : MonoBehaviour
         }
 
         ProcessMap();
-
 
 
         MeshGenerator meshGen = GetComponent<MeshGenerator>();

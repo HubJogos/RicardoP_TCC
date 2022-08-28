@@ -24,38 +24,7 @@ public class Questionario : MonoBehaviour
     public void Send()
     {
         StartCoroutine(Post(dataGen));
-        Analytics.CustomEvent("LifeLost", new Dictionary<string, object> { { "TotalLifeLost", dataGen.playerData.totalLifeLost } });
-        Analytics.CustomEvent("Level", new Dictionary<string, object> { { "PlayerLevel", dataGen.playerData.playerLevel } });
-        Analytics.CustomEvent("Time", new Dictionary<string, object> { { "TimeSpent", Mathf.FloorToInt(dataGen.playerData.timeSpent).ToString() } });
-        Analytics.CustomEvent("Steps", new Dictionary<string, object> { { "Steps", dataGen.playerData.steps } });
-        Analytics.CustomEvent("Deaths", new Dictionary<string, object> { { "DeathCounter", dataGen.playerData.deaths } });
-        Analytics.CustomEvent("Continues", new Dictionary<string, object> { { "Continues", dataGen.playerData.continues } });
-        Analytics.CustomEvent("Precision", new Dictionary<string, object> { { "Precision", dataGen.playerData.precision } });
-        Analytics.CustomEvent("KilledEnemies", new Dictionary<string, object> { { "PercentKills", dataGen.playerData.percentKills } });
-        Analytics.CustomEvent("ItemsCollected", new Dictionary<string, object> { { "PercentItemsCollected", dataGen.playerData.percentItemsCollected } });
-        Analytics.CustomEvent("AmmoRecovered", new Dictionary<string, object> { { "PercentAmmo", dataGen.playerData.percentAmmo } });
-        Analytics.CustomEvent("Interactions", new Dictionary<string, object> { { "Interactions", dataGen.playerData.interactions } });
-        Analytics.CustomEvent("QuestCompletion", new Dictionary<string, object> { { "PercentQuests", dataGen.playerData.percentQuests } });
-        Analytics.CustomEvent("Victorious", new Dictionary<string, object> { { "Victorious", dataGen.playerData.victorious } });
-        Analytics.CustomEvent("FoundSecret", new Dictionary<string, object> { { "FoundSecret", dataGen.playerData.foundSecret } });
-        Analytics.CustomEvent("FinalPosition", new Dictionary<string, object> { { "FinalPosition", dataGen.playerData.finalPosition } });
-
-        Analytics.CustomEvent("MapWidth", new Dictionary<string, object> { { "Width", dataGen.genData.width } });
-        Analytics.CustomEvent("MapHeight", new Dictionary<string, object> { { "Height", dataGen.genData.height } });
-        Analytics.CustomEvent("PlayerPos", new Dictionary<string, object> { { "StartingPos", dataGen.playerStartPos } }); 
-        Analytics.CustomEvent("ExitDoorPos", new Dictionary<string, object> { { "ExitPos", dataGen.exitDoorPos } });
-        Analytics.CustomEvent("ItemPositions", new Dictionary<string, object> { { "ItemPositions", dataGen.itemPositions } });
-        Analytics.CustomEvent("EnemyPositions", new Dictionary<string, object> { { "EnemyPositions", dataGen.enemyPositions } }); 
-        Analytics.CustomEvent("Seed", new Dictionary<string, object> { { "Seed", dataGen.genData.seed } });
-
-        Analytics.CustomEvent("MapSize", new Dictionary<string, object> { { "MapSize", answers[0] } });
-        Analytics.CustomEvent("Complexity", new Dictionary<string, object> { { "Complexity", answers[1] } });
-        Analytics.CustomEvent("EnemyAmount", new Dictionary<string, object> { { "EnemyAmount", answers[2] } });
-        Analytics.CustomEvent("EnemyDensity", new Dictionary<string, object> { { "EnemyDensity", answers[3] } });
-        Analytics.CustomEvent("InteractionAmount", new Dictionary<string, object> { { "InteractionAmount", answers[4] } });
-        Analytics.CustomEvent("ConversationMaterial", new Dictionary<string, object> { { "ConversationMaterial", answers[5] } });
-        Analytics.CustomEvent("Difficulty", new Dictionary<string, object> { { "Difficulty", answers[6] } });
-        Analytics.CustomEvent("Fun", new Dictionary<string, object> { { "Fun", answers[7] } });
+        //Analytics.CustomEvent("LifeLost", new Dictionary<string, object> { { "TotalLifeLost", dataGen.playerData.totalLifeLost } });
     }
     public void QuitGame()
     {
@@ -75,25 +44,43 @@ public class Questionario : MonoBehaviour
         form.AddField("entry.175035077", data.playerData.steps);//steps
         form.AddField("entry.1023732896", data.playerData.deaths);//deaths
         form.AddField("entry.213494061", data.playerData.continues);//continue
-        form.AddField("entry.793916201", data.playerData.precision.ToString());//precision
-        form.AddField("entry.788247621", data.playerData.percentKills.ToString());//percentKills
-        form.AddField("entry.1765112349", data.playerData.percentItemsCollected.ToString());//percentItems
-        form.AddField("entry.1340334397", data.playerData.percentAmmo.ToString());//percentAmmo
+        form.AddField("entry.793916201", data.playerData.precision.ToString().Replace(",","."));//precision
+        form.AddField("entry.788247621", data.playerData.percentKills.ToString().Replace(",", "."));//percentKills
+        form.AddField("entry.1765112349", data.playerData.percentItemsCollected.ToString().Replace(",", "."));//percentItems
+        form.AddField("entry.1340334397", data.playerData.percentAmmo.ToString().Replace(",", "."));//percentAmmo
         form.AddField("entry.963488702", data.playerData.interactions);//interactions
-        form.AddField("entry.596939258", data.playerData.percentQuests.ToString());//percentQuests
-        form.AddField("entry.53939988", data.playerData.victorious.ToString());//victorious
-        form.AddField("entry.646014955", data.playerData.foundSecret.ToString());//foundSecret
-        form.AddField("entry.105534763", data.playerData.finalPosition.ToString());//finalPosition
+        form.AddField("entry.596939258", data.playerData.percentQuests.ToString().Replace(",", "."));//percentQuests
+        form.AddField("entry.53939988", data.playerData.victorious.ToString().Replace(",", "."));//victorious
+        form.AddField("entry.646014955", data.playerData.foundSecret.ToString().Replace(",", "."));//foundSecret
+        form.AddField("entry.105534763", data.playerData.finalPosition.ToString().Replace(",", "."));//finalPosition
         
         //genData
         form.AddField("entry.2048159362", data.genData.width);//width
         form.AddField("entry.1371681809", data.genData.height);//height
+
+        // new data
         form.AddField("entry.1451868055", data.playerStartPos);//playerStart
         form.AddField("entry.1889395333", data.exitDoorPos);//exitDoor
         form.AddField("entry.1933815164", data.itemPositions);//itemPos
         form.AddField("entry.592241768", data.enemyPositions);//EnemyPos
         form.AddField("entry.364457296", data.genData.seed);//seed
+
+        form.AddField("entry.351761793", data.genData.smooth);//smooth
+        form.AddField("entry.371079419", data.genData.minRegionSize);//minRegionSize
+        form.AddField("entry.1717891015", data.genData.randomFillPercent);//randomFillPercent
         
+        form.AddField("entry.177368219", data.genData.minEnemyDistance);//minEnemyDistance
+        form.AddField("entry.200603954", data.genData.minItemDistance);//minItemDistance
+        form.AddField("entry.1101105295", data.genData.averageEnemyDistance.ToString().Replace(",", "."));//averageEnemyDistance
+        form.AddField("entry.590433800", data.genData.averageItemDistance.ToString().Replace(",", "."));//averageItemDistance
+                        
+        form.AddField("entry.1803966669", data.genData.enemyDensity);//EnemyDensity
+        form.AddField("entry.647642773", data.genData.itemDensity);//ItemDensity
+        form.AddField("entry.1313680592", data.genData.maxEnemies);//MaxEnemies
+        form.AddField("entry.2094617186", data.genData.maxItems);//MaxItems
+        form.AddField("entry.1626933655", data.genData.currentEnemies);//GeneratedEnemies
+        form.AddField("entry.1461146218", data.genData.currentItems);//GeneratedItems
+
         //playerInput
         form.AddField("entry.777965021", answers[0]);//mapSize
         form.AddField("entry.1009410047", answers[1]);//complexity

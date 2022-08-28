@@ -9,6 +9,7 @@ public class EndStage : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
+            FindObjectOfType<DataGenerator>().playthroughs++;
             if(FindObjectOfType<DataGenerator>().completedQuests < 2)
             {
                 FindObjectOfType<DataGenerator>().SaveAsCSV();

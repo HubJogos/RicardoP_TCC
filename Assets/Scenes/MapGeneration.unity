@@ -3734,13 +3734,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 100
   height: 60
-  smooth: 6
-  minRegionSize: 30
+  smooth: 2
+  minRegionSize: 20
   seed: 0
-  randomFillPercent: 55
-  enemyDensity: 40
-  itemDensity: 15
-  maxEnemies: 16
+  useRandomSeed: 0
+  randomFillPercent: 50
+  enemyDensity: 50
+  itemDensity: 20
+  maxEnemies: 19
+  maxItems: 12
+  currentItems: 0
   currentEnemies: 0
   minEnemyDistance: 15
   enemyPrefab: {fileID: 8325857762171716469, guid: 42609d72494b793478f11604ebb0cd52,
@@ -3751,8 +3754,6 @@ MonoBehaviour:
   enemyPositions: []
   averageEnemyDistance: 0
   averageItemDistance: 0
-  maxItems: 8
-  currentItems: 0
   minItemDistance: 25
   coinPrefab: {fileID: 3678395753166504787, guid: 4fbc5069908dbf54fa77641aaffbb734,
     type: 3}
