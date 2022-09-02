@@ -183,16 +183,14 @@ MonoBehaviour:
   doneGen: 0
   foundSecret: 0
   deathCounter: 0
-  continues: 0
   completedQuests: 0
   interactions: 0
   playerData:
     totalLifeLost: 0
-    expGain: 0
+    playerLevel: 0
     timeSpent: 0
     steps: 0
     deaths: 0
-    continues: 0
     precision: 0
     percentKills: 0
     percentItemsCollected: 0
@@ -205,16 +203,63 @@ MonoBehaviour:
   genData:
     width: 0
     height: 0
+    smooth: 0
+    minRegionSize: 0
+    randomFillPercent: 0
+    minEnemyDistance: 0
+    minItemDistance: 0
+    averageEnemyDistance: 0
+    averageItemDistance: 0
+    enemyDensity: 0
+    itemDensity: 0
+    maxEnemies: 0
+    maxItems: 0
+    currentEnemies: 0
+    currentItems: 0
+    seed: 
     playerStart: {x: 0, y: 0}
     exitDoor: {x: 0, y: 0}
     itemPositions: []
     enemyPositions: []
-    seed: 
+  totalLifeLost: 
+  time: 
+  steps: 
+  runLevel: 
+  precision: 
+  percentKills: 
+  percentItemPickup: 
+  percentAmmoPickup: 
+  width: 
+  height: 
+  smooth: 
+  minRegionSize: 
+  randomFillPercent: 
+  minEnemyDistance: 
+  minItemDistance: 
+  averageEnemyDistance: 
+  averageItemDistance: 
+  enemyDensity: 
+  itemDensity: 
+  maxEnemies: 
+  maxItems: 
+  currentEnemies: 
+  currentItems: 
+  seed: 
   finalPosition: {x: 0, y: 0}
+  runVictory: 
+  runDeath: 
   playerStartPos: 
   exitDoorPos: 
   itemPositions: 
   enemyPositions: 
+  playthroughs: 0
+  answers:
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
 --- !u!114 &461567153
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -228,9 +273,60 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   quest:
-    isActive: 0
+  - isActive: 0
     title: 
     description: 
+    tracker: 
+    expReward: 0
+    healthImprovement: 0
+    goal:
+      goalType: 0
+      requiredAmount: 0
+      currentAmount: 0
+  - isActive: 0
+    title: 
+    description: 
+    tracker: 
+    expReward: 0
+    healthImprovement: 0
+    goal:
+      goalType: 0
+      requiredAmount: 0
+      currentAmount: 0
+  - isActive: 0
+    title: 
+    description: 
+    tracker: 
+    expReward: 0
+    healthImprovement: 0
+    goal:
+      goalType: 0
+      requiredAmount: 0
+      currentAmount: 0
+  - isActive: 0
+    title: 
+    description: 
+    tracker: 
+    expReward: 0
+    healthImprovement: 0
+    goal:
+      goalType: 0
+      requiredAmount: 0
+      currentAmount: 0
+  - isActive: 0
+    title: 
+    description: 
+    tracker: 
+    expReward: 0
+    healthImprovement: 0
+    goal:
+      goalType: 0
+      requiredAmount: 0
+      currentAmount: 0
+  - isActive: 0
+    title: 
+    description: 
+    tracker: 
     expReward: 0
     healthImprovement: 0
     goal:
@@ -252,3 +348,4 @@ MonoBehaviour:
   playerLevel: 1
   currentExp: 0
   maxHealth: 50
+  closedTutorial: 0

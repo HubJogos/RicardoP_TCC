@@ -8,6 +8,8 @@ TagManager:
   - Weapon
   - NPC
   - DialogueTrigger
+  - PartialQuestions
+  - VictoryScreen
   layers:
   - Default
   - TransparentFX

@@ -5,33 +5,39 @@ using UnityEngine.SceneManagement;
 
 public class Continue : MonoBehaviour
 {
+    DataGenerator dataGen;
     public GameObject gameOverScreen;
+    EndStage endStage;
     bool gameHasEnded = false;
+
     private void Start()
     {
+        
+        dataGen = FindObjectOfType<DataGenerator>();
         gameOverScreen.SetActive(false);
         gameHasEnded = false;
     }
     public void GameOverScreen()
     {
+        endStage = FindObjectOfType<EndStage>();
+        Time.timeScale = 0;
         if (!gameHasEnded)
         {
-            FindObjectOfType<DataGenerator>().deathCounter++;
+            dataGen.deathCounter++;
             gameHasEnded = true;
             gameOverScreen.SetActive(true);
         }
     }
     public void EndGame()
     {
-        FindObjectOfType<DataGenerator>().SaveAsCSV();
+        dataGen.SaveAsCSV();
         SceneManager.LoadScene("Questionario");
     }
     public void Restart()
     {
-        FindObjectOfType<DataGenerator>().continues++;
-        FindObjectOfType<DataGenerator>().SaveAsCSV();
         gameOverScreen.SetActive(false);
         gameHasEnded = false;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        Time.timeScale = 1;
+        endStage.partialQuestions.SetActive(true);
     }
 }

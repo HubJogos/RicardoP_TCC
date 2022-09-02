@@ -87,11 +87,11 @@ public class PlayerScript : MonoBehaviour
     [HideInInspector] public float itemsGenerated;
 
     float ammoPickup=0;
-    public float ammoPickupRate=0;
+    public float ammoPickupRate;
     float shotsFired = 0;
-    [HideInInspector] public float attacksAttempted = 0;
+    public float attacksAttempted = 0;
     [HideInInspector] public float successfulAttacks = 0;
-    public float precision = 0;
+    public float precision;
     public int totalLifeLost = 0;
 
     public float percentKills;
@@ -121,7 +121,8 @@ public class PlayerScript : MonoBehaviour
             playerX = Mathf.FloorToInt(transform.position.x + mapReference.width / 2);//conversão da posição global para a posição no mapa do jogador
             playerY = Mathf.FloorToInt(transform.position.y + mapReference.height / 2);
         }
-        
+        steps = 0;
+        attacksAttempted = 0;
 
         attackCounter = attackTime;
         maxHealth = stats.maxHealth;
@@ -222,7 +223,10 @@ public class PlayerScript : MonoBehaviour
             {
                 attackCounter = attackTime;//resets attack timer
                 isAttacking = true;//sets attack variables
-                attacksAttempted++;
+                if (Time.timeScale != 0)
+                {
+                    attacksAttempted++;
+                }
                 
                 animator.SetBool("IsAttacking", true);
             }
@@ -351,7 +355,10 @@ public class PlayerScript : MonoBehaviour
             GameObject projectile = Instantiate(projectilePrefab, transform.position, Quaternion.Euler(0, 0, angle));
             Rigidbody2D projectileRb = projectile.GetComponent<Rigidbody2D>();
             projectileRb.AddForce(new Vector2(shootDirection.x, shootDirection.y) * projectileForce, ForceMode2D.Impulse);
-            attacksAttempted++;
+            if (Time.timeScale != 0)
+            {
+                attacksAttempted++;
+            }
             shotsFired++;
         }
 

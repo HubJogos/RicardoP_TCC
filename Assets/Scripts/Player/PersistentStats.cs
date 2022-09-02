@@ -11,4 +11,6 @@ public class PersistentStats : MonoBehaviour
     [Header("Health Variables")]
     public int maxHealth = 50;
     public bool closedTutorial;
+
+    
 }

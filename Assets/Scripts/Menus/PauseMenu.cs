@@ -58,13 +58,9 @@ public class PauseMenu : MonoBehaviour
     */
     public void Reload()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        FindObjectOfType<MapGenAutomata>().RespawnPlayer();
         Time.timeScale = 1f;
-    }
-    public void ReturnToTown()
-    {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(1);
     }
     public void QuitGame()
     {

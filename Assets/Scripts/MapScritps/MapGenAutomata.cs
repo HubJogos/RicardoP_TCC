@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System;
 using System.IO;
 using UnityEngine;
-using Newtonsoft.Json;
 
 public class MapGenAutomata : MonoBehaviour
 {
+    DataGenerator dataGen;
     public int width, height;//largura e altura do mapa
     public int smooth = 5;//grau de suavização dos quadrados gerados
     public int minRegionSize = 50;//tamanho mínimo das regiões geradas (exclui o que estiver abaixo)
@@ -44,11 +44,13 @@ public class MapGenAutomata : MonoBehaviour
     public GameObject player;
     bool canSpawnEnd = false;
     bool canSpawnPlayer = false;
+    public Vector2 playerStartPos;
     //public GenData genData;
     System.Random pseudoRandom;
 
     private void Start()
     {
+        dataGen = FindObjectOfType<DataGenerator>();
         if (useRandomSeed)
         {
             seed = Time.time.ToString();//usado para aleatorizar seed
@@ -62,6 +64,7 @@ public class MapGenAutomata : MonoBehaviour
 
 
         GenerateMap();
+        dataGen.playthroughs++;
     }//gera mapa on startup
 
 
@@ -104,10 +107,10 @@ public class MapGenAutomata : MonoBehaviour
                 if (canSpawnPlayer)
                 {
                     player = Instantiate(playerPrefab, new Vector2(x - (width / 2), y - (height / 2)), Quaternion.identity) as GameObject;
+                    playerStartPos = player.transform.position;
                 }
             }
         }
-        
         #endregion
 
         #region ExitPlacement
@@ -223,9 +226,9 @@ public class MapGenAutomata : MonoBehaviour
         }
         #endregion
         float distSum = 0;
-        for (int i = 0; i < enemies.Length; i++)
+        for (int i = 0; i < currentEnemies; i++)
         {
-            for (int j = 0; j < enemies.Length; j++)
+            for (int j = 0; j < currentEnemies; j++)
             {
                 distSum += Vector2.Distance(enemies[i].transform.position, enemies[j].transform.position);
             }
@@ -233,15 +236,26 @@ public class MapGenAutomata : MonoBehaviour
         averageEnemyDistance = distSum / (enemies.Length * enemies.Length);
 
         float distSumItem = 0;
-        for (int i = 0; i < items.Length; i++)
+        for (int i = 0; i < currentItems; i++)
         {
-            for (int j = 0; j < items.Length; j++)
+            for (int j = 0; j < currentItems; j++)
             {
-                distSum += Vector2.Distance(items[i].transform.position, items[j].transform.position);
+                distSumItem += Vector2.Distance(items[i].transform.position, items[j].transform.position);
             }
         }
         averageItemDistance = distSumItem / (items.Length * items.Length);
 
+    }
+
+    public void RespawnPlayer()
+    {
+        int x = Mathf.FloorToInt(pseudoRandom.Next(0, width - 1));
+        int y = Mathf.FloorToInt(pseudoRandom.Next(0, height - 1));
+        if (map[x, y] == 0)
+        {
+            player.transform.position = new Vector2(x - (width / 2), y - (height / 2));
+            playerStartPos = player.transform.position;
+        }
     }
     #region MapGenFunctions
     void RandomFillMap()

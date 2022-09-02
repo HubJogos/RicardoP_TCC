@@ -19,7 +19,6 @@ public class DataGenerator : MonoBehaviour
     bool victory = false;
     public bool foundSecret = false;
     public int deathCounter = 0;
-    public int continues = 0;
 
     public float completedQuests = 0;
     float totalQuests = 2;
@@ -32,17 +31,56 @@ public class DataGenerator : MonoBehaviour
     public PlayerData playerData;
     public GenData genData;
     public QuestionData questionData;
-    public Vector2 finalPosition;
+    
 
+    Questionario questionario;
+    bool doneQuestion = false;
+
+    [Header("Final Data")]
+    //player data for multiple plays
+    public string totalLifeLost;
+    public string time;
+    public string steps;
+    public string runLevel;
+
+    public string precision;
+    public string percentKills;
+    public string percentItemPickup;
+    public string percentAmmoPickup;
+
+    [Header("Generation")]
+    //GenData for multiple plays
+    public string width;
+    public string height;
+    public string smooth;
+    public string minRegionSize;
+    public string randomFillPercent;
+    public string minEnemyDistance;
+    public string minItemDistance;
+    public string averageEnemyDistance;
+    public string averageItemDistance;
+    public string enemyDensity;
+    public string itemDensity;
+    public string maxEnemies;
+    public string maxItems;
+    public string currentEnemies;
+    public string currentItems;
+    public string seed;
+    [Header("Playthrough")]
+    public Vector2 finalPosition;
+    public string runVictory;
+    public string runDeath;
     public string playerStartPos;
     public string exitDoorPos;
     public string itemPositions;
     public string enemyPositions;
     public int playthroughs = 0;
+    [Header("Questions")]
+    //Partial questions answers for multiple plays
+    public string[] answers = new string[6];
 
-    Questionario questionario;
-    bool doneQuestion = false;
-    
+
+
     private void FixedUpdate()
     {
         if (FindObjectOfType<Questionario>() && !doneQuestion)
@@ -99,11 +137,11 @@ public class DataGenerator : MonoBehaviour
                         mapReference.currentEnemies,
                         mapReference.currentItems,
                         
-                        mapReference.player.transform.position,
                         mapReference.endStage.transform.position,
                         mapReference.itemPositions,
                         mapReference.enemyPositions,
                         mapReference.seed);
+
                 }
             }//executa 1 vez só pra referenciar objetos relevantes
             doneGen = true;
@@ -118,7 +156,7 @@ public class DataGenerator : MonoBehaviour
             questionData = new QuestionData(questionario.answers);
         }
 
-        if (playerScript.currentHealth <= 0)//se função foi chamada quando player morreu
+        if (completedQuests < 2)//se cumpriu todas as quests
         {
             victory = false;
         }
@@ -126,28 +164,53 @@ public class DataGenerator : MonoBehaviour
         {
             victory = true;
         }
+
+
         finalPosition = playerScript.transform.position;
 
+        //data per playthrough is separated
+        totalLifeLost += playerScript.totalLifeLost.ToString() + " / ";
+        time += Mathf.FloorToInt(Time.time - startTime).ToString() + " / ";
+        steps += playerScript.steps.ToString() + " / ";
+        runLevel += playerScript.playerLevel.ToString() + " / ";
+
+        //averages
+
+        if (playerScript.attacksAttempted == 0)
+        {
+            precision += Double.NaN.ToString().Replace(",", ".") + " / ";
+
+        }else precision += playerScript.precision.ToString().Replace(",",".") + " / ";
+
+        percentKills += playerScript.percentKills.ToString().Replace(",", ".") + " / ";
+        percentItemPickup += playerScript.percentItemsCollected.ToString().Replace(",", ".") + " / ";
+
+        percentAmmoPickup += playerScript.ammoPickupRate.ToString().Replace(",", ".") + " / ";
+        runVictory += victory.ToString() + " / ";
+
         //where all player data is stored
+
         playerData = new PlayerData(playerScript.totalLifeLost, 
             playerScript.playerLevel, 
-            (Time.time - startTime), 
+            (Time.time - startTime),
             playerScript.steps, 
             deathCounter,
-            continues,
-            playerScript.precision, 
-            playerScript.percentKills, 
-            playerScript.percentItemsCollected, 
+
+            playerScript.precision,
+            playerScript.percentKills,
+            playerScript.percentItemsCollected,
             playerScript.ammoPickupRate,
+
             interactions,
             percentQuests,
             victory,
             foundSecret,
             finalPosition);
-        itemPositions = "";
-        enemyPositions = "";
-        playerStartPos = genData.playerStart.ToString().Replace(",", ".");
-        exitDoorPos = genData.exitDoor.ToString().Replace(",", ".");
+
+        playerStartPos += mapReference.playerStartPos.ToString().Replace(",", ".") + " / ";
+        exitDoorPos += genData.exitDoor.ToString().Replace(",", ".") + " / ";
+
+
         for (int i = 0; i < mapReference.currentItems; i++)
         {
             itemPositions += genData.itemPositions[i].ToString().Replace(",",".");
@@ -156,8 +219,42 @@ public class DataGenerator : MonoBehaviour
         {
             enemyPositions += genData.enemyPositions[i].ToString().Replace(",", ".");
         }
+        itemPositions += " / ";
+        enemyPositions += " / ";//separando dados das playthroughs
+
+
         done = false;
         doneGen = false;
+
+        //concatenating multiple playthroughs data
+        width += genData.width.ToString() + " / ";
+        height += genData.height.ToString() + " / ";
+        smooth += genData.smooth.ToString() + " / ";
+        minRegionSize += genData.minRegionSize.ToString() + " / ";
+        randomFillPercent += genData.randomFillPercent.ToString() + " / ";
+        minEnemyDistance += genData.minEnemyDistance.ToString() + " / ";
+        minItemDistance += genData.minItemDistance.ToString() + " / ";
+        averageEnemyDistance += genData.averageEnemyDistance.ToString().Replace(",", ".") + " / ";
+        averageItemDistance += genData.averageItemDistance.ToString().Replace(",", ".") + " / ";
+        enemyDensity += genData.enemyDensity.ToString() + " / ";
+        itemDensity += genData.itemDensity.ToString() + " / ";
+        maxEnemies += genData.maxEnemies.ToString() + " / ";
+        maxItems += genData.maxItems.ToString() + " / ";
+        currentEnemies += genData.currentEnemies.ToString() + " / ";
+        currentItems += genData.currentItems.ToString() + " / ";
+        seed += genData.seed.ToString().Replace(",", ".") + " / ";
+
+    }
+
+
+    public void UpdateCounters()
+    {
+        if (deathCounter > 0)
+        {
+            runDeath += true.ToString() + " / ";
+        }else runDeath += false.ToString() + " / ";
+
+        deathCounter = 0;
     }
 }
 
@@ -170,7 +267,6 @@ public class PlayerData
     public float timeSpent;
     public int steps;
     public int deaths;
-    public int continues;
     public float precision;
     public float percentKills;
     public float percentItemsCollected;
@@ -180,7 +276,7 @@ public class PlayerData
     public bool victorious;
     public bool foundSecret;
     public Vector2 finalPosition;
-    public PlayerData(int _totalLifeLost, int _playerLevel, float _timeSpent, int _steps, int _deaths, int _continues, float _precision, float _percentKills, float _percentItemsCollected, float _percentAmmo, int _interactions, float _percentQuests, bool _victorious, bool _foundSecret, Vector2 _finalPosition)
+    public PlayerData(int _totalLifeLost, int _playerLevel, float _timeSpent, int _steps, int _deaths, float _precision, float _percentKills, float _percentItemsCollected, float _percentAmmo, int _interactions, float _percentQuests, bool _victorious, bool _foundSecret, Vector2 _finalPosition)
     {
 
         totalLifeLost = _totalLifeLost;
@@ -188,7 +284,6 @@ public class PlayerData
         timeSpent = _timeSpent;
         steps = _steps;
         deaths = _deaths;
-        continues = _continues;
         precision = _precision;
         percentKills = _percentKills;
         percentItemsCollected = _percentItemsCollected;
@@ -223,15 +318,15 @@ public class GenData
     public int maxItems;
     public int currentEnemies;
     public int currentItems;
-                        
-    public Vector2 playerStart;
+
+    public string seed;
+
     public Vector2 exitDoor;
     public Vector2[] itemPositions;
     public Vector2[] enemyPositions;
-    public string seed;
     public GenData(int _width, int _height, int _smooth, int _minRegionSize, int _randomFillPercent, int _minEnemyDistance, 
         int _minItemDistance, float _averageEnemyDistance, float _averageItemDistance, int _enemyDensity,
-        int _itemDensity, int _maxEnemies, int _maxItems, int _currentEnemies, int _currentItems, Vector2 _playerStart, 
+        int _itemDensity, int _maxEnemies, int _maxItems, int _currentEnemies, int _currentItems, 
         Vector2 _exitDoor, Vector2[] _itemPositions, Vector2[] _enemyPositions, string _seed)
     {
         width = _width;
@@ -253,7 +348,6 @@ public class GenData
         currentEnemies = _currentEnemies;
         currentItems = _currentItems;
 
-        playerStart = _playerStart;
         exitDoor = _exitDoor;
         itemPositions = _itemPositions;
         enemyPositions = _enemyPositions;

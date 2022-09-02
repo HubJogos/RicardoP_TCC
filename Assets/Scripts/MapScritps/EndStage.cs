@@ -2,31 +2,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class EndStage : MonoBehaviour
 {
+    public GameObject partialQuestions;
+    DataGenerator dataGen;
+    private void Start()
+    {
+        dataGen = FindObjectOfType<DataGenerator>();
+        partialQuestions = GameObject.FindGameObjectWithTag("PartialQuestions").gameObject;
+        partialQuestions.SetActive(false);
+    }
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            FindObjectOfType<DataGenerator>().playthroughs++;
-            if(FindObjectOfType<DataGenerator>().completedQuests < 2)
+            if(dataGen.completedQuests < 2)
             {
-                FindObjectOfType<DataGenerator>().SaveAsCSV();
-                SceneManager.LoadScene("Game");//reloads town scene
+                partialQuestions.SetActive(true);
+                Time.timeScale = 0;
             }
             else
             {
-                FindObjectOfType<DataGenerator>().SaveAsCSV();
+                dataGen.SaveAsCSV();
                 SceneManager.LoadScene("Questionario");//vai pro questionario
             }
-            //com 1 quest, retorna a cidade
-            FindObjectOfType<DataGenerator>().SaveAsCSV();//somente ao completar ambas as quests
+            //com 1 ou menos quests, exibe questionário parcial
         }
     }
 
-    IEnumerator WaitToRestart()
-    {
-        yield return new WaitForSeconds(2);
-    }//auxiliar para reiniciar o jogo
+    
+
 }
