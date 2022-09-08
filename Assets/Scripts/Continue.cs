@@ -38,6 +38,5 @@ public class Continue : MonoBehaviour
         gameOverScreen.SetActive(false);
         gameHasEnded = false;
         Time.timeScale = 1;
-        endStage.partialQuestions.SetActive(true);
     }
 }

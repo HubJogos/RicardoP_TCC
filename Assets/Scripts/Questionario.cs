@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using System.Runtime.InteropServices;
-using UnityEngine.Analytics;
+using UnityEngine.SceneManagement;
+
 public class Questionario : MonoBehaviour
 {
     [DllImport("__Internal")]
@@ -12,6 +13,7 @@ public class Questionario : MonoBehaviour
     DataGenerator dataGen;
     public GameObject[] questions;
     int activeQuestion;
+    public GameObject replayButton;
 
     string url = "https://docs.google.com/forms/u/0/d/e/1FAIpQLScRToMptMqLz3J0mSTqUqnZpBWOIxLEwiGF6B5qOY_s96DsJQ/formResponse";
     //string url = "https://docs.google.com/forms/u/0/d/e/1FAIpQLSeTWlIZjBk9SPzWS3e6JbhDtIf1UdTbiTv2EUxs2FHQ2DP3Qg/formResponse"; //original
@@ -20,6 +22,7 @@ public class Questionario : MonoBehaviour
     public string[] answers;
     private void Start()
     {
+        replayButton.SetActive(false);
         dataGen = FindObjectOfType<DataGenerator>();
         dataGen.UpdateCounters();
         activeQuestion = 0;
@@ -29,6 +32,11 @@ public class Questionario : MonoBehaviour
     {
         StartCoroutine(Post(dataGen));
         //Analytics.CustomEvent("LifeLost", new Dictionary<string, object> { { "TotalLifeLost", dataGen.playerData.totalLifeLost } });
+    }
+    public void Replay()
+    {
+        Send();
+        SceneManager.LoadScene(0);
     }
     public void QuitGame()
     {
@@ -49,7 +57,7 @@ public class Questionario : MonoBehaviour
         form.AddField("entry.1108869829", data.runLevel);//nível nas runs
         form.AddField("entry.1204426239", data.time);//time
         form.AddField("entry.175035077", data.steps);//steps
-        form.AddField("entry.1023732896", data.runDeath);//deaths
+        form.AddField("entry.1023732896", data.playerData.deaths.ToString());//deaths
         form.AddField("entry.793916201", data.precision);//precision
         form.AddField("entry.788247621", data.percentKills);//percentKills
         form.AddField("entry.1765112349", data.percentItemPickup);//percentItems
@@ -92,18 +100,19 @@ public class Questionario : MonoBehaviour
         form.AddField("entry.1461146218", data.currentItems);//GeneratedItems
 
         //playerInput
-        form.AddField("entry.777965021", data.answers[0] + answers[0] + " / ");//mapSize
-        form.AddField("entry.1009410047", data.answers[1] + answers[1] + " / ");//complexity
-        form.AddField("entry.299056882", data.answers[2] + answers[2] + " / ");//enemyAmount
-        form.AddField("entry.203252442", data.answers[3] + answers[3] + " / ");//enemyDensity
-
-        form.AddField("entry.1282593994", data.answers[3] + answers[6] + " / ");//difficulty
-        form.AddField("entry.1313662470", data.answers[3] + answers[7] + " / ");//fun
-
-        //end one playthrough info--------------------------------------------------------------------------------------------------
+        form.AddField("entry.777965021", answers[0]);//mapSize
+        form.AddField("entry.1009410047", answers[1]);//complexity
+        form.AddField("entry.299056882", answers[2]);//enemyAmount
+        form.AddField("entry.203252442", answers[3]);//enemyDensity
 
         form.AddField("entry.258848594", answers[4]);//interactionAmount
         form.AddField("entry.675072857", answers[5]);//conversationMaterial
+
+        form.AddField("entry.1282593994", answers[6]);//difficulty
+        form.AddField("entry.1313662470", answers[7]);//fun
+
+        //end one playthrough info--------------------------------------------------------------------------------------------------
+
 
         
         
@@ -125,7 +134,7 @@ public class Questionario : MonoBehaviour
         }
         else
         {
-            QuitGame();
+            replayButton.SetActive(true);
         }
     }
 

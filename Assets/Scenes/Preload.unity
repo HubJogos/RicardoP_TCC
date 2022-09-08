@@ -217,7 +217,6 @@ MonoBehaviour:
     currentEnemies: 0
     currentItems: 0
     seed: 
-    playerStart: {x: 0, y: 0}
     exitDoor: {x: 0, y: 0}
     itemPositions: []
     enemyPositions: []
@@ -349,3 +348,14 @@ MonoBehaviour:
   currentExp: 0
   maxHealth: 50
   closedTutorial: 0
+  width: 100
+  height: 60
+  smooth: 2
+  minRegionSize: 20
+  useRandomSeed: 1
+  seed: 0
+  randomFillPercent: 50
+  enemyDensity: 50
+  itemDensity: 20
+  minEnemyDistance: 15
+  minItemDistance: 25

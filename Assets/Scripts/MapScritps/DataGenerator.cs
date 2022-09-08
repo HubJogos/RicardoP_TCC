@@ -169,24 +169,24 @@ public class DataGenerator : MonoBehaviour
         finalPosition = playerScript.transform.position;
 
         //data per playthrough is separated
-        totalLifeLost += playerScript.totalLifeLost.ToString() + " / ";
-        time += Mathf.FloorToInt(Time.time - startTime).ToString() + " / ";
-        steps += playerScript.steps.ToString() + " / ";
-        runLevel += playerScript.playerLevel.ToString() + " / ";
+        totalLifeLost = playerScript.totalLifeLost.ToString();
+        time = Mathf.FloorToInt(Time.time - startTime).ToString();
+        steps = playerScript.steps.ToString();
+        runLevel = playerScript.playerLevel.ToString();
 
         //averages
 
         if (playerScript.attacksAttempted == 0)
         {
-            precision += Double.NaN.ToString().Replace(",", ".") + " / ";
+            precision = Double.NaN.ToString().Replace(",", ".");
 
-        }else precision += playerScript.precision.ToString().Replace(",",".") + " / ";
+        }else precision = playerScript.precision.ToString().Replace(",",".");
 
-        percentKills += playerScript.percentKills.ToString().Replace(",", ".") + " / ";
-        percentItemPickup += playerScript.percentItemsCollected.ToString().Replace(",", ".") + " / ";
+        percentKills = playerScript.percentKills.ToString().Replace(",", ".");
+        percentItemPickup = playerScript.percentItemsCollected.ToString().Replace(",", ".");
 
-        percentAmmoPickup += playerScript.ammoPickupRate.ToString().Replace(",", ".") + " / ";
-        runVictory += victory.ToString() + " / ";
+        percentAmmoPickup = playerScript.ammoPickupRate.ToString().Replace(",", ".");
+        runVictory = victory.ToString();
 
         //where all player data is stored
 
@@ -207,8 +207,8 @@ public class DataGenerator : MonoBehaviour
             foundSecret,
             finalPosition);
 
-        playerStartPos += mapReference.playerStartPos.ToString().Replace(",", ".") + " / ";
-        exitDoorPos += genData.exitDoor.ToString().Replace(",", ".") + " / ";
+        playerStartPos = mapReference.playerStartPos.ToString().Replace(",", ".");
+        exitDoorPos = genData.exitDoor.ToString().Replace(",", ".");
 
 
         for (int i = 0; i < mapReference.currentItems; i++)
@@ -219,30 +219,28 @@ public class DataGenerator : MonoBehaviour
         {
             enemyPositions += genData.enemyPositions[i].ToString().Replace(",", ".");
         }
-        itemPositions += " / ";
-        enemyPositions += " / ";//separando dados das playthroughs
 
 
         done = false;
         doneGen = false;
 
         //concatenating multiple playthroughs data
-        width += genData.width.ToString() + " / ";
-        height += genData.height.ToString() + " / ";
-        smooth += genData.smooth.ToString() + " / ";
-        minRegionSize += genData.minRegionSize.ToString() + " / ";
-        randomFillPercent += genData.randomFillPercent.ToString() + " / ";
-        minEnemyDistance += genData.minEnemyDistance.ToString() + " / ";
-        minItemDistance += genData.minItemDistance.ToString() + " / ";
-        averageEnemyDistance += genData.averageEnemyDistance.ToString().Replace(",", ".") + " / ";
-        averageItemDistance += genData.averageItemDistance.ToString().Replace(",", ".") + " / ";
-        enemyDensity += genData.enemyDensity.ToString() + " / ";
-        itemDensity += genData.itemDensity.ToString() + " / ";
-        maxEnemies += genData.maxEnemies.ToString() + " / ";
-        maxItems += genData.maxItems.ToString() + " / ";
-        currentEnemies += genData.currentEnemies.ToString() + " / ";
-        currentItems += genData.currentItems.ToString() + " / ";
-        seed += genData.seed.ToString().Replace(",", ".") + " / ";
+        width = genData.width.ToString();
+        height = genData.height.ToString();
+        smooth = genData.smooth.ToString();
+        minRegionSize = genData.minRegionSize.ToString();
+        randomFillPercent = genData.randomFillPercent.ToString();
+        minEnemyDistance = genData.minEnemyDistance.ToString();
+        minItemDistance = genData.minItemDistance.ToString();
+        averageEnemyDistance = genData.averageEnemyDistance.ToString().Replace(",", ".");
+        averageItemDistance = genData.averageItemDistance.ToString().Replace(",", ".");
+        enemyDensity = genData.enemyDensity.ToString();
+        itemDensity = genData.itemDensity.ToString();
+        maxEnemies = genData.maxEnemies.ToString();
+        maxItems = genData.maxItems.ToString();
+        currentEnemies = genData.currentEnemies.ToString();
+        currentItems = genData.currentItems.ToString();
+        seed = genData.seed.ToString().Replace(",", ".");
 
     }
 
@@ -251,8 +249,8 @@ public class DataGenerator : MonoBehaviour
     {
         if (deathCounter > 0)
         {
-            runDeath += true.ToString() + " / ";
-        }else runDeath += false.ToString() + " / ";
+            runDeath = true.ToString();
+        }else runDeath = false.ToString();
 
         deathCounter = 0;
     }
