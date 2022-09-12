@@ -73,6 +73,7 @@ public class PlayerScript : MonoBehaviour
     private float shootingCounter;//counts time to shoot again
     public int maxAmmo;
     public int currentAmmo;
+    DataGenerator dataGen;
     #endregion
 
     #region DataVariables
@@ -106,6 +107,7 @@ public class PlayerScript : MonoBehaviour
     #endregion
     void Start()
     {
+        dataGen = FindObjectOfType<DataGenerator>();
         stats = FindObjectOfType<PersistentStats>();
         tracker = FindObjectOfType<QuestTracker>();
         
@@ -398,7 +400,7 @@ public class PlayerScript : MonoBehaviour
                     GetExp(tracker.quest[i].expReward);
                     UpgradeHealth(tracker.quest[i].healthImprovement);
                     tracker.quest[i].Complete();
-                    FindObjectOfType<DataGenerator>().completedQuests++;
+                    dataGen.completedQuests++;
                 }
             }
         }
@@ -421,7 +423,7 @@ public class PlayerScript : MonoBehaviour
                     GetExp(tracker.quest[i].expReward);
                     UpgradeHealth(tracker.quest[i].healthImprovement);
                     tracker.quest[i].Complete();
-                    FindObjectOfType<DataGenerator>().completedQuests++;
+                    dataGen.completedQuests++;
                 }
             }
         }
