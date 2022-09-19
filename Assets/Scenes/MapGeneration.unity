@@ -1391,7 +1391,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Continue?
+  m_text: Continuar
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2902,8 +2902,8 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "O jogo chegou ao fim, mas gostar\xEDamos de fazer algumas perguntas sobre
-    sua experi\xEAncia antes de sair do jogo. Obrigado por sua participa\xE7\xE3o!"
+  m_Text: "Parece que voc\xEA foi derrotado dessa vez, gostaria de continuar tentando?
+    Caso escolha desistir, gostar\xEDamos de fazer algumas perguntas sobre sua experi\xEAncia."
 --- !u!222 &1603884509
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2928,7 +2928,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1692863119
 Transform:
   m_ObjectHideFlags: 0
@@ -3325,7 +3325,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Quit
+  m_text: Desistir
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3736,16 +3736,17 @@ MonoBehaviour:
   height: 60
   smooth: 2
   minRegionSize: 20
+  useRandomSeed: 1
   seed: 0
-  useRandomSeed: 0
   randomFillPercent: 50
   enemyDensity: 50
   itemDensity: 20
+  minEnemyDistance: 15
+  minItemDistance: 25
   maxEnemies: 19
   maxItems: 12
   currentItems: 0
   currentEnemies: 0
-  minEnemyDistance: 15
   enemyPrefab: {fileID: 8325857762171716469, guid: 42609d72494b793478f11604ebb0cd52,
     type: 3}
   enemyPrefab2: {fileID: 3805220014200242665, guid: 86b752ac05c60f143898db64180d6e06,
@@ -3754,7 +3755,6 @@ MonoBehaviour:
   enemyPositions: []
   averageEnemyDistance: 0
   averageItemDistance: 0
-  minItemDistance: 25
   coinPrefab: {fileID: 3678395753166504787, guid: 4fbc5069908dbf54fa77641aaffbb734,
     type: 3}
   items: []
@@ -3765,14 +3765,7 @@ MonoBehaviour:
     type: 3}
   endStage: {fileID: 0}
   player: {fileID: 0}
-  genData:
-    width: 0
-    height: 0
-    playerStart: {x: 0, y: 0}
-    exitDoor: {x: 0, y: 0}
-    itemPositions: []
-    enemyPositions: []
-    seed: 
+  playerStartPos: {x: 0, y: 0}
 --- !u!4 &1903688047
 Transform:
   m_ObjectHideFlags: 0
@@ -4013,8 +4006,8 @@ Camera:
   m_GameObject: {fileID: 2013751271}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.22352943, g: 0, b: 0.30980393, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0

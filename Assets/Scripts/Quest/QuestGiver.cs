@@ -16,6 +16,12 @@ public class QuestGiver : MonoBehaviour
     public GameObject acceptButtonMage;
     public GameObject acceptButtonWarrior;
     QuestTracker tracker;
+    DataGenerator dataGen;
+
+    private void Start()
+    {
+        dataGen = FindObjectOfType<DataGenerator>();
+    }
 
     public void OpenQuestWindow()
     {
@@ -46,6 +52,7 @@ public class QuestGiver : MonoBehaviour
             tracker.quest[0] = quest;
         }
         else if(tracker.quest[0].goal != quest.goal) tracker.quest[1] = quest;
+        dataGen.activeQuests += 1;
     }
     public void RefuseQuest()
     {

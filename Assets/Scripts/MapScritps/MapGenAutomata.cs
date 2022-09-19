@@ -3,28 +3,40 @@ using System.Collections.Generic;
 using System;
 using System.IO;
 using UnityEngine;
-using Newtonsoft.Json;
 
 public class MapGenAutomata : MonoBehaviour
 {
+    DataGenerator dataGen;
+    PersistentStats stats;
+
+    //map config, save on persistent data
     public int width, height;//largura e altura do mapa
-    public int smooth = 5;//grau de suavização dos quadrados gerados
-    public int minRegionSize = 50;//tamanho mínimo das regiões geradas (exclui o que estiver abaixo)
-    public string seed;
+    public int smooth;//grau de suavização dos quadrados gerados
+    public int minRegionSize;//tamanho mínimo das regiões geradas (exclui o que estiver abaixo)
+
     public bool useRandomSeed = false;
+    public string seed;
+
     [Range(0, 100)]
     public int randomFillPercent;//porcentagem de terreno/parede
-    [HideInInspector] public int[,] map;//matriz do mapa
 
-    //geração de inimigos
     [Range(0, 100)]
     public int enemyDensity;
     [Range(0, 100)]
     public int itemDensity;
+
+    public int minEnemyDistance;
+    public int minItemDistance;
+
     public int maxEnemies;
-    public int maxItems, currentItems = 0;
+    public int maxItems;
+
+
+
+    [HideInInspector] public int[,] map;//matriz do mapa
+    //geração de inimigos
+    [HideInInspector] public int currentItems = 0;
     [HideInInspector] public int currentEnemies = 0;
-    [HideInInspector] public int minEnemyDistance;
     public GameObject enemyPrefab;
     public GameObject enemyPrefab2;
     [HideInInspector] public GameObject[] enemies;
@@ -34,7 +46,6 @@ public class MapGenAutomata : MonoBehaviour
 
     //geração de itens
     
-    [HideInInspector] public int minItemDistance;
     public GameObject coinPrefab;
     [HideInInspector] public GameObject[] items;
     [HideInInspector] public Vector2[] itemPositions;
@@ -44,11 +55,32 @@ public class MapGenAutomata : MonoBehaviour
     public GameObject player;
     bool canSpawnEnd = false;
     bool canSpawnPlayer = false;
-    //public GenData genData;
+    public Vector2 playerStartPos;
     System.Random pseudoRandom;
 
     private void Start()
     {
+        stats = FindObjectOfType<PersistentStats>();
+        dataGen = FindObjectOfType<DataGenerator>();
+
+        //receive persistent stats relevant to generation
+        
+        width = stats.width;
+        height = stats.height;
+        minRegionSize = stats.minRegionSize;
+        minEnemyDistance = stats.minEnemyDistance;
+        minItemDistance = stats.minItemDistance;
+        smooth = stats.smooth;
+        useRandomSeed = stats.useRandomSeed;
+        seed = stats.seed;
+        randomFillPercent = stats.randomFillPercent;
+        enemyDensity = stats.enemyDensity;
+        itemDensity = stats.itemDensity;
+        maxEnemies = stats.maxEnemies;
+        maxItems = stats.maxItems;
+        
+
+
         if (useRandomSeed)
         {
             seed = Time.time.ToString();//usado para aleatorizar seed
@@ -60,15 +92,24 @@ public class MapGenAutomata : MonoBehaviour
         items = new GameObject[maxItems];
         itemPositions = new Vector2[maxItems];
 
+        try
+        {
+            GenerateMap();
+        }
+        catch (Exception)
+        {
 
-        GenerateMap();
+            GenerateMap();
+            throw;
+        }
+        dataGen.playthroughs++;
     }//gera mapa on startup
 
 
 
     void GenerateMap()
     {
-        FindObjectOfType<DataGenerator>().doneGen = false;
+        dataGen.doneGen = false;
         map = new int[width, height];
         RandomFillMap();
 
@@ -104,10 +145,10 @@ public class MapGenAutomata : MonoBehaviour
                 if (canSpawnPlayer)
                 {
                     player = Instantiate(playerPrefab, new Vector2(x - (width / 2), y - (height / 2)), Quaternion.identity) as GameObject;
+                    playerStartPos = player.transform.position;
                 }
             }
         }
-        
         #endregion
 
         #region ExitPlacement
@@ -223,9 +264,9 @@ public class MapGenAutomata : MonoBehaviour
         }
         #endregion
         float distSum = 0;
-        for (int i = 0; i < enemies.Length; i++)
+        for (int i = 0; i < currentEnemies; i++)
         {
-            for (int j = 0; j < enemies.Length; j++)
+            for (int j = 0; j < currentEnemies; j++)
             {
                 distSum += Vector2.Distance(enemies[i].transform.position, enemies[j].transform.position);
             }
@@ -233,15 +274,26 @@ public class MapGenAutomata : MonoBehaviour
         averageEnemyDistance = distSum / (enemies.Length * enemies.Length);
 
         float distSumItem = 0;
-        for (int i = 0; i < items.Length; i++)
+        for (int i = 0; i < currentItems; i++)
         {
-            for (int j = 0; j < items.Length; j++)
+            for (int j = 0; j < currentItems; j++)
             {
-                distSum += Vector2.Distance(items[i].transform.position, items[j].transform.position);
+                distSumItem += Vector2.Distance(items[i].transform.position, items[j].transform.position);
             }
         }
         averageItemDistance = distSumItem / (items.Length * items.Length);
 
+    }
+
+    public void RespawnPlayer()
+    {
+        int x = Mathf.FloorToInt(pseudoRandom.Next(0, width - 1));
+        int y = Mathf.FloorToInt(pseudoRandom.Next(0, height - 1));
+        if (map[x, y] == 0)
+        {
+            player.transform.position = new Vector2(x - (width / 2), y - (height / 2));
+            playerStartPos = player.transform.position;
+        }
     }
     #region MapGenFunctions
     void RandomFillMap()
