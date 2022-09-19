@@ -40,7 +40,12 @@ public class Questionario : MonoBehaviour
     }
     public void QuitGame()
     {
+        StartCoroutine(Quit());
+    }
+    public IEnumerator Quit()
+    {
         Send();
+        yield return new WaitForSeconds(2);
         Application.Quit();
     }
 
