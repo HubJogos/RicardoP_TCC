@@ -401,6 +401,7 @@ public class PlayerScript : MonoBehaviour
                     UpgradeHealth(tracker.quest[i].healthImprovement);
                     tracker.quest[i].Complete();
                     dataGen.completedQuests++;
+                    dataGen.activeQuests -= 1;
                 }
             }
         }
@@ -424,6 +425,7 @@ public class PlayerScript : MonoBehaviour
                     UpgradeHealth(tracker.quest[i].healthImprovement);
                     tracker.quest[i].Complete();
                     dataGen.completedQuests++;
+                    dataGen.activeQuests -= 1;
                 }
             }
         }

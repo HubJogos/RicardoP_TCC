@@ -32,7 +32,7 @@ public class PersistentStats : MonoBehaviour
     public int minEnemyDistance = 15;
     public int minItemDistance = 25;
 
-    //max enemies
-    //max items
+    public int maxEnemies=19;
+    public int maxItems=12;
 
 }

@@ -40,6 +40,8 @@ public class MapConfig : MonoBehaviour
         mapGenData[8].GetComponent<Slider>().value = stats.randomFillPercent; //map fill percent, slider
         mapGenData[9].GetComponent<Slider>().value = stats.enemyDensity; //enemy density, slider
         mapGenData[10].GetComponent<Slider>().value = stats.itemDensity; //item density, slider
+        mapGenData[11].GetComponent<InputField>().text = stats.maxEnemies.ToString();
+        mapGenData[12].GetComponent<InputField>().text = stats.maxItems.ToString();
     }
     public void Accept()//changes generation parameters
     {
@@ -55,6 +57,9 @@ public class MapConfig : MonoBehaviour
         stats.randomFillPercent =  Mathf.FloorToInt(mapGenData[8].GetComponent<Slider>().value);
         stats.enemyDensity = Mathf.FloorToInt(mapGenData[9].GetComponent<Slider>().value);
         stats.itemDensity = Mathf.FloorToInt(mapGenData[10].GetComponent<Slider>().value);
+
+        int.TryParse(mapGenData[11].GetComponent<InputField>().text, out stats.maxEnemies);
+        int.TryParse(mapGenData[12].GetComponent<InputField>().text, out stats.maxItems);
 
         accept = true;
         //send player to next scene

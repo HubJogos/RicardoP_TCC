@@ -76,6 +76,8 @@ public class MapGenAutomata : MonoBehaviour
         randomFillPercent = stats.randomFillPercent;
         enemyDensity = stats.enemyDensity;
         itemDensity = stats.itemDensity;
+        maxEnemies = stats.maxEnemies;
+        maxItems = stats.maxItems;
         
 
 

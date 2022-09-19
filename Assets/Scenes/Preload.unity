@@ -292,46 +292,6 @@ MonoBehaviour:
       goalType: 0
       requiredAmount: 0
       currentAmount: 0
-  - isActive: 0
-    title: 
-    description: 
-    tracker: 
-    expReward: 0
-    healthImprovement: 0
-    goal:
-      goalType: 0
-      requiredAmount: 0
-      currentAmount: 0
-  - isActive: 0
-    title: 
-    description: 
-    tracker: 
-    expReward: 0
-    healthImprovement: 0
-    goal:
-      goalType: 0
-      requiredAmount: 0
-      currentAmount: 0
-  - isActive: 0
-    title: 
-    description: 
-    tracker: 
-    expReward: 0
-    healthImprovement: 0
-    goal:
-      goalType: 0
-      requiredAmount: 0
-      currentAmount: 0
-  - isActive: 0
-    title: 
-    description: 
-    tracker: 
-    expReward: 0
-    healthImprovement: 0
-    goal:
-      goalType: 0
-      requiredAmount: 0
-      currentAmount: 0
 --- !u!114 &461567154
 MonoBehaviour:
   m_ObjectHideFlags: 0

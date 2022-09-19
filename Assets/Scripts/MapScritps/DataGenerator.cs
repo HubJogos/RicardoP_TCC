@@ -23,6 +23,7 @@ public class DataGenerator : MonoBehaviour
     public float completedQuests = 0;
     float totalQuests = 2;
     float percentQuests;
+    public int activeQuests = 0;
 
     public int interactions = 0;
 
@@ -42,7 +43,6 @@ public class DataGenerator : MonoBehaviour
     public string time;
     public string steps;
     public string runLevel;
-
     public string precision;
     public string percentKills;
     public string percentItemPickup;
@@ -190,17 +190,16 @@ public class DataGenerator : MonoBehaviour
 
         //where all player data is stored
 
-        playerData = new PlayerData(playerScript.totalLifeLost, 
+        playerData = new PlayerData(
+            playerScript.totalLifeLost, 
             playerScript.playerLevel, 
             (Time.time - startTime),
             playerScript.steps, 
             deathCounter,
-
             playerScript.precision,
             playerScript.percentKills,
             playerScript.percentItemsCollected,
             playerScript.ammoPickupRate,
-
             interactions,
             percentQuests,
             victory,
@@ -220,11 +219,11 @@ public class DataGenerator : MonoBehaviour
             enemyPositions += genData.enemyPositions[i].ToString().Replace(",", ".");
         }
 
-
+        //usados para executar funções ao trocar de cena
         done = false;
         doneGen = false;
 
-        //concatenating multiple playthroughs data
+        //salva os dados como variáveis internas
         width = genData.width.ToString();
         height = genData.height.ToString();
         smooth = genData.smooth.ToString();
@@ -274,7 +273,9 @@ public class PlayerData
     public bool victorious;
     public bool foundSecret;
     public Vector2 finalPosition;
-    public PlayerData(int _totalLifeLost, int _playerLevel, float _timeSpent, int _steps, int _deaths, float _precision, float _percentKills, float _percentItemsCollected, float _percentAmmo, int _interactions, float _percentQuests, bool _victorious, bool _foundSecret, Vector2 _finalPosition)
+    public PlayerData(int _totalLifeLost, int _playerLevel, float _timeSpent, int _steps, int _deaths, float _precision, float _percentKills, 
+        float _percentItemsCollected, float _percentAmmo, int _interactions, float _percentQuests, bool _victorious, bool _foundSecret, 
+        Vector2 _finalPosition)
     {
 
         totalLifeLost = _totalLifeLost;

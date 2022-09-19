@@ -19,7 +19,7 @@ public class EndStage : MonoBehaviour
     }
     private void Update()
     {
-        if (dataGen.completedQuests >= 2 && !finished)
+        if (dataGen.activeQuests <= 0 && !finished)
         {
             transform.position = FindSpawningPoint();
             finished = true;

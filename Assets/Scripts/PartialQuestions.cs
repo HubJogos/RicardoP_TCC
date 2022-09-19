@@ -35,7 +35,7 @@ public class PartialQuestions : MonoBehaviour
         }
         else
         {
-            dataGen.UpdateCounters();
+            //dataGen.UpdateCounters();
             dataGen.SaveAsCSV();
             Time.timeScale = 1;
             gameObject.SetActive(false);

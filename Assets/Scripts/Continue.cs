@@ -7,7 +7,6 @@ public class Continue : MonoBehaviour
 {
     DataGenerator dataGen;
     public GameObject gameOverScreen;
-    EndStage endStage;
     bool gameHasEnded = false;
 
     private void Start()
@@ -19,7 +18,6 @@ public class Continue : MonoBehaviour
     }
     public void GameOverScreen()
     {
-        endStage = FindObjectOfType<EndStage>();
         Time.timeScale = 0;
         if (!gameHasEnded)
         {
@@ -38,5 +36,7 @@ public class Continue : MonoBehaviour
         gameOverScreen.SetActive(false);
         gameHasEnded = false;
         Time.timeScale = 1;
+        dataGen.SaveAsCSV();
+        SceneManager.LoadScene("MapGeneration");
     }
 }
