@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
@@ -10,7 +11,7 @@ public class CallAI : MonoBehaviour{
     private DataGenerator data;
     //private Questionario questionario;
     private List<object> data_values_regression = new List<object>();
-    public List<object> predicted_values = new List<object>();
+    public Predictions predicted = new Predictions();
 
     void Start(){
         Init();
@@ -26,27 +27,37 @@ public class CallAI : MonoBehaviour{
     private void BuildSampleRegression(){
 
         // Inputs
-        data_values_regression.Add(data.playerData.totalLifeLost);
+        /*data_values_regression.Add(data.playerData.totalLifeLost);
         data_values_regression.Add(Mathf.FloorToInt(data.playerData.timeSpent));
         data_values_regression.Add(data.playerData.steps);
         data_values_regression.Add(data.playerData.deaths);
         data_values_regression.Add(data.playerData.percentKills);
         data_values_regression.Add(data.playerData.percentItemsCollected);
-        //data_values_regression.Add(questionario.answers[1]);   //complexity
-        //data_values_regression.Add(questionario.answers[6]);   //difficulty
-        //data_values_regression.Add(questionario.answers[7]);   //fun
-        data_values_regression.Add(2);   //complexity
-        data_values_regression.Add(2);   //difficulty
-        data_values_regression.Add(1);   //fun
+        data_values_regression.Add(questionario.answers[1]);   //complexity
+        data_values_regression.Add(questionario.answers[6]);   //difficulty
         data_values_regression.Add(data.genData.averageEnemyDistance);
         data_values_regression.Add(data.genData.averageItemDistance);
         data_values_regression.Add(data.playerData.interactions);
+        data_values_regression.Add(data.playerData.playthroughs);
+
+        data_values_regression[0] = data.playerData.totalLifeLost;
+        data_values_regression[1] = Mathf.FloorToInt(data.playerData.timeSpent);
+        data_values_regression[2] = data.playerData.steps;
+        data_values_regression[3] = data.playerData.deaths;
+        data_values_regression[4] = data.playerData.percentKills;
+        data_values_regression[5] = data.playerData.percentItemsCollected;
+        data_values_regression[6] = float.Parse(questionario.answers[1]);   //complexity
+        data_values_regression[7] = float.Parse(questionario.answers[6]);   //difficulty
+        data_values_regression[8] = data.genData.averageEnemyDistance;
+        data_values_regression[9] = data.genData.averageItemDistance;
+        data_values_regression[10] = data.playerData.interactions;
+        data_values_regression[11] = data.playthroughs;*/
 
     }
 
     public IEnumerator JsonReader(){
 
-        float[] data = {90f,50f,261f,0f,0.105263f,0.555556f,2f,2f,1f,25.253560f,16.643700f,7f};
+        float[] data = {100f,62f,477f,0f,0.210526f,0.700000f,0f,1f,33.681550f,32.242820f,4f,4f};
         string data_api = BuildString(data);
 
         //string url = "https://python-integration.herokuapp.com/regression";
@@ -74,6 +85,8 @@ public class CallAI : MonoBehaviour{
             else{
                 jsonDownloaded = request.downloadHandler.text;
                 Debug.Log(jsonDownloaded);
+                predicted = JsonConvert.DeserializeObject<Predictions>(jsonDownloaded);
+                Debug.Log(predicted.predictions[0][1]);
             }
         }
     }
@@ -85,4 +98,10 @@ public class CallAI : MonoBehaviour{
         return z;
     }
 
+}
+
+
+[System.Serializable]
+public class Predictions{
+    public float[][] predictions;
 }
