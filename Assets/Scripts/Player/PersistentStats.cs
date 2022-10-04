@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PersistentStats : MonoBehaviour
-{
+{   
     [Header("Player Stats")]
     public int playerLevel = 1;
     public int currentExp = 0;
@@ -34,5 +34,19 @@ public class PersistentStats : MonoBehaviour
 
     public int maxEnemies=19;
     public int maxItems=12;
+    
+    public void SetNewGeneratedMap(Predictions predictions){
+        width               = (int)predictions.predictions[0][0];
+        height              = (int)predictions.predictions[0][1];
+        smooth              = (int)predictions.predictions[0][2];
+        minRegionSize       = (int)predictions.predictions[0][3];
+        minEnemyDistance    = (int)predictions.predictions[0][4];
+        minItemDistance     = (int)predictions.predictions[0][5];
+        maxEnemies          = (int)predictions.predictions[0][6];
+        maxItems            = (int)predictions.predictions[0][7];
+        randomFillPercent   = (int)predictions.predictions[0][8];
+        enemyDensity        = (int)predictions.predictions[0][9];
+        itemDensity         = (int)predictions.predictions[0][10];
+    }
 
 }
