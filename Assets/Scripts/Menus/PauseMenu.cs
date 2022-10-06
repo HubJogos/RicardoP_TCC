@@ -60,7 +60,7 @@ public class PauseMenu : MonoBehaviour
     {
         //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         FindObjectOfType<MapGenAutomata>().RespawnPlayer();
-        Time.timeScale = 1f;
+        Resume();
     }
     public void QuitGame()
     {

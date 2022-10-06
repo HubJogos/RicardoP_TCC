@@ -19,13 +19,13 @@ public class QuestHUD : MonoBehaviour
         if (tracker.quest[0].isActive)
         {
             tracker1.SetActive(true);
-            tracker1.GetComponentInChildren<Text>().text = tracker.quest[0].tracker + tracker.quest[0].goal.requiredAmount + " \\ " + tracker.quest[0].goal.currentAmount;
+            tracker1.GetComponentInChildren<Text>().text = tracker.quest[0].tracker + tracker.quest[0].goal.currentAmount + " \\ " + tracker.quest[0].goal.requiredAmount;
         }
         else tracker1.SetActive(false);
         if (tracker.quest[1].isActive)
         {
             tracker2.SetActive(true);
-            tracker2.GetComponentInChildren<Text>().text = tracker.quest[1].tracker + tracker.quest[1].goal.requiredAmount + " \\ " + tracker.quest[1].goal.currentAmount;
+            tracker2.GetComponentInChildren<Text>().text = tracker.quest[1].tracker + tracker.quest[1].goal.currentAmount + " \\ " + tracker.quest[1].goal.requiredAmount;
         }
         else tracker2.SetActive(false);
     }

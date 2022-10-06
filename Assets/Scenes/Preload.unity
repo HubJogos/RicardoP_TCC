@@ -184,6 +184,7 @@ MonoBehaviour:
   foundSecret: 0
   deathCounter: 0
   completedQuests: 0
+  activeQuests: 0
   interactions: 0
   playerData:
     totalLifeLost: 0
@@ -319,3 +320,5 @@ MonoBehaviour:
   itemDensity: 20
   minEnemyDistance: 15
   minItemDistance: 25
+  maxEnemies: 19
+  maxItems: 12

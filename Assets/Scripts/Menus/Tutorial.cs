@@ -16,6 +16,13 @@ public class Tutorial : MonoBehaviour
             OpenTutorial();
         }
     }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape) && tutorialScreen.activeSelf)
+        {
+            CloseTutorial();
+        }
+    }
     public void OpenTutorial()
     {
         Time.timeScale = 0;

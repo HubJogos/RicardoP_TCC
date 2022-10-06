@@ -85,7 +85,6 @@ public class DialogueManager : MonoBehaviour
 
     public void EndDialogue()
     {
-        interactionText.SetActive(true);
         activeDialogue = false;
         dialogueBox.SetActive(false);
         //animator.SetBool("IsOpen", activeDialogue);
