@@ -9,7 +9,7 @@ public class CallAI : MonoBehaviour{
 
     private string jsonDownloaded;
     private List<object> data_values_regression = new List<object>();
-    public float[] data = new float[12];
+    public float[] data = new float[10];
     public Predictions predicted = new Predictions();
     private PersistentStats stats;
 
