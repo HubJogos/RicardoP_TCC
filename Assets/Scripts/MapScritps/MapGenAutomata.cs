@@ -34,6 +34,7 @@ public class MapGenAutomata : MonoBehaviour
 
 
     [HideInInspector] public int[,] map;//matriz do mapa
+    [HideInInspector] public int[,] mapAll;//matriz dos itens no mapa
     //geração de inimigos
     [HideInInspector] public int currentItems = 0;
     [HideInInspector] public int currentEnemies = 0;
@@ -92,14 +93,29 @@ public class MapGenAutomata : MonoBehaviour
         items = new GameObject[maxItems];
         itemPositions = new Vector2[maxItems];
 
+        String path_saves = "/home/daniele/git-repositories/TCC/Result/";
+        int fileCount = Directory.GetFiles(path_saves, "*.txt", SearchOption.TopDirectoryOnly).Length;
+        String filePathSave = String.Format("{0}mapa{1}.txt", path_saves, fileCount);
+        StreamWriter file1 = new StreamWriter(filePathSave);
+        Debug.Log(filePathSave);
         try
         {
             GenerateMap();
+            
+            for(int i=height-1; i>=0; i--){
+                String mapArr = "";
+                for(int j=0; j<width; j++){
+                    mapArr += mapAll[j,i] + " ";
+                }
+                file1.WriteLine(mapArr);
+            }
+            file1.Close();
         }
         catch (Exception)
         {
 
             GenerateMap();
+            file1.Close();
             throw;
         }
         dataGen.playthroughs++;
@@ -111,6 +127,8 @@ public class MapGenAutomata : MonoBehaviour
     {
         dataGen.doneGen = false;
         map = new int[width, height];
+        mapAll = new int[width, height];
+
         RandomFillMap();
 
         ProcessMap();
@@ -122,6 +140,7 @@ public class MapGenAutomata : MonoBehaviour
 
         ProcessMap();
 
+        mapAll = map;
 
         MeshGenerator meshGen = GetComponent<MeshGenerator>();
         meshGen.GenerateMesh(map, 1);
@@ -147,6 +166,7 @@ public class MapGenAutomata : MonoBehaviour
                 {
                     player = Instantiate(playerPrefab, spawnPos, Quaternion.identity) as GameObject;
                     playerStartPos = player.transform.position;
+                    mapAll[x,y] = 2;
                 }
             }
         }
@@ -170,6 +190,7 @@ public class MapGenAutomata : MonoBehaviour
             if (canSpawnEnd)
             {
                 endStage = Instantiate(endStagePrefab, new Vector2(x - (width / 2), y - (height / 2)), Quaternion.identity) as GameObject;
+                mapAll[x,y] = 3;
             }
         }
         #endregion
@@ -189,6 +210,7 @@ public class MapGenAutomata : MonoBehaviour
                         enemies[0] = go;//coloca no array de referencia
                         enemyPositions[0] = new Vector2(Mathf.FloorToInt(go.transform.position.x + width / 2), Mathf.FloorToInt(go.transform.position.y + height / 2));
                         currentEnemies = 1;//inicia contador
+                        mapAll[tile.tileX,tile.tileY] = 4;
                     }
                     else
                     {
@@ -209,6 +231,7 @@ public class MapGenAutomata : MonoBehaviour
                                 enemies[currentEnemies] = go;//coloca no array de referencia
                                 enemyPositions[currentEnemies] = go.transform.position;
                                 currentEnemies++;//incrementa contador
+                                mapAll[tile.tileX,tile.tileY] = 5;
                             }
                             else
                             {
@@ -216,6 +239,7 @@ public class MapGenAutomata : MonoBehaviour
                                 enemies[currentEnemies] = go;//coloca no array de referencia
                                 enemyPositions[currentEnemies] = go.transform.position;
                                 currentEnemies++;//incrementa contador
+                                mapAll[tile.tileX,tile.tileY] = 4;
                             }
                             
                         }
@@ -241,6 +265,7 @@ public class MapGenAutomata : MonoBehaviour
                         items[0] = go;//coloca no array de referencia
                         itemPositions[0] = new Vector2(Mathf.FloorToInt(go.transform.position.x + width / 2), Mathf.FloorToInt(go.transform.position.y + height / 2));
                         currentItems = 1;//inicia contador
+                        mapAll[tile.tileX,tile.tileY] = 6;
                     }
                     else
                     {
@@ -259,6 +284,7 @@ public class MapGenAutomata : MonoBehaviour
                             items[currentItems] = go;//coloca no array de referencia
                             itemPositions[currentItems] = go.transform.position;
                             currentItems++;//incrementa contador
+                            mapAll[tile.tileX,tile.tileY] = 6;
                         }
                     }
                 }
@@ -781,5 +807,3 @@ public class MapGenAutomata : MonoBehaviour
     }//definição do que é uma sala e métodos de set e compare com seus atributos
     #endregion
 }
-
-   
