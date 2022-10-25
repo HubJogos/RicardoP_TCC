@@ -14,11 +14,13 @@ public class DialogueManager : MonoBehaviour
     public GameObject interactionText;
     public GameObject questButtonMage;
     public GameObject questButtonWarrior;
+    DataGenerator dataGen;
 
     public QuestGiver questGiver;
     public bool activeDialogue = false;
     void Start()
     {
+        dataGen = FindObjectOfType<DataGenerator>();
         sentences = new Queue<string>();
         //animator = GetComponent<Animator>();
     }
@@ -68,7 +70,7 @@ public class DialogueManager : MonoBehaviour
             return;
         }
         string sentence = sentences.Dequeue();
-        FindObjectOfType<DataGenerator>().interactions++;
+        dataGen.interactions++;
         StopAllCoroutines();
         StartCoroutine(TypeSentence(sentence));
     }

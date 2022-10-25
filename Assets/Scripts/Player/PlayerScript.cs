@@ -102,14 +102,22 @@ public class PlayerScript : MonoBehaviour
     Scene activeScene;
 
     public QuestTracker tracker;
+    #endregion
 
     
+    #region Sounds
+    [Header ("Sounds")]
+    AudioManager audioManager;
     #endregion
+
+
+
     void Start()
     {
         dataGen = FindObjectOfType<DataGenerator>();
         stats = FindObjectOfType<PersistentStats>();
         tracker = FindObjectOfType<QuestTracker>();
+        audioManager = FindObjectOfType<AudioManager>();
         
         cam = Camera.main;
         rb = GetComponent<Rigidbody2D>();
@@ -231,6 +239,7 @@ public class PlayerScript : MonoBehaviour
                 }
                 
                 animator.SetBool("IsAttacking", true);
+                audioManager.Play("PlayerSlash");
             }
         }//regulates attacking
 

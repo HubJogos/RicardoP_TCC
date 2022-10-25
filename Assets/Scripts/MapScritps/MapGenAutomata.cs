@@ -43,6 +43,7 @@ public class MapGenAutomata : MonoBehaviour
     [HideInInspector] public Vector2[] enemyPositions;
     [HideInInspector] public float averageEnemyDistance;
     [HideInInspector] public float averageItemDistance;
+    [HideInInspector] bool guaranteeSpawn;
 
     //geração de itens
     
@@ -79,7 +80,7 @@ public class MapGenAutomata : MonoBehaviour
         maxEnemies = stats.maxEnemies;
         maxItems = stats.maxItems;
         
-
+        guaranteeSpawn = false;
 
         if (useRandomSeed)
         {
@@ -174,27 +175,38 @@ public class MapGenAutomata : MonoBehaviour
         }
         #endregion
 
-        #region EnemyPlacement
+        #region EnemyPlacement 
+
         //generating enemies
         foreach (List<Coord> region in GetRegions(0))//recebe os tiles vazios
         {
             foreach (Coord tile in region)//para cada tile vazio
             {
-                if (pseudoRandom.Next(0, 100) < enemyDensity && currentEnemies < maxEnemies)//confere se inimigo deve ser inserido
+                if ((pseudoRandom.Next(0, 100) < enemyDensity && currentEnemies < maxEnemies) || guaranteeSpawn)//confere se inimigo deve ser inserido
                 {
-                    bool canSpawn  = true;
-                    if (!enemies[0])
+                    Vector2 spawnPos = new Vector2(tile.tileX - (width / 2), tile.tileY - (height / 2));
+                    bool canSpawn  = PreventSpawnOverlap(spawnPos, 5f);
+                    if(!canSpawn){
+                        guaranteeSpawn = true;
+                        continue;
+                    }
+
+                    
+                    if (!enemies[0])//insere primeiro inimigo
                     {
-                        GameObject go = Instantiate(enemyPrefab, new Vector2(tile.tileX + 1 - (width / 2), tile.tileY + 1 - (height / 2)), Quaternion.identity) as GameObject;//instancia inimigo, problema no posicionamento
-                        enemies[0] = go;//coloca no array de referencia
-                        enemyPositions[0] = new Vector2(Mathf.FloorToInt(go.transform.position.x + width / 2), Mathf.FloorToInt(go.transform.position.y + height / 2));
-                        currentEnemies = 1;//inicia contador
+                        if(canSpawn){
+                            GameObject go = Instantiate(enemyPrefab, spawnPos, Quaternion.identity) as GameObject;//instancia inimigo
+                            enemies[0] = go;//coloca no array de referencia
+                            enemyPositions[0] = new Vector2(Mathf.FloorToInt(go.transform.position.x + width / 2), Mathf.FloorToInt(go.transform.position.y + height / 2));
+                            currentEnemies = 1;//inicia contador
+                            guaranteeSpawn = false;
+                        }
                     }
                     else
                     {
                         for (int i = 0; i < currentEnemies; i++)//compara distancia a todos os inimigos instanciados
                         {
-                            if (Vector2.Distance(enemies[i].transform.position, new Vector2(tile.tileX - width / 2, tile.tileY - height / 2)) < minEnemyDistance)
+                            if (Vector2.Distance(enemies[i].transform.position, spawnPos) < minEnemyDistance)
                             {
                                 canSpawn = false;
                                 break;
@@ -205,17 +217,19 @@ public class MapGenAutomata : MonoBehaviour
                         {
                             if (currentEnemies % 2 == 1)
                             {
-                                GameObject go = Instantiate(enemyPrefab2, new Vector2(tile.tileX - width / 2, tile.tileY - height / 2), Quaternion.identity) as GameObject;//instancia inimigo
+                                GameObject go = Instantiate(enemyPrefab2, spawnPos, Quaternion.identity) as GameObject;//instancia inimigo
                                 enemies[currentEnemies] = go;//coloca no array de referencia
-                                enemyPositions[currentEnemies] = go.transform.position;
+                                enemyPositions[currentEnemies] = new Vector2(Mathf.FloorToInt(go.transform.position.x + width / 2), Mathf.FloorToInt(go.transform.position.y + height / 2));
                                 currentEnemies++;//incrementa contador
+                                guaranteeSpawn = false;
                             }
                             else
                             {
-                                GameObject go = Instantiate(enemyPrefab, new Vector2(tile.tileX - width / 2, tile.tileY - height / 2), Quaternion.identity) as GameObject;//instancia inimigo
+                                GameObject go = Instantiate(enemyPrefab, spawnPos, Quaternion.identity) as GameObject;//instancia inimigo
                                 enemies[currentEnemies] = go;//coloca no array de referencia
-                                enemyPositions[currentEnemies] = go.transform.position;
+                                enemyPositions[currentEnemies] = new Vector2(Mathf.FloorToInt(go.transform.position.x + width / 2), Mathf.FloorToInt(go.transform.position.y + height / 2));
                                 currentEnemies++;//incrementa contador
+                                guaranteeSpawn = false;
                             }
                             
                         }
@@ -227,26 +241,36 @@ public class MapGenAutomata : MonoBehaviour
 
         #region ItemPlacement
         //generating Items
-
+        guaranteeSpawn = false;
         foreach (List<Coord> region in GetRegions(0))//recebe os tiles vazios
         {
             foreach (Coord tile in region)//para cada tile vazio
             {
-                if (pseudoRandom.Next(0, 100) < itemDensity && currentItems < maxItems)//confere se item deve ser inserido
+                if ((pseudoRandom.Next(0, 100) < itemDensity && currentItems < maxItems) || guaranteeSpawn)//confere se item deve ser inserido
                 {
-                    bool canSpawn = true;
+                    Vector2 spawnPos = new Vector2(tile.tileX - (width / 2), tile.tileY - (height / 2));
+                    bool canSpawn  = PreventSpawnOverlap(spawnPos, 5f);
+                    if(!canSpawn){
+                        guaranteeSpawn = true;
+                        continue;
+                    }
+
                     if (items[0] == null)
                     {
-                        GameObject go = Instantiate(coinPrefab, new Vector2(tile.tileX + 1 - (width / 2), tile.tileY + 1 - (height / 2)), Quaternion.identity) as GameObject;//instancia item
-                        items[0] = go;//coloca no array de referencia
-                        itemPositions[0] = new Vector2(Mathf.FloorToInt(go.transform.position.x + width / 2), Mathf.FloorToInt(go.transform.position.y + height / 2));
-                        currentItems = 1;//inicia contador
+                        if(canSpawn)
+                        {
+                            GameObject go = Instantiate(coinPrefab, spawnPos, Quaternion.identity) as GameObject;//instancia item
+                            items[0] = go;//coloca no array de referencia
+                            itemPositions[0] = new Vector2(Mathf.FloorToInt(go.transform.position.x + width / 2), Mathf.FloorToInt(go.transform.position.y + height / 2));
+                            currentItems = 1;//inicia contador
+                            guaranteeSpawn = false;
+                        }
                     }
                     else
                     {
                         for (int i = 0; i < currentItems; i++)//compara distancia a todos os itens instanciados
                         {
-                            if (Vector2.Distance(items[i].transform.position, new Vector2(tile.tileX - width / 2, tile.tileY - height / 2)) < minItemDistance)
+                            if (Vector2.Distance(items[i].transform.position, spawnPos) < minItemDistance)
                             {
                                 canSpawn = false;
                                 break;
@@ -255,16 +279,19 @@ public class MapGenAutomata : MonoBehaviour
                         //se está em uma distância razoavel do inimigo anterior
                         if (canSpawn)
                         {
-                            GameObject go = Instantiate(coinPrefab, new Vector2(tile.tileX - width / 2, tile.tileY - height / 2), Quaternion.identity) as GameObject;//instancia item
+                            GameObject go = Instantiate(coinPrefab, spawnPos, Quaternion.identity) as GameObject;//instancia item
                             items[currentItems] = go;//coloca no array de referencia
-                            itemPositions[currentItems] = go.transform.position;
+                            itemPositions[currentItems] = new Vector2(Mathf.FloorToInt(go.transform.position.x + width / 2), Mathf.FloorToInt(go.transform.position.y + height / 2));
                             currentItems++;//incrementa contador
+                            guaranteeSpawn = false;
                         }
                     }
                 }
             }
         }
         #endregion
+
+        #region calculatingAverageDistances
         float distSum = 0;
         for (int i = 0; i < currentEnemies; i++)
         {
@@ -284,6 +311,7 @@ public class MapGenAutomata : MonoBehaviour
             }
         }
         averageItemDistance = distSumItem / (items.Length * items.Length);
+        #endregion
 
     }
 
