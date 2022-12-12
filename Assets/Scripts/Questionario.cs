@@ -34,20 +34,20 @@ public class Questionario : MonoBehaviour
     private void BuildRegressionSample()
     {
        callAI.data[0]   = (float)dataGen.playerData.totalLifeLost;
-       //callAI.data[1]   = (float)dataGen.playerData.timeSpent; 
-       callAI.data[1]   = (float)dataGen.playerData.steps; 
-       callAI.data[2]   = (float)dataGen.playerData.deaths; 
-       callAI.data[3]   = (float)dataGen.playerData.percentKills; 
-       callAI.data[4]   = (float)dataGen.playerData.percentItemsCollected; 
-       callAI.data[5]   = float.Parse(answers[1]); // complexety
-       callAI.data[6]   = float.Parse(answers[6]); // difficulty
-       //callAI.data[8]   = (float)dataGen.genData.averageEnemyDistance; 
-       //callAI.data[9]   = (float)dataGen.genData.averageItemDistance;
-       callAI.data[7]  = (float)dataGen.playerData.interactions; 
-       callAI.data[8]  = (float)dataGen.playthroughs;
+       callAI.data[1]   = (float)dataGen.playerData.timeSpent; 
+       callAI.data[2]   = (float)dataGen.playerData.steps; 
+       callAI.data[3]   = (float)dataGen.playerData.deaths; 
+       callAI.data[4]   = (float)dataGen.playerData.percentKills; 
+       callAI.data[5]   = (float)dataGen.playerData.percentItemsCollected; 
+       callAI.data[6]   = float.Parse(answers[1]); // complexety
+       callAI.data[7]   = float.Parse(answers[6]); // difficulty
+       callAI.data[8]   = (float)dataGen.genData.averageEnemyDistance; 
+       callAI.data[9]   = (float)dataGen.genData.averageItemDistance;
+       callAI.data[10]  = (float)dataGen.playerData.interactions; 
+       callAI.data[11]  = (float)dataGen.playthroughs;
        //callAI.data[12]  = float.Parse(answers[3]); // enemydensety
        //callAI.data[13]  = (float)dataGen.genData.itemDensity;
-       callAI.data[9]  = float.Parse(answers[0]); // mapsize
+       //callAI.data[9]  = float.Parse(answers[0]); // mapsize
     }
 
     public void Send()
