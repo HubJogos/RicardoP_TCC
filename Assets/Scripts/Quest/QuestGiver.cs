@@ -17,28 +17,14 @@ public class QuestGiver : MonoBehaviour
     public GameObject acceptButtonWarrior;
     QuestTracker tracker;
     DataGenerator dataGen;
-    PlayerScript player;
-    bool thisDialogueActive;
 
     private void Start()
     {
         dataGen = FindObjectOfType<DataGenerator>();
-        tracker = FindObjectOfType<QuestTracker>();
-        player = FindObjectOfType<PlayerScript>();
-        thisDialogueActive = false;
     }
-    private void Update()
-    {
-        if (Vector2.Distance(player.transform.position, transform.position) > 5f && thisDialogueActive)
-        {
-            RefuseQuest();
-        }
-    }
-
 
     public void OpenQuestWindow()
     {
-        thisDialogueActive = true;
         if(gameObject.name == "MageNialNPC")
         {
             acceptButtonMage.SetActive(true);
@@ -59,8 +45,8 @@ public class QuestGiver : MonoBehaviour
     public void AcceptQuest()
     {
         questWindow.SetActive(false);
-        thisDialogueActive = false;
         quest.isActive = true;
+        tracker = FindObjectOfType<QuestTracker>();
         if (!tracker.quest[0].isActive)
         {
             tracker.quest[0] = quest;
@@ -71,6 +57,5 @@ public class QuestGiver : MonoBehaviour
     public void RefuseQuest()
     {
         questWindow.SetActive(false);
-        thisDialogueActive = false;
     }
 }
