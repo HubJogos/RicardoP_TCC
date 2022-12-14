@@ -5,18 +5,12 @@ using UnityEngine.UI;
 public class MapConfig : MonoBehaviour
 {
     PersistentStats stats;
-    DataGenerator dataGen;
-    public GameObject missionCheck;
-    public GameObject startingMenu;
-    public GameObject configMenu;
     public GameObject[] mapGenData;
     public bool accept = false;
-
 
     // Start is called before the first frame update
     void Start()
     {
-        dataGen = FindObjectOfType<DataGenerator>();
         accept = false;
         stats = FindObjectOfType<PersistentStats>();
         Load();
@@ -30,10 +24,6 @@ public class MapConfig : MonoBehaviour
         {
             mapGenData[7].SetActive(true);
         }
-        if (dataGen.activeQuests == 0)
-        {
-            missionCheck.SetActive(true);
-        }else missionCheck.SetActive(false);
     }
     public void Load()//loads previously used parameters
     {
@@ -74,20 +64,9 @@ public class MapConfig : MonoBehaviour
         accept = true;
         //send player to next scene
     }
-    public void DefaultGen()
-    {
-        accept = true;
-    }
-    public void ConfigureGen()
-    {
-        startingMenu.SetActive(false);
-        configMenu.SetActive(true);
-    }
     public void Cancel()
     {
-        accept = false; 
-        startingMenu.SetActive(true);
-        configMenu.SetActive(false);
+        accept = false;
         gameObject.SetActive(false);
         Time.timeScale = 1;
         //close popup

@@ -223,9 +223,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   daggerDrop: {fileID: 3678395753166504787, guid: b31d2b73c44e2f041920abf089e6eeec,
     type: 3}
-  damageTextPrefab: {fileID: 3426803992755954648, guid: dbd079a70390f394ca4a15834a3b2189,
-    type: 3}
-  damage: 0
 --- !u!212 &632032575022887055
 SpriteRenderer:
   m_ObjectHideFlags: 0
