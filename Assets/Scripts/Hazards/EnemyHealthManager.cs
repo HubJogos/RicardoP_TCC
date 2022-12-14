@@ -18,12 +18,9 @@ public class EnemyHealthManager : MonoBehaviour
 
     public GameObject daggerDrop;
     public int heldAmmo = 0;
-    PlayerScript playerScript;
-    public bool huntPlayer;
 
     void Start()
     {
-        huntPlayer = false;
         playerRef = FindObjectOfType<PlayerScript>();
         if (GetComponent<Animator>())
         {
@@ -33,12 +30,10 @@ public class EnemyHealthManager : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         currentHealth = maxHealth;
         enemySprite = GetComponent<SpriteRenderer>();
-        playerScript = FindObjectOfType<PlayerScript>();
     }
     
     void Update()
     {
-
         if (flashActive)
         {
             if (flashCounter > flashLength * .99f)//flashes enemy in and out
@@ -92,7 +87,7 @@ public class EnemyHealthManager : MonoBehaviour
     }
     public void HurtEnemy(int damage)
     {
-        huntPlayer = true;
+        PlayerScript playerScript = FindObjectOfType<PlayerScript>();
         playerScript.successfulAttacks++;
         flashActive = true;//starts flashing when taking damage
         flashCounter = flashLength;
@@ -111,19 +106,7 @@ public class EnemyHealthManager : MonoBehaviour
     {
         for(int i = heldAmmo; i>0; i--)
         {
-            float distX = Random.Range(0f, 2f);
-            float distY = Random.Range(0f, 2f);
-            if (i == heldAmmo)
-            {
-                Vector2 pos = transform.position;
-                Instantiate(daggerDrop, pos, Quaternion.identity);
-
-            }
-            else
-            {
-                Vector2 pos = new Vector2(transform.position.x + distX, transform.position.y + distY);
-                Instantiate(daggerDrop, pos, Quaternion.identity);
-            }
+            Instantiate(daggerDrop, transform.position, Quaternion.identity);
         }
     }
 }

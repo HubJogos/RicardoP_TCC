@@ -53,7 +53,6 @@ public class DialogueTrigger : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             interactionText.SetActive(false);
-            dialogueManager.EndDialogue();
         }
     }
 }

@@ -10,45 +10,31 @@ public class MoveStraightToPlayer : MonoBehaviour
     public float range;
     Rigidbody2D rb;
     Vector2 movement;
-    EnemyHealthManager enemyHealth;
-    float huntDuration = 5f;
-    float huntCounter;
     private void Start()
-    {        rb = GetComponent<Rigidbody2D>();
-        player = FindObjectOfType<PlayerScript>().transform;
-        enemyHealth = GetComponent<EnemyHealthManager>();
+    {
+        rb = GetComponent<Rigidbody2D>();
     }
     private void FixedUpdate()
     {
-        if (Vector2.Distance(transform.position, player.position) < range || (enemyHealth.huntPlayer && huntCounter > 0))
+        player = FindObjectOfType<PlayerScript>().transform;
+        if (Vector2.Distance(transform.position, player.position) < range)
         {
             Vector2 direction = player.position - transform.position;
             direction.Normalize();
             movement = direction;
             MoveTowards(movement);
-            if (enemyHealth.huntPlayer)
-            {
-                huntCounter -= Time.deltaTime;
-            }
         }
         else
         {
-            ReturnToSpawnPoint();
-            huntCounter = huntDuration;
-            enemyHealth.huntPlayer = false;
+            Vector2 direction = rootPosition.position - transform.position;
+            direction.Normalize();
+            movement = direction;
+            MoveTowards(movement);
         }
     }
-    public void MoveTowards(Vector2 target)
+    void MoveTowards(Vector2 target)
     {
         rb.velocity = target * speed;
-    }
-
-    void ReturnToSpawnPoint()
-    {
-        Vector2 direction = rootPosition.position - transform.position;
-        direction.Normalize();
-        movement = direction;
-        MoveTowards(movement);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
