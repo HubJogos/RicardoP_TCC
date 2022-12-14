@@ -40,6 +40,7 @@ public class PlayerScript : MonoBehaviour
     private SpriteRenderer playerSprite;
     [HideInInspector] public float waitToDamage = 2f;//time to wait before dealing another instance of damage
     [HideInInspector] public bool isTouching;//detects if player came into contact
+    public float knockbackStrength = 5f;
     #endregion
 
     #region DashVariables
@@ -59,7 +60,6 @@ public class PlayerScript : MonoBehaviour
     private bool isAttacking;
     public int damage = 2;
     public GameObject damageTextPrefab;
-    public string textToDisplay;
     #endregion
 
     #region ShootingVariables
@@ -300,7 +300,7 @@ public class PlayerScript : MonoBehaviour
             playerY = Mathf.FloorToInt(transform.position.y + mapReference.height / 2);
             if (playerX != currPlayerX || playerY != currPlayerY)//se mudar de posição
             {
-                UpdatePathing();
+                steps++;
             }
         }//controla dados do jogador no mapa gerado
         
@@ -355,6 +355,7 @@ public class PlayerScript : MonoBehaviour
         {
             currentAmmo--;
             GameObject projectile = Instantiate(projectilePrefab, transform.position, Quaternion.Euler(0, 0, angle));
+            projectile.GetComponent<DaggerToss>().damage = damage;
             Rigidbody2D projectileRb = projectile.GetComponent<Rigidbody2D>();
             projectileRb.AddForce(new Vector2(shootDirection.x, shootDirection.y) * projectileForce, ForceMode2D.Impulse);
             if (Time.timeScale != 0)
@@ -441,20 +442,19 @@ public class PlayerScript : MonoBehaviour
             damageTextInstance.transform.GetChild(0).GetComponent<TextMeshPro>().SetText(damage.ToString());
             enemyHealthManager.HurtEnemy(damage);
         }
-    }
-
-    public void OnCollisionEnter2D(Collision2D other)
+    }//se colide com inimigo, recebe dano
+    private void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.CompareTag("Enemy"))
         {
+            Vector2 knockback = transform.position - other.transform.position;
             int enemyDamage = other.gameObject.GetComponent<EnemyStats>().damage;
             HurtPlayer(enemyDamage);//causa dano na colisão
             GameObject damageTextInstance = Instantiate(damageTextPrefab, other.transform);
             damageTextInstance.transform.GetChild(0).GetComponent<TextMeshPro>().SetText(enemyDamage.ToString());
-            damageTextInstance.transform.GetChild(0).GetComponent<TextMeshPro>().color = new Color32(200, 100, 100, 255);//red            
-        }
-    }//se colide com inimigo, recebe dano
-
+            damageTextInstance.transform.GetChild(0).GetComponent<TextMeshPro>().color = new Color32(200, 100, 100, 255);//red 
+        }        
+    }
 
     public void OnCollisionExit2D(Collision2D other)//resets "touching" status
     {
@@ -472,19 +472,11 @@ public class PlayerScript : MonoBehaviour
         totalLifeLost += damageTaken;
         if (currentHealth <= 0)
         {
+            for (int i = 0; i < tracker.quest.Length; i++)
+            {
+                tracker.quest[i].goal.currentAmount = 0;
+            }
             FindObjectOfType<Continue>().GameOverScreen();
         }
-    }
-
-    public void UpdatePathing()
-    {
-        if (pathing == null)
-        {
-            pathing = mapReference.map;
-        }
-        currPlayerX = playerX;//usado para verificar mudanças na posição
-        currPlayerY = playerY;
-        pathing[playerX, playerY]--;//decrementa posição do jogador
-        steps++;
     }
 }

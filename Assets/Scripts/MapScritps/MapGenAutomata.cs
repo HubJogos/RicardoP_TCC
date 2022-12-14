@@ -136,15 +136,16 @@ public class MapGenAutomata : MonoBehaviour
             while (!canSpawnPlayer)
             {
 
-                int x = Mathf.FloorToInt(pseudoRandom.Next(0, width - 1));
-                int y = Mathf.FloorToInt(pseudoRandom.Next(0, height - 1));
+                int x = Mathf.FloorToInt(pseudoRandom.Next(2, width - 2));
+                int y = Mathf.FloorToInt(pseudoRandom.Next(2, height - 2));
+                Vector2 spawnPos = new Vector2(x - (width / 2), y - (height / 2));
                 if (map[x, y] == 0)
                 {
-                    canSpawnPlayer = true;
+                    canSpawnPlayer = PreventSpawnOverlap(spawnPos, 5f);
                 }
                 if (canSpawnPlayer)
                 {
-                    player = Instantiate(playerPrefab, new Vector2(x - (width / 2), y - (height / 2)), Quaternion.identity) as GameObject;
+                    player = Instantiate(playerPrefab, spawnPos, Quaternion.identity) as GameObject;
                     playerStartPos = player.transform.position;
                 }
             }
@@ -161,9 +162,10 @@ public class MapGenAutomata : MonoBehaviour
 
             int x = Mathf.FloorToInt(pseudoRandom.Next(0, width - 1));
             int y = Mathf.FloorToInt(pseudoRandom.Next(0, height - 1));
-            if (map[x, y] == 0)
+            if (map[x, y] == 0 && Vector2.Distance(player.transform.position, new Vector2(x,y)) > 5)
             {
-                canSpawnEnd = true;
+                Vector2 spawnPos = new Vector2(x, y);
+                canSpawnEnd = PreventSpawnOverlap(spawnPos, 5f);
             }
             if (canSpawnEnd)
             {
@@ -180,7 +182,7 @@ public class MapGenAutomata : MonoBehaviour
             {
                 if (pseudoRandom.Next(0, 100) < enemyDensity && currentEnemies < maxEnemies)//confere se inimigo deve ser inserido
                 {
-                    bool canSpawn = true;
+                    bool canSpawn  = true;
                     if (!enemies[0])
                     {
                         GameObject go = Instantiate(enemyPrefab, new Vector2(tile.tileX + 1 - (width / 2), tile.tileY + 1 - (height / 2)), Quaternion.identity) as GameObject;//instancia inimigo, problema no posicionamento
@@ -285,15 +287,53 @@ public class MapGenAutomata : MonoBehaviour
 
     }
 
+    public bool PreventSpawnOverlap(Vector2 spawnPos, float radius)
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(spawnPos, radius);
+
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            Vector2 centerPoint = colliders[i].bounds.center;
+            float wid = colliders[i].bounds.extents.x;
+            float hei = colliders[i].bounds.extents.y;
+
+            float leftExtent = centerPoint.x - wid;
+            float rightExtent = centerPoint.x + wid;
+            float topExtent = centerPoint.y + hei;
+            float botExtent = centerPoint.y - hei;
+
+            if (spawnPos.x >= leftExtent && spawnPos.x <= rightExtent)
+            {
+                if (spawnPos.y >= botExtent && spawnPos.y <= topExtent)
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     public void RespawnPlayer()
     {
-        int x = Mathf.FloorToInt(pseudoRandom.Next(0, width - 1));
-        int y = Mathf.FloorToInt(pseudoRandom.Next(0, height - 1));
-        if (map[x, y] == 0)
+        
+        bool canRespawn = false;
+        while (!canRespawn)
         {
-            player.transform.position = new Vector2(x - (width / 2), y - (height / 2));
-            playerStartPos = player.transform.position;
+            int x = Mathf.FloorToInt(pseudoRandom.Next(1, width - 2));
+            int y = Mathf.FloorToInt(pseudoRandom.Next(1, height - 2));
+            Vector2 spawnPos = new Vector2(x - (width / 2), y - (height / 2));
+            if (map[x, y] == 0)
+            {
+                canRespawn = PreventSpawnOverlap(spawnPos, 3f);
+            }
+            if (canRespawn)
+            {
+                player.transform.position = spawnPos;
+                playerStartPos = player.transform.position;
+            }
         }
+        
+            
     }
     #region MapGenFunctions
     void RandomFillMap()

@@ -164,8 +164,6 @@ TextureImporter:
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
-  vTOnly: 0
-  ignoreMasterTextureLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -175,8 +173,8 @@ TextureImporter:
   textureSettings:
     serializedVersion: 2
     filterMode: 0
-    aniso: 1
-    mipBias: 0
+    aniso: -1
+    mipBias: -100
     wrapU: 1
     wrapV: 1
     wrapW: 1
@@ -197,12 +195,9 @@ TextureImporter:
   textureType: 8
   textureShape: 1
   singleChannelComponent: 0
-  flipbookRows: 1
-  flipbookColumns: 1
   maxTextureSizeSet: 0
   compressionQualitySet: 0
   textureFormatSet: 0
-  ignorePngGamma: 0
   applyGammaDecoding: 0
   platformSettings:
   - serializedVersion: 3
@@ -1277,54 +1272,6 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable:
-      CaveTiles1_15: -7481293443112958149
-      CaveTiles1_37: -3509247377246419981
-      CaveTiles1_28: -5255206848161507176
-      CaveTiles1_33: 7345351209707359036
-      CaveTiles1_38: -2109913142653441000
-      CaveTiles1_39: 1264474672706144191
-      CaveTiles1_11: 1609566451164527907
-      CaveTiles1_25: 5029987922422282211
-      CaveTiles1_45: 6103522530332204053
-      CaveTiles1_22: -510575044900621034
-      CaveTiles1_41: -1590678893791049435
-      CaveTiles1_4: -2927287735852433395
-      CaveTiles1_20: 773322207390991008
-      CaveTiles1_24: 3059086150311223278
-      CaveTiles1_8: 6551703383251493370
-      CaveTiles1_5: -6005871459835464014
-      CaveTiles1_44: 5977481355859456495
-      CaveTiles1_1: -5970103060252762830
-      CaveTiles1_6: 3110786745079731698
-      CaveTiles1_0: -2308322092537389593
-      CaveTiles1_34: 476269499347219812
-      CaveTiles1_29: -1702453593276436052
-      CaveTiles1_17: -2768140116547126843
-      CaveTiles1_27: 1815593209189376872
-      CaveTiles1_40: -5946030564664519298
-      CaveTiles1_19: -5824434978694368249
-      CaveTiles1_36: 5330286345388383413
-      CaveTiles1_46: 4549743521101400448
-      CaveTiles1_14: -1928067696033970496
-      CaveTiles1_2: 4854377176562986519
-      CaveTiles1_21: -5377494475315483663
-      CaveTiles1_7: -1760633926419923088
-      CaveTiles1_35: -5655068503070284991
-      CaveTiles1_26: -3570277600945897414
-      CaveTiles1_10: -4876051336105113444
-      CaveTiles1_16: -318704855495170830
-      CaveTiles1_12: -7522190008149671333
-      CaveTiles1_30: -2702592990901891971
-      CaveTiles1_13: -6405986716845945258
-      CaveTiles1_18: 8561982250953563971
-      CaveTiles1_31: 5592267611939764786
-      CaveTiles1_3: -784063399682678833
-      CaveTiles1_43: -378556273213584037
-      CaveTiles1_42: 3681063727245391209
-      CaveTiles1_32: 1766622069559445845
-      CaveTiles1_23: -3712388579226532304
-      CaveTiles1_9: -6260956648533412406
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
