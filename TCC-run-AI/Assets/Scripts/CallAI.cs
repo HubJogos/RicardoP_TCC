@@ -55,7 +55,6 @@ public class CallAI : MonoBehaviour{
             else{
                 jsonDownloaded = request.downloadHandler.text;
                 Debug.Log(jsonDownloaded);
-                Debug.Log("vamo merda");
                 Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(jsonDownloaded);  
            
                 for(var itemIndex = 0; itemIndex < myDeserializedClass.Mapas.Count; itemIndex++){
