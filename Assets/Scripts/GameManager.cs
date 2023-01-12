@@ -5,17 +5,15 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
-    
-    private void Awake()
-    {
-        DontDestroyOnLoad(gameObject);
-    }
-   
-
-    // Update is called once per frame
-    void Update()
-    {
+    private static GameManager instance;
+    void Awake(){
         
+        DontDestroyOnLoad(this);
+        if (instance == null)
+            instance = this;
+        else
+            DestroyObject(gameObject);
     }
-    
+
 }
+
