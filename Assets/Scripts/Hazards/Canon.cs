@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Canon : MonoBehaviour
 {
-    public float speed;
+    public float rotationSpeed;
     public float range;
     public float rateOfFire;
     float rofCounter;
@@ -13,17 +13,19 @@ public class Canon : MonoBehaviour
     public GameObject projectile;
     bool isFiring;
     Vector2 playerPos;
+    Transform player;
     private void Start()
     {
-        
+        player = FindObjectOfType<PlayerScript>().transform;
+
     }
     private void FixedUpdate()
     {
-        playerPos = FindObjectOfType<PlayerScript>().transform.position;
+        playerPos = player.position;
         Vector2 aimDir = playerPos - new Vector2(transform.position.x,transform.position.y);
         float angle = Mathf.Atan2(aimDir.y,aimDir.x)*Mathf.Rad2Deg - 90f;
         Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-        transform.rotation = Quaternion.Slerp(transform.rotation, rotation, speed * Time.fixedDeltaTime);
+        transform.rotation = Quaternion.Slerp(transform.rotation, rotation, rotationSpeed * Time.fixedDeltaTime);
 
         if (isFiring)
         {
@@ -36,6 +38,7 @@ public class Canon : MonoBehaviour
 
         if (Vector2.Distance(playerPos, transform.position) < range && !isFiring)
         {
+
             rofCounter = rateOfFire;//resets attack timer
             isFiring = true;//sets attack variables
             ShootPlayer();            
