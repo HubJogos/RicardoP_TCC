@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -38,7 +38,8 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] private float flashLength = 0f;
     private float flashCounter = 0f;
     private SpriteRenderer playerSprite;
-    [HideInInspector] public float waitToDamage = 2f;//time to wait before dealing another instance of damage
+    [HideInInspector] public float waitToDamage = 3f;//time to wait before dealing another instance of damage
+    public float nextDamage;
     [HideInInspector] public bool isTouching;//detects if player came into contact
     public float knockbackStrength = 5f;
     #endregion
@@ -58,22 +59,25 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] private float attackTime = .25f;//time player must wait between attacks
     private float attackCounter;
     private bool isAttacking;
-    public int damage = 2;
+    public int damage = 5;
     public GameObject damageTextPrefab;
     #endregion
 
     #region ShootingVariables
     [Header("TopDown Shooting")]
     public GameObject projectilePrefab;
-    public float projectileForce = 20f;
+    public float projectileForce = 25f;
     [HideInInspector] public Vector2 shootDirection;
     [HideInInspector] public float angle;
     [HideInInspector] public bool isShooting;
-    [SerializeField] private float shootingTime = .25f;//time player must wait between attacks
+    [SerializeField] private float shootingTime = .05f;//time player must wait between attacks
     private float shootingCounter;//counts time to shoot again
     public int maxAmmo;
     public int currentAmmo;
     DataGenerator dataGen;
+    public float firerate = 0.5f;
+    float nextFire;
+
     #endregion
 
     #region DataVariables
@@ -227,7 +231,7 @@ public class PlayerScript : MonoBehaviour
                 canRoll = true;
             }
         }//regulates attack timer
-        if (Input.GetKeyDown(KeyCode.Mouse0))//attack button is set to left mouse button
+        if (Input.GetKeyDown(KeyCode.Mouse2))//attack button is set to left mouse button
         {
             if (!isAttacking)//checks if player is not attacking already
             {
@@ -282,15 +286,14 @@ public class PlayerScript : MonoBehaviour
         }//controls flashing when taking damage
         if (isTouching)
         {
-            waitToDamage -= Time.deltaTime;//counts down damage instance timer
-            if (waitToDamage <= 0)
+            if (Time.time > nextDamage)
             {
+                nextDamage = Time.time + waitToDamage;
                 HurtPlayer(damage);//causa dano ao permanecer encostado na hitbox
                 GameObject damageTextInstance = Instantiate(damageTextPrefab, transform);
                 damageTextInstance.transform.GetChild(0).GetComponent<TextMeshPro>().color = new Color32(200, 100, 100, 255);
                 damageTextInstance.transform.GetChild(0).GetComponent<TextMeshPro>().SetText(damage.ToString());
 
-                waitToDamage = 2f;//resets counter
             }
         }//controla recepção de dano ao permanecer tocando um inimigo
         
@@ -312,42 +315,20 @@ public class PlayerScript : MonoBehaviour
                 steps++;
             }
         }//controla dados do jogador no mapa gerado
-        
-    }
 
-    void FixedUpdate()//60 vezes por segundo, atualiza os comandos de mirar e atirar
-    {
-        mousePosition = cam.ScreenToWorldPoint(Input.mousePosition);
-        shootDirection = (mousePosition - rb.position).normalized;
-
+        shootDirection = (mousePosition - rb.position).normalized;//aqui2
         angle = Mathf.Atan2(shootDirection.y, shootDirection.x) * Mathf.Rad2Deg + 235f;
 
 
-        if (isShooting)
-        {
-            canRoll = false;
-            rb.velocity = Vector2.zero;//blocks movement when shooting
-            shootingCounter -= Time.fixedDeltaTime;//counts down attack timer
-            if (shootingCounter <= 0)
-            {
-                animator.SetBool("IsShooting", false);
-                isShooting = false;//resets shooting
-                canRoll = true;
-            }
-        }
-
         if (Input.GetKeyDown(KeyCode.Mouse1))
         {
-            if (!isShooting)
-            {
-                shootingCounter = shootingTime;//resets attack timer
-                isShooting = true;//sets attack variables
-                animator.SetBool("IsShooting", true);
-                Shoot();
-            }
-
+            animator.SetBool("IsShooting", true);
+            Shoot();
+            animator.SetBool("IsShooting", false);
         }
+        
     }
+
 
     void LevelUp()
     {
@@ -360,19 +341,24 @@ public class PlayerScript : MonoBehaviour
     }
     public void Shoot()
     {
-        if (currentAmmo > 0)
+        if (Time.time > nextFire)
         {
-            currentAmmo--;
-            GameObject projectile = Instantiate(projectilePrefab, transform.position, Quaternion.Euler(0, 0, angle));
-            projectile.GetComponent<DaggerToss>().damage = damage;
-            Rigidbody2D projectileRb = projectile.GetComponent<Rigidbody2D>();
-            projectileRb.AddForce(new Vector2(shootDirection.x, shootDirection.y) * projectileForce, ForceMode2D.Impulse);
-            if (Time.timeScale != 0)
+            nextFire = Time.time + firerate;
+            if (currentAmmo > 0)
             {
-                attacksAttempted++;
+                currentAmmo--;
+                GameObject projectile = Instantiate(projectilePrefab, transform.position, Quaternion.Euler(0, 0, angle));
+                projectile.GetComponent<DaggerToss>().damage = damage;
+                Rigidbody2D projectileRb = projectile.GetComponent<Rigidbody2D>();
+                projectileRb.AddForce(new Vector2(shootDirection.x, shootDirection.y) * projectileForce, ForceMode2D.Impulse);//aqui
+                if (Time.timeScale != 0)
+                {
+                    attacksAttempted++;
+                }
+                shotsFired++;
             }
-            shotsFired++;
         }
+
 
     }//dispara projétil
 
