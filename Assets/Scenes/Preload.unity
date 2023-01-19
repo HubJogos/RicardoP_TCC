@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_LightingSettings: {fileID: 4890085278179872738, guid: 39be3e789d5999e45b22c9d840e4efce,
+  m_LightingSettings: {fileID: 4890085278179872738, guid: c4c20c0bdd3494044aeec54c0a47b81c,
     type: 2}
 --- !u!196 &4
 NavMeshSettings:
@@ -137,6 +137,7 @@ GameObject:
   - component: {fileID: 461567152}
   - component: {fileID: 461567153}
   - component: {fileID: 461567154}
+  - component: {fileID: 461567155}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -326,3 +327,21 @@ MonoBehaviour:
   minItemDistance: 25
   maxEnemies: 19
   maxItems: 12
+--- !u!114 &461567155
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 461567149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e7138b5760dd584980e85ec9c3cf005, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - name: PlayerSlash
+    clip: {fileID: 8300000, guid: 88b1cbe3caa3fee4b8b103b5edd7aba9, type: 3}
+    volume: 1
+    pitch: 0.5
+    source: {fileID: 0}
