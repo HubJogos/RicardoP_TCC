@@ -75,8 +75,9 @@ public class PlayerScript : MonoBehaviour
     public int maxAmmo;
     public int currentAmmo;
     DataGenerator dataGen;
-    public float firerate = 0.5f;
+    public float firerate = 1f;
     float nextFire;
+    float waitShoot;
 
     #endregion
 
@@ -320,16 +321,20 @@ public class PlayerScript : MonoBehaviour
         angle = Mathf.Atan2(shootDirection.y, shootDirection.x) * Mathf.Rad2Deg + 235f;
 
 
-        if (Input.GetKeyDown(KeyCode.Mouse1))
+        if (Input.GetKeyDown(KeyCode.Mouse1))//Joga a faca com o botão direito do mouse
         {
             animator.SetBool("IsShooting", true);
+            StartCoroutine(ExecuteAfterTime(firerate));
             Shoot();
-            animator.SetBool("IsShooting", false);
+            
         }
-        
     }
 
-
+    IEnumerator ExecuteAfterTime(float time)
+    {
+        yield return new WaitForSeconds(time);
+        animator.SetBool("IsShooting", false);
+    }
     void LevelUp()
     {
         UpgradeHealth(10);
