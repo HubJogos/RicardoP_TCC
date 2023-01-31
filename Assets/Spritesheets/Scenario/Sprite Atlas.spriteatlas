@@ -28,11 +28,15 @@ SpriteAtlas:
       allowAlphaSplitting: 0
       enableRotation: 1
       enableTightPacking: 1
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
     variantMultiplier: 1
     packables:
     - {fileID: 2800000, guid: 66ba84ba0a4ebb8458c59a5be5ac71d8, type: 3}
     - {fileID: 102900000, guid: f63fbec11f218cf4299a69e693508f68, type: 3}
     bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 3814363562521435490, guid: bfd09110aefc6c14996e8eaabf7659c2, type: 3}
@@ -1528,6 +1532,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 439f887ea48001648a03d278631f10c3, type: 3}
   - {fileID: 21300000, guid: eba73c7e832f4464b98b457519ba7415, type: 3}
   - {fileID: 21300000, guid: 285fcf8ebbe809c449069b442c94c700, type: 3}
+  - {fileID: 21300000, guid: 0c63539e8c137b947a237c42e2e9ca4f, type: 2}
   - {fileID: 21300000, guid: b7ce84aedd1817341bc71c0e32c2489b, type: 3}
   - {fileID: 21300000, guid: 4973b8ae60fc46f4b8b6df015c96034a, type: 3}
   - {fileID: 21300000, guid: 60e557cef8dee4c4c967d43f6c665fc5, type: 3}
@@ -3068,6 +3073,7 @@ SpriteAtlas:
   - hurt4
   - jump4
   - run6
+  - CaveTiles1_39
   - idle3
   - high_jump6
   - high_jump3
@@ -3114,5 +3120,6 @@ SpriteAtlas:
   - climb2
   - attack_extra3
   - high_jump11
+  m_RenderDataMap: {}
   m_Tag: Sprite Atlas
   m_IsVariant: 0

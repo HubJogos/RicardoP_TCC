@@ -14,6 +14,7 @@ public class Questionario : MonoBehaviour
     public GameObject[] questions;
     int activeQuestion;
     public GameObject replayButton;
+    public GameObject quickReplayButton;
 
     string url = "https://docs.google.com/forms/u/0/d/e/1FAIpQLScRToMptMqLz3J0mSTqUqnZpBWOIxLEwiGF6B5qOY_s96DsJQ/formResponse";
     //string url = "https://docs.google.com/forms/u/0/d/e/1FAIpQLSeTWlIZjBk9SPzWS3e6JbhDtIf1UdTbiTv2EUxs2FHQ2DP3Qg/formResponse"; //original
@@ -23,6 +24,7 @@ public class Questionario : MonoBehaviour
     private void Start()
     {
         replayButton.SetActive(false);
+        quickReplayButton.SetActive(true);
         dataGen = FindObjectOfType<DataGenerator>();
         dataGen.UpdateCounters();
         activeQuestion = 0;
@@ -31,12 +33,14 @@ public class Questionario : MonoBehaviour
     public void Send()
     {
         StartCoroutine(Post(dataGen));
-        //Analytics.CustomEvent("LifeLost", new Dictionary<string, object> { { "TotalLifeLost", dataGen.playerData.totalLifeLost } });
     }
     public void Replay()
     {
         Send();
         SceneManager.LoadScene(0);
+    }
+    public void QuickReplay(){
+        SceneManager.LoadScene(2);
     }
     public void QuitGame()
     {
@@ -140,6 +144,7 @@ public class Questionario : MonoBehaviour
         else
         {
             replayButton.SetActive(true);
+            quickReplayButton.SetActive(false);
         }
     }
 
