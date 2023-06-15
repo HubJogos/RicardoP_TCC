@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//script associado ao item da adaga que inimigos criam quando derrotados ou colide com outros objetos
+
 public class DaggerPickup : MonoBehaviour
 {
-    // Start is called before the first frame update
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Player"))

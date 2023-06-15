@@ -1,11 +1,11 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using System.Runtime.InteropServices;
 using UnityEngine.SceneManagement;
-
+//Questionário foi removido do ciclo de gameplay do jogo
 public class Questionario : MonoBehaviour
 {
     [DllImport("__Internal")]
@@ -31,7 +31,7 @@ public class Questionario : MonoBehaviour
         answers = new string[questions.Length];
     }
 
-    /*private void BuildRegressionSample()
+    private void BuildRegressionSample()
     {
        callAI.data[0]   = (float)dataGen.playerData.totalLifeLost;
        callAI.data[1]   = (float)dataGen.playerData.timeSpent; 
@@ -39,26 +39,17 @@ public class Questionario : MonoBehaviour
        callAI.data[3]   = (float)dataGen.playerData.deaths; 
        callAI.data[4]   = (float)dataGen.playerData.percentKills; 
        callAI.data[5]   = (float)dataGen.playerData.percentItemsCollected; 
-       callAI.data[6]   = float.Parse(answers[1]);
-       callAI.data[7]   = float.Parse(answers[6]);
+       callAI.data[6]   = float.Parse(answers[1]); // complexety
+       callAI.data[7]   = float.Parse(answers[6]); // difficulty
        callAI.data[8]   = (float)dataGen.genData.averageEnemyDistance; 
        callAI.data[9]   = (float)dataGen.genData.averageItemDistance;
        callAI.data[10]  = (float)dataGen.playerData.interactions; 
-       callAI.data[11]  = (float)dataGen.playthroughs;  
-    } */
-    
-    private void BuildKNNSample(){
-        callAI.dataKnn[0] = (float)dataGen.playerData.timeSpent;
-        callAI.dataKnn[1] = (float)dataGen.playerData.percentKills;
-        callAI.dataKnn[2] = float.Parse(answers[0]); //map size
-        callAI.dataKnn[3] = float.Parse(answers[2]); //enemy amount
-        callAI.dataKnn[4] = float.Parse(answers[3]); //enemy density
-        callAI.dataKnn[5] = float.Parse(answers[4]); //interaction ammount
-        callAI.dataKnn[6] = float.Parse(answers[5]); //conversation material
-        callAI.dataKnn[7] = float.Parse(answers[6]); //difficulty
-        callAI.dataKnn[8] = (float)dataGen.playerData.percentItemsCollected;
-        callAI.dataKnn[9] = (float)dataGen.playerData.totalLifeLost;
+       callAI.data[11]  = (float)dataGen.playthroughs;
+       //callAI.data[12]  = float.Parse(answers[3]); // enemydensety
+       //callAI.data[13]  = (float)dataGen.genData.itemDensity;
+       //callAI.data[9]  = float.Parse(answers[0]); // mapsize
     }
+
     public void Send()
     {
         StartCoroutine(Post(dataGen));
@@ -171,9 +162,7 @@ public class Questionario : MonoBehaviour
         else
         {
             replayButton.SetActive(true);
-            //BuildRegressionSample();
-            BuildKNNSample();
-            //Debug.Log(BuildKNNSample());
+            BuildRegressionSample();
             callAI.CallAPI();
         }
     }

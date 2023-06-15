@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-
+//Script associado em cada GameObject que possua caixa de diálogo na interação, tal como NPCs
+//Usado para determinar quando iniciar diálogo e quais frases serão ditas
 public class DialogueTrigger : MonoBehaviour
 {
     public Dialogue dialogue;
@@ -10,7 +11,7 @@ public class DialogueTrigger : MonoBehaviour
     DialogueManager dialogueManager;
     void Start()
     {
-        dialogueManager = FindObjectOfType<DialogueManager>();
+        dialogueManager = FindObjectOfType<DialogueManager>();//referência ao controlador
     }
 
     public void TriggerDialogue()
@@ -25,17 +26,7 @@ public class DialogueTrigger : MonoBehaviour
         dialogueManager.StartDialogue(dialogue);
     }
 
-    void OnTriggerStay2D(Collider2D other)
-    {
-        
-        if (other.gameObject.CompareTag("Player"))
-        {
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                TriggerDialogue();
-            }
-        }
-    }
+    //Controla comportamento em relação ao alcance de interação
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
@@ -48,11 +39,23 @@ public class DialogueTrigger : MonoBehaviour
             interactionText.SetActive(true);
         }
     }
+    void OnTriggerStay2D(Collider2D other)
+    {
+
+        if (other.gameObject.CompareTag("Player"))
+        {
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                TriggerDialogue();
+            }
+        }
+    }
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
             interactionText.SetActive(false);
+            dialogueManager.EndDialogue();
         }
     }
 }

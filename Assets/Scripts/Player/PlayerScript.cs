@@ -17,6 +17,10 @@ public class PlayerScript : MonoBehaviour
     private Vector2 mousePosition;
     private Vector3 mouseDirection;
     public float speed = 7f;
+    public ParticleSystem dust;
+    bool waiting = false;
+    CameraController camControl;
+    public UIManager playerUI;
     #endregion
 
     #region PlayerStats
@@ -28,18 +32,23 @@ public class PlayerScript : MonoBehaviour
     public int baseExp = 100;
     public Text levelText;
     public int[] expToLevelUp;
+    [SerializeField] ParticleSystem levelUpVFX;
     #endregion
 
     #region HealthVariables
     [Header("Health Variables")]
     public int maxHealth;
     public int currentHealth;
-    private bool flashActive;//variable to flash player when hit
+    private bool flashActive;//variável que controla o "piscar" do jogador ao ser atingido
     [SerializeField] private float flashLength = 0f;
     private float flashCounter = 0f;
     private SpriteRenderer playerSprite;
-    [HideInInspector] public float waitToDamage = 2f;//time to wait before dealing another instance of damage
-    [HideInInspector] public bool isTouching;//detects if player came into contact
+    [HideInInspector] public float waitToDamage = 2f;//tempo que o sistema espera quando o jogador permanece em contato com os inimigos antes de causar dano novamente
+    [HideInInspector] public bool isTouching;//detecta se player entrou em contato com inimigo
+    public float knockbackStrength = 5f; 
+    Color red = new Color(1f, 0f, 0f, 1f);
+    Color normal = new Color(1f, 1f, 1f, 1f);
+    [SerializeField] ParticleSystem bloodVFX;
     #endregion
 
     #region DashVariables
@@ -47,19 +56,26 @@ public class PlayerScript : MonoBehaviour
     private float rollSpeed;
     [SerializeField] private float defaultRollSpeed = 1000f;
     [HideInInspector] public bool canRoll = true;
-    [SerializeField] private float dashTime = .25f;//time player must wait between dashes
+    [SerializeField] private float dashTime = .25f;//tempo de espera entre dashes
     private float rollCounter;
     private bool isRolling;
     #endregion
 
     #region AttackVariables
     [Header("Attack Variables")]
-    [SerializeField] private float attackTime = .25f;//time player must wait between attacks
+    public GameObject slashHitbox;
+    [SerializeField] private float attackTime = .25f;//tempo de espera entre ataques
+    public float angleOffset;
     private float attackCounter;
     private bool isAttacking;
     public int damage = 2;
     public GameObject damageTextPrefab;
-    public string textToDisplay;
+    float swordAngleOffset = 10f;
+
+    [SerializeField] GameObject swordRotation;
+    Quaternion targetRotation;
+    public float rotationSpeed;
+    [SerializeField] GameObject swordTrail;
     #endregion
 
     #region ShootingVariables
@@ -69,8 +85,8 @@ public class PlayerScript : MonoBehaviour
     [HideInInspector] public Vector2 shootDirection;
     [HideInInspector] public float angle;
     [HideInInspector] public bool isShooting;
-    [SerializeField] private float shootingTime = .25f;//time player must wait between attacks
-    private float shootingCounter;//counts time to shoot again
+    [SerializeField] private float shootingTime = .25f;//tempo de espera entre disparos
+    private float shootingCounter;//conta tempo até poder atirar novamente
     public int maxAmmo;
     public int currentAmmo;
     DataGenerator dataGen;
@@ -78,7 +94,7 @@ public class PlayerScript : MonoBehaviour
 
     #region DataVariables
     [Header ("Data Variables")]
-    MapGenAutomata mapReference;//referencia ao gerador
+    MapGenAutomata mapReference;//referencia ao gerador do mapa
     [HideInInspector] public int[,] pathing;
     int currPlayerX, currPlayerY;
     int playerX, playerY;
@@ -102,27 +118,51 @@ public class PlayerScript : MonoBehaviour
     Scene activeScene;
 
     public QuestTracker tracker;
+    #endregion
 
-    
+    #region Sounds
+    [Header ("Sounds")]
+    AudioManager audioManager;
+    #endregion
+
+    #region Inventory
+    [Header("Inventory")]
+    public GameObject inventoryUI;
+
+
+
+
+    #endregion
+
+    #region ExternalSetups
+    [HideInInspector] public NecroBoss boss;
     #endregion
     void Start()
     {
         dataGen = FindObjectOfType<DataGenerator>();
         stats = FindObjectOfType<PersistentStats>();
         tracker = FindObjectOfType<QuestTracker>();
-        
+        audioManager = FindObjectOfType<AudioManager>();
+        inventoryUI.SetActive(false);
+
         cam = Camera.main;
+        camControl = cam.GetComponent<CameraController>();
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         activeScene = SceneManager.GetActiveScene();
+        playerSprite = GetComponent<SpriteRenderer>();
+
         if (activeScene.name == "MapGeneration")
         {
+            boss = FindObjectOfType<NecroBoss>();
             mapReference = FindObjectOfType<MapGenAutomata>();
 
             itemsGenerated = mapReference.currentItems;
             playerX = Mathf.FloorToInt(transform.position.x + mapReference.width / 2);//conversão da posição global para a posição no mapa do jogador
             playerY = Mathf.FloorToInt(transform.position.y + mapReference.height / 2);
+            boss.target = transform;
         }
+
         steps = 0;
         attacksAttempted = 0;
 
@@ -132,9 +172,8 @@ public class PlayerScript : MonoBehaviour
         playerLevel = stats.playerLevel;
 
         currentHealth = maxHealth;//makes sure current health can't be greater than max health
-        playerSprite = GetComponent<SpriteRenderer>();
 
-        levelText.text = "Level: " + playerLevel;//sets screen text for player level
+        levelText.text = playerLevel.ToString();//sets screen text for player level
         expToLevelUp = new int[maxLevel];
         expToLevelUp[0] = baseExp;
         for (int i = 1; i < expToLevelUp.Length; i++)
@@ -144,21 +183,30 @@ public class PlayerScript : MonoBehaviour
 
         shootingCounter = shootingTime;
         currentAmmo = maxAmmo;
+        slashHitbox.SetActive(false);
+        playerUI.UpdateHealth();
     }
 
 
     void Update()//atualiza comandos de movimento o mais rápido possível
     {
+        if (Input.GetKeyDown(KeyCode.I)) inventoryUI.SetActive(!inventoryUI.activeSelf);//toggle inventory
+
+
         moveX = Input.GetAxisRaw("Horizontal");//receives directional inputs
         moveY = Input.GetAxisRaw("Vertical");
         mousePosition = cam.ScreenToWorldPoint(Input.mousePosition);//recebe posição do mouse na tela
         mouseDirection = -((Vector2)transform.position - mousePosition).normalized;//calcula vetor direcional do ataque, com valor absoluto = 1
 
-
+        #region Movement and rolling
         if (!isRolling)
         {
             rb.velocity = new Vector2(moveX, moveY).normalized * speed;//actually does the moving part
-        }
+            if(rb.velocity.magnitude > 0 && !audioManager.isPlaying("PlayerStep"))
+            {
+                audioManager.Play("PlayerStep");
+            }
+        }//controla movimento
         else
         {
             canRoll = false;
@@ -171,6 +219,7 @@ public class PlayerScript : MonoBehaviour
                 canRoll = false;
                 isRolling = true;
                 animator.SetBool("IsRolling", true);
+                audioManager.Play("PlayerDash");
                 rollSpeed = defaultRollSpeed;
             }
         }//starts rolling
@@ -180,8 +229,8 @@ public class PlayerScript : MonoBehaviour
             if (rollCounter <= 0)
             {
                 canRoll = true;
-            }//resets rolling
-        }
+            }
+        }//resets rolling
         else
         {
             rollCounter = dashTime;
@@ -206,6 +255,8 @@ public class PlayerScript : MonoBehaviour
             animator.SetFloat("lastMoveX", moveX);//required for correcting idle direction
             animator.SetFloat("lastMoveY", moveY);
         }//idle look direction
+        #endregion
+
 
         if (isAttacking)
         {
@@ -216,57 +267,62 @@ public class PlayerScript : MonoBehaviour
             {
                 animator.SetBool("IsAttacking", false);
                 isAttacking = false;//resets attack
+                slashHitbox.SetActive(false);
+                swordTrail.SetActive(false);
                 canRoll = true;
             }
-        }//regulates attack timer
+        }//regulates attack timer and resets
         if (Input.GetKeyDown(KeyCode.Mouse0))//attack button is set to left mouse button
         {
             if (!isAttacking)//checks if player is not attacking already
             {
                 attackCounter = attackTime;//resets attack timer
                 isAttacking = true;//sets attack variables
+                slashHitbox.SetActive(true);
+                swordTrail.SetActive(true);
                 if (Time.timeScale != 0)
                 {
                     attacksAttempted++;
                 }
-                
                 animator.SetBool("IsAttacking", true);
-            }
+                audioManager.PlayUnrestricted("PlayerSlash");
+            }//actually does the attacking
         }//regulates attacking
+
 
         if (flashActive)
         {
             if (flashCounter > flashLength * .99f)//flashes player in and out
             {
-                playerSprite.color = new Color(playerSprite.color.r, playerSprite.color.g, playerSprite.color.b, 0f);
+                playerSprite.color = red;
             }
             else if (flashCounter > flashLength * .82f)
             {
-                playerSprite.color = new Color(playerSprite.color.r, playerSprite.color.g, playerSprite.color.b, 1f);
+                playerSprite.color = normal;
             }
             else if (flashCounter > flashLength * .66f)
             {
-                playerSprite.color = new Color(playerSprite.color.r, playerSprite.color.g, playerSprite.color.b, 0f);
+                playerSprite.color = red;
             }
             else if (flashCounter > flashLength * .49f)
             {
-                playerSprite.color = new Color(playerSprite.color.r, playerSprite.color.g, playerSprite.color.b, 1f);
+                playerSprite.color = normal;
             }
             else if (flashCounter > flashLength * .33f)
             {
-                playerSprite.color = new Color(playerSprite.color.r, playerSprite.color.g, playerSprite.color.b, 0f);
+                playerSprite.color = red;
             }
             else if (flashCounter > flashLength * .16f)
             {
-                playerSprite.color = new Color(playerSprite.color.r, playerSprite.color.g, playerSprite.color.b, 1f);
+                playerSprite.color = normal;
             }
             else if (flashCounter > 0)
             {
-                playerSprite.color = new Color(playerSprite.color.r, playerSprite.color.g, playerSprite.color.b, 0f);
+                playerSprite.color = red;
             }
             else
             {
-                playerSprite.color = new Color(playerSprite.color.r, playerSprite.color.g, playerSprite.color.b, 1f);
+                playerSprite.color = normal;
                 flashActive = false;//resets flashing
             }
             flashCounter -= Time.deltaTime;//counts down on flash times
@@ -300,7 +356,7 @@ public class PlayerScript : MonoBehaviour
             playerY = Mathf.FloorToInt(transform.position.y + mapReference.height / 2);
             if (playerX != currPlayerX || playerY != currPlayerY)//se mudar de posição
             {
-                UpdatePathing();
+                steps++;
             }
         }//controla dados do jogador no mapa gerado
         
@@ -310,9 +366,21 @@ public class PlayerScript : MonoBehaviour
     {
         mousePosition = cam.ScreenToWorldPoint(Input.mousePosition);
         shootDirection = (mousePosition - rb.position).normalized;
-
         angle = Mathf.Atan2(shootDirection.y, shootDirection.x) * Mathf.Rad2Deg + 235f;
-
+        
+        //controla rotação da espada ao atacar
+        if (attacksAttempted % 2 == 0)
+        {
+            targetRotation = swordRotation.transform.rotation;
+            targetRotation = Quaternion.AngleAxis(angle - swordAngleOffset-15f, transform.forward);
+        }
+        else
+        {
+            targetRotation = swordRotation.transform.rotation;
+            targetRotation = Quaternion.AngleAxis(angle - swordAngleOffset + 105f, transform.forward);
+        }
+        swordRotation.transform.rotation = Quaternion.Lerp(swordRotation.transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        //-----------------------------------
 
         if (isShooting)
         {
@@ -342,37 +410,53 @@ public class PlayerScript : MonoBehaviour
 
     void LevelUp()
     {
+        //efeitos
+        audioManager.Play("LevelUp");
+        levelUpVFX.Play();
+        //recompensas
+        damage += 2;
         UpgradeHealth(10);
+        //atualiza valores
         stats.currentExp = stats.currentExp-expToLevelUp[playerLevel];
         currentExp = stats.currentExp;
         stats.playerLevel++;
         playerLevel = stats.playerLevel;
-        levelText.text = "Level: " + playerLevel;
+        levelText.text = playerLevel.ToString();
+        playerUI.UpdateExp();
+
     }
     public void Shoot()
     {
         if (currentAmmo > 0)
         {
+            audioManager.PlayUnrestricted("DaggerToss");
             currentAmmo--;
+
             GameObject projectile = Instantiate(projectilePrefab, transform.position, Quaternion.Euler(0, 0, angle));
+            projectile.GetComponent<DaggerToss>().damage = damage;
+
             Rigidbody2D projectileRb = projectile.GetComponent<Rigidbody2D>();
             projectileRb.AddForce(new Vector2(shootDirection.x, shootDirection.y) * projectileForce, ForceMode2D.Impulse);
+
             if (Time.timeScale != 0)
             {
                 attacksAttempted++;
             }
             shotsFired++;
+            playerUI.UpdateAmmo();
         }
 
     }//dispara projétil
 
     public void PickUpAmmo()
     {
+        audioManager.PlayUnrestricted("DaggerPickup");
         if (currentAmmo < maxAmmo)
         {
             currentAmmo++;
         }
         ammoPickup++;
+        playerUI.UpdateAmmo();
     }//incrementa munição
     void GetExp(int amount)
     {
@@ -380,14 +464,16 @@ public class PlayerScript : MonoBehaviour
         currentExp = stats.currentExp;
         if (currentExp >= expToLevelUp[playerLevel]){
             LevelUp();
-        }
+        }else playerUI.UpdateExp();
     }
     public void UpgradeHealth(int amount)
     {
         stats.maxHealth += amount;
         maxHealth = stats.maxHealth;
         currentHealth = maxHealth;
-    }//incrementa munição
+        playerUI.UpdateHealth();
+    }//incrementa HP
+
     public void GetCoin()
     {
         for(int i = 0; i < tracker.quest.Length; i++)
@@ -397,6 +483,7 @@ public class PlayerScript : MonoBehaviour
                 tracker.quest[i].goal.Gathered();
                 if (tracker.quest[i].goal.IsReached())
                 {
+                    audioManager.Play("FinishQuest");
                     GetExp(tracker.quest[i].expReward);
                     UpgradeHealth(tracker.quest[i].healthImprovement);
                     tracker.quest[i].Complete();
@@ -411,6 +498,7 @@ public class PlayerScript : MonoBehaviour
 
     public void DefeatEnemy(int exp)
     {
+        audioManager.PlayUnrestricted("EnemyDeath");
         isTouching = false;
         GetExp(exp);
         enemiesDefeated++;
@@ -432,7 +520,7 @@ public class PlayerScript : MonoBehaviour
 
     }
 
-    public void OnTriggerEnter2D(Collider2D other)//causa dano ao inimigo quando trigger ocorre
+    public void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Enemy"))
         {
@@ -441,9 +529,9 @@ public class PlayerScript : MonoBehaviour
             damageTextInstance.transform.GetChild(0).GetComponent<TextMeshPro>().SetText(damage.ToString());
             enemyHealthManager.HurtEnemy(damage);
         }
-    }
+    }//trigger em questão está associado ao objeto da arma do personagem, que, ao entrar em contato com inimigo, causa dano
 
-    public void OnCollisionEnter2D(Collision2D other)
+    private void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.CompareTag("Enemy"))
         {
@@ -451,10 +539,9 @@ public class PlayerScript : MonoBehaviour
             HurtPlayer(enemyDamage);//causa dano na colisão
             GameObject damageTextInstance = Instantiate(damageTextPrefab, other.transform);
             damageTextInstance.transform.GetChild(0).GetComponent<TextMeshPro>().SetText(enemyDamage.ToString());
-            damageTextInstance.transform.GetChild(0).GetComponent<TextMeshPro>().color = new Color32(200, 100, 100, 255);//red            
-        }
-    }//se colide com inimigo, recebe dano
-
+            damageTextInstance.transform.GetChild(0).GetComponent<TextMeshPro>().color = new Color32(200, 100, 100, 255);//red 
+        }        
+    }//caso jogador encoste em algum inimigo, recebe dano
 
     public void OnCollisionExit2D(Collision2D other)//resets "touching" status
     {
@@ -466,25 +553,36 @@ public class PlayerScript : MonoBehaviour
 
     public void HurtPlayer(int damageTaken)
     {
+        HitStop(.1f);
+        bloodVFX.Play();
+        audioManager.PlayUnrestricted("EnemyHit");
         flashActive = true;//begins flashing player
         flashCounter = flashLength;//resets health timer
         currentHealth -= damageTaken;//decreases health
         totalLifeLost += damageTaken;
+        playerUI.UpdateHealth();
         if (currentHealth <= 0)
         {
+            audioManager.Play("PlayerDeath");
+            for (int i = 0; i < tracker.quest.Length; i++)
+            {
+                tracker.quest[i].goal.currentAmount = 0;
+            }
             FindObjectOfType<Continue>().GameOverScreen();
         }
     }
 
-    public void UpdatePathing()
+    public void HitStop(float duration)
     {
-        if (pathing == null)
-        {
-            pathing = mapReference.map;
-        }
-        currPlayerX = playerX;//usado para verificar mudanças na posição
-        currPlayerY = playerY;
-        pathing[playerX, playerY]--;//decrementa posição do jogador
-        steps++;
+        if (waiting) return;
+        Time.timeScale = 0f;
+        StartCoroutine(WaitForFloat(duration));
+    }//breve pausa ao ser atingido, melhoria de feedback para o jogador
+    IEnumerator WaitForFloat(float duration)
+    {
+        waiting = true;
+        yield return new WaitForSecondsRealtime(duration);
+        Time.timeScale = 1f;
+        waiting = false;
     }
 }

@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_LightingSettings: {fileID: 4890085278179872738, guid: 39be3e789d5999e45b22c9d840e4efce,
+  m_LightingSettings: {fileID: 4890085278179872738, guid: c4c20c0bdd3494044aeec54c0a47b81c,
     type: 2}
 --- !u!196 &4
 NavMeshSettings:
@@ -137,6 +137,7 @@ GameObject:
   - component: {fileID: 461567152}
   - component: {fileID: 461567153}
   - component: {fileID: 461567154}
+  - component: {fileID: 461567155}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -326,3 +327,130 @@ MonoBehaviour:
   minItemDistance: 25
   maxEnemies: 19
   maxItems: 12
+--- !u!114 &461567155
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 461567149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e7138b5760dd584980e85ec9c3cf005, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - name: PlayerSlash
+    clip: {fileID: 8300000, guid: 88b1cbe3caa3fee4b8b103b5edd7aba9, type: 3}
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+    loop: 0
+  - name: PlayerDash
+    clip: {fileID: 8300000, guid: 7f6f9d7c9be1f9244a51d5b61d68d9a7, type: 3}
+    volume: 1
+    pitch: 2
+    source: {fileID: 0}
+    loop: 0
+  - name: PlayerStep
+    clip: {fileID: 8300000, guid: 023ea3ddeaa8dd146b7633a0800e5a0e, type: 3}
+    volume: 1
+    pitch: 2
+    source: {fileID: 0}
+    loop: 0
+  - name: DaggerToss
+    clip: {fileID: 8300000, guid: 10a7824bc6a4c8044b70a604b0db259b, type: 3}
+    volume: 1
+    pitch: 3
+    source: {fileID: 0}
+    loop: 0
+  - name: DaggerPickup
+    clip: {fileID: 8300000, guid: a8ff19bb5da485f4bb6589b2fc692fdc, type: 3}
+    volume: 1
+    pitch: 0.5
+    source: {fileID: 0}
+    loop: 0
+  - name: PlayerHit
+    clip: {fileID: 8300000, guid: 490bfbc72255342408984f60044487de, type: 3}
+    volume: 1
+    pitch: 0.5
+    source: {fileID: 0}
+    loop: 0
+  - name: EnemyHit
+    clip: {fileID: 8300000, guid: 7c47b20bb9874304a809dc5580d403ba, type: 3}
+    volume: 1
+    pitch: 0.5
+    source: {fileID: 0}
+    loop: 0
+  - name: PlayerDeath
+    clip: {fileID: 8300000, guid: 88b1cbe3caa3fee4b8b103b5edd7aba9, type: 3}
+    volume: 1
+    pitch: 0.5
+    source: {fileID: 0}
+    loop: 0
+  - name: EnemyDeath
+    clip: {fileID: 8300000, guid: 566d2ea6240b489479a6e9fd608c2621, type: 3}
+    volume: 1
+    pitch: 0.5
+    source: {fileID: 0}
+    loop: 0
+  - name: CoinPickup
+    clip: {fileID: 8300000, guid: b0e62ed71b1538648b719821f4f63b4c, type: 3}
+    volume: 1
+    pitch: 2
+    source: {fileID: 0}
+    loop: 0
+  - name: LevelUp
+    clip: {fileID: 8300000, guid: cfce0cea076109f478783201b2a9f57f, type: 3}
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+    loop: 0
+  - name: FinishQuest
+    clip: {fileID: 8300000, guid: aa967a280457c054bb646d57611f5bd0, type: 3}
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+    loop: 0
+  - name: ButtonHover
+    clip: {fileID: 8300000, guid: 35cf7766e9e2aa542811e896fde57989, type: 3}
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+    loop: 0
+  - name: ButtonClick
+    clip: {fileID: 8300000, guid: c5cb2ac29e89dbf43a9b644caaad45e6, type: 3}
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+    loop: 0
+  - name: GroundTentacle
+    clip: {fileID: 8300000, guid: 8f879305adc7d934cb244cbeca392254, type: 3}
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+    loop: 0
+  - name: BossCollision
+    clip: {fileID: 8300000, guid: 8101f81d1f8aa2c46b95d3036754bdf8, type: 3}
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+    loop: 0
+  - name: BossDeath
+    clip: {fileID: 8300000, guid: 86faeab09dd63db488a030edffa6562f, type: 3}
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+    loop: 0
+  - name: BossAttacking
+    clip: {fileID: 8300000, guid: b51bd3a7aec281245b15d0f873693b95, type: 3}
+    volume: 0.7
+    pitch: 1
+    source: {fileID: 0}
+    loop: 0
+  - name: BossProjectile
+    clip: {fileID: 8300000, guid: 431550a5f8828374c890ec2724f5b647, type: 3}
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+    loop: 0

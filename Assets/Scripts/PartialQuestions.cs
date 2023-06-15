@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-
+//Dado que o questionário foi removido do ciclo de gameplay, esse script não possui aplicação atualmente
 public class PartialQuestions : MonoBehaviour
 {
     DataGenerator dataGen;

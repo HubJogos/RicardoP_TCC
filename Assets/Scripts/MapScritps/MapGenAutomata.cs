@@ -4,6 +4,13 @@ using System;
 using System.IO;
 using UnityEngine;
 
+/*
+ * Controla a geração do mapa em sua abstração na forma de matriz:
+ * - Recebe dados persistentes relevantes para a geração do script "PersistentStats"
+ * - Posiciona Jogador, inimigos, itens e "portal" do chefe de acordo com dados recebidos
+ * - Calcula métricas de geração
+ * - Mantém contador de quantos mapas foram gerados na sessão de jogo para o script "DataGen"
+ */
 public class MapGenAutomata : MonoBehaviour
 {
     DataGenerator dataGen;
@@ -43,6 +50,7 @@ public class MapGenAutomata : MonoBehaviour
     [HideInInspector] public Vector2[] enemyPositions;
     [HideInInspector] public float averageEnemyDistance;
     [HideInInspector] public float averageItemDistance;
+    [HideInInspector] bool guaranteeSpawn;
 
     //geração de itens
     
@@ -50,7 +58,8 @@ public class MapGenAutomata : MonoBehaviour
     [HideInInspector] public GameObject[] items;
     [HideInInspector] public Vector2[] itemPositions;
     public GameObject playerPrefab;
-    public GameObject endStagePrefab;
+    public GameObject bossPortalPrefab;
+    public GameObject arenaSpawnPos;
     public GameObject endStage;
     public GameObject player;
     bool canSpawnEnd = false;
@@ -58,10 +67,13 @@ public class MapGenAutomata : MonoBehaviour
     public Vector2 playerStartPos;
     System.Random pseudoRandom;
 
-    private void Start()
+    public bool reverseMap = true;
+
+    private void Start()//Recebe dados e gera mapa assim que a cena inicia
     {
         stats = FindObjectOfType<PersistentStats>();
         dataGen = FindObjectOfType<DataGenerator>();
+        bossPortalPrefab.GetComponent<MoveToArena>().arenaSpawnPos = arenaSpawnPos;
 
         //receive persistent stats relevant to generation
         
@@ -79,19 +91,21 @@ public class MapGenAutomata : MonoBehaviour
         maxEnemies = stats.maxEnemies;
         maxItems = stats.maxItems;
         
+        guaranteeSpawn = false;
 
-
-        if (useRandomSeed)
+        if (useRandomSeed)//usado para aleatorizar seed
         {
-            seed = Time.time.ToString();//usado para aleatorizar seed
+            seed = Time.time.ToString();
         }
         pseudoRandom = new System.Random(seed.GetHashCode());//pseudo random number generator
+
         enemies = new GameObject[maxEnemies];
         enemyPositions = new Vector2[maxEnemies];
 
         items = new GameObject[maxItems];
         itemPositions = new Vector2[maxItems];
 
+        //Raramente a inicialização do mapa falhava, "try-catch" foi um "band-aid" inesperadamente eficiente
         try
         {
             GenerateMap();
@@ -103,16 +117,15 @@ public class MapGenAutomata : MonoBehaviour
             throw;
         }
         dataGen.playthroughs++;
-    }//gera mapa on startup
+    }
 
-
-
+    
     void GenerateMap()
     {
         dataGen.doneGen = false;
         map = new int[width, height];
-        RandomFillMap();
 
+        RandomFillMap();
         ProcessMap();
 
         for (int x = 0; x < smooth; x++)
@@ -120,31 +133,34 @@ public class MapGenAutomata : MonoBehaviour
             SmoothMap();
         }
 
-        ProcessMap();
+        ProcessMap();//processar o mapa duas vezes dessa forma resultou em mapas de aparência mais "natural"
 
-
+        //repassa dados relevantes para o script que gera os polígonos que compôem o mapa e inicializa a composição
         MeshGenerator meshGen = GetComponent<MeshGenerator>();
-        meshGen.GenerateMesh(map, 1);
+        meshGen.GenerateMesh(map, 1, reverseMap);
 
         #region PlayerPlacement
-        if (player != null)
+
+        if (player != null)//garante que somente um player será criado
         {
             Destroy(player);
         }
         else
         {
-            while (!canSpawnPlayer)
+            while (!canSpawnPlayer)//encontra posição válida para o jogador
             {
 
-                int x = Mathf.FloorToInt(pseudoRandom.Next(0, width - 1));
-                int y = Mathf.FloorToInt(pseudoRandom.Next(0, height - 1));
+                int x = Mathf.FloorToInt(pseudoRandom.Next(2, width - 2));
+                int y = Mathf.FloorToInt(pseudoRandom.Next(2, height - 2));
+
+                Vector2 spawnPos = new Vector2(x - (width / 2), y - (height / 2));//conversão de parâmetros de geração para posicionamento real no unity
                 if (map[x, y] == 0)
                 {
-                    canSpawnPlayer = true;
+                    canSpawnPlayer = PreventSpawnOverlap(spawnPos, 5f);//garante que jogador não será posicionado dentro de paredes
                 }
                 if (canSpawnPlayer)
                 {
-                    player = Instantiate(playerPrefab, new Vector2(x - (width / 2), y - (height / 2)), Quaternion.identity) as GameObject;
+                    player = Instantiate(playerPrefab, spawnPos, Quaternion.identity) as GameObject;
                     playerStartPos = player.transform.position;
                 }
             }
@@ -152,47 +168,59 @@ public class MapGenAutomata : MonoBehaviour
         #endregion
 
         #region ExitPlacement
-        if (endStage != null)
+        if (endStage != null)//garante que somente uma saída será gerada
         {
             Destroy(endStage);
         }
-        while (!canSpawnEnd)
+        while (!canSpawnEnd)//encontra posição válida para saída
         {
 
             int x = Mathf.FloorToInt(pseudoRandom.Next(0, width - 1));
             int y = Mathf.FloorToInt(pseudoRandom.Next(0, height - 1));
-            if (map[x, y] == 0)
+            if (map[x, y] == 0 && Vector2.Distance(player.transform.position, new Vector2(x,y)) > 5)//garante distância mínima do jogador
             {
-                canSpawnEnd = true;
+                Vector2 spawnPos = new Vector2(x, y);
+                canSpawnEnd = PreventSpawnOverlap(spawnPos, 5f);
             }
             if (canSpawnEnd)
             {
-                endStage = Instantiate(endStagePrefab, new Vector2(x - (width / 2), y - (height / 2)), Quaternion.identity) as GameObject;
+                endStage = Instantiate(bossPortalPrefab, new Vector2(x - (width / 2), y - (height / 2)), Quaternion.identity) as GameObject;
             }
         }
         #endregion
 
-        #region EnemyPlacement
+        #region EnemyPlacement 
         //generating enemies
         foreach (List<Coord> region in GetRegions(0))//recebe os tiles vazios
         {
             foreach (Coord tile in region)//para cada tile vazio
             {
-                if (pseudoRandom.Next(0, 100) < enemyDensity && currentEnemies < maxEnemies)//confere se inimigo deve ser inserido
+                if ((pseudoRandom.Next(0, 100) < enemyDensity && currentEnemies < maxEnemies)//confere se inimigo deve ser inserido
+                    || guaranteeSpawn)//é necessário garantir o posicionamento do primeiro
                 {
-                    bool canSpawn = true;
-                    if (!enemies[0])
+                    Vector2 spawnPos = new Vector2(tile.tileX - (width / 2), tile.tileY - (height / 2));//converte posição inicial para coordenadas reais do unity
+                    bool canSpawn  = PreventSpawnOverlap(spawnPos, 5f);//garante posição fora das paredes
+                    if(!canSpawn){
+                        guaranteeSpawn = true;
+                        continue;
+                    }
+
+                    
+                    if (!enemies[0])//insere primeiro inimigo
                     {
-                        GameObject go = Instantiate(enemyPrefab, new Vector2(tile.tileX + 1 - (width / 2), tile.tileY + 1 - (height / 2)), Quaternion.identity) as GameObject;//instancia inimigo, problema no posicionamento
-                        enemies[0] = go;//coloca no array de referencia
-                        enemyPositions[0] = new Vector2(Mathf.FloorToInt(go.transform.position.x + width / 2), Mathf.FloorToInt(go.transform.position.y + height / 2));
-                        currentEnemies = 1;//inicia contador
+                        if(canSpawn){
+                            GameObject go = Instantiate(enemyPrefab, spawnPos, Quaternion.identity) as GameObject;//instancia inimigo
+                            enemies[0] = go;//coloca no array de referencia
+                            enemyPositions[0] = new Vector2(Mathf.FloorToInt(go.transform.position.x + width / 2), Mathf.FloorToInt(go.transform.position.y + height / 2));
+                            currentEnemies = 1;//inicia contador
+                            guaranteeSpawn = false;
+                        }
                     }
                     else
                     {
                         for (int i = 0; i < currentEnemies; i++)//compara distancia a todos os inimigos instanciados
                         {
-                            if (Vector2.Distance(enemies[i].transform.position, new Vector2(tile.tileX - width / 2, tile.tileY - height / 2)) < minEnemyDistance)
+                            if (Vector2.Distance(enemies[i].transform.position, spawnPos) < minEnemyDistance)
                             {
                                 canSpawn = false;
                                 break;
@@ -203,17 +231,19 @@ public class MapGenAutomata : MonoBehaviour
                         {
                             if (currentEnemies % 2 == 1)
                             {
-                                GameObject go = Instantiate(enemyPrefab2, new Vector2(tile.tileX - width / 2, tile.tileY - height / 2), Quaternion.identity) as GameObject;//instancia inimigo
+                                GameObject go = Instantiate(enemyPrefab2, spawnPos, Quaternion.identity) as GameObject;//instancia inimigo
                                 enemies[currentEnemies] = go;//coloca no array de referencia
-                                enemyPositions[currentEnemies] = go.transform.position;
+                                enemyPositions[currentEnemies] = new Vector2(Mathf.FloorToInt(go.transform.position.x + width / 2), Mathf.FloorToInt(go.transform.position.y + height / 2));
                                 currentEnemies++;//incrementa contador
+                                guaranteeSpawn = false;
                             }
                             else
                             {
-                                GameObject go = Instantiate(enemyPrefab, new Vector2(tile.tileX - width / 2, tile.tileY - height / 2), Quaternion.identity) as GameObject;//instancia inimigo
+                                GameObject go = Instantiate(enemyPrefab, spawnPos, Quaternion.identity) as GameObject;//instancia inimigo
                                 enemies[currentEnemies] = go;//coloca no array de referencia
-                                enemyPositions[currentEnemies] = go.transform.position;
+                                enemyPositions[currentEnemies] = new Vector2(Mathf.FloorToInt(go.transform.position.x + width / 2), Mathf.FloorToInt(go.transform.position.y + height / 2));
                                 currentEnemies++;//incrementa contador
+                                guaranteeSpawn = false;
                             }
                             
                         }
@@ -225,26 +255,36 @@ public class MapGenAutomata : MonoBehaviour
 
         #region ItemPlacement
         //generating Items
-
+        guaranteeSpawn = false;
         foreach (List<Coord> region in GetRegions(0))//recebe os tiles vazios
         {
             foreach (Coord tile in region)//para cada tile vazio
             {
-                if (pseudoRandom.Next(0, 100) < itemDensity && currentItems < maxItems)//confere se item deve ser inserido
+                if ((pseudoRandom.Next(0, 100) < itemDensity && currentItems < maxItems) || guaranteeSpawn)//confere se item deve ser inserido
                 {
-                    bool canSpawn = true;
+                    Vector2 spawnPos = new Vector2(tile.tileX - (width / 2), tile.tileY - (height / 2));
+                    bool canSpawn  = PreventSpawnOverlap(spawnPos, 5f);
+                    if(!canSpawn){
+                        guaranteeSpawn = true;
+                        continue;
+                    }
+
                     if (items[0] == null)
                     {
-                        GameObject go = Instantiate(coinPrefab, new Vector2(tile.tileX + 1 - (width / 2), tile.tileY + 1 - (height / 2)), Quaternion.identity) as GameObject;//instancia item
-                        items[0] = go;//coloca no array de referencia
-                        itemPositions[0] = new Vector2(Mathf.FloorToInt(go.transform.position.x + width / 2), Mathf.FloorToInt(go.transform.position.y + height / 2));
-                        currentItems = 1;//inicia contador
+                        if(canSpawn)
+                        {
+                            GameObject go = Instantiate(coinPrefab, spawnPos, Quaternion.identity) as GameObject;//instancia item
+                            items[0] = go;//coloca no array de referencia
+                            itemPositions[0] = new Vector2(Mathf.FloorToInt(go.transform.position.x + width / 2), Mathf.FloorToInt(go.transform.position.y + height / 2));
+                            currentItems = 1;//inicia contador
+                            guaranteeSpawn = false;
+                        }
                     }
                     else
                     {
                         for (int i = 0; i < currentItems; i++)//compara distancia a todos os itens instanciados
                         {
-                            if (Vector2.Distance(items[i].transform.position, new Vector2(tile.tileX - width / 2, tile.tileY - height / 2)) < minItemDistance)
+                            if (Vector2.Distance(items[i].transform.position, spawnPos) < minItemDistance)
                             {
                                 canSpawn = false;
                                 break;
@@ -253,16 +293,19 @@ public class MapGenAutomata : MonoBehaviour
                         //se está em uma distância razoavel do inimigo anterior
                         if (canSpawn)
                         {
-                            GameObject go = Instantiate(coinPrefab, new Vector2(tile.tileX - width / 2, tile.tileY - height / 2), Quaternion.identity) as GameObject;//instancia item
+                            GameObject go = Instantiate(coinPrefab, spawnPos, Quaternion.identity) as GameObject;//instancia item
                             items[currentItems] = go;//coloca no array de referencia
-                            itemPositions[currentItems] = go.transform.position;
+                            itemPositions[currentItems] = new Vector2(Mathf.FloorToInt(go.transform.position.x + width / 2), Mathf.FloorToInt(go.transform.position.y + height / 2));
                             currentItems++;//incrementa contador
+                            guaranteeSpawn = false;
                         }
                     }
                 }
             }
         }
         #endregion
+
+        #region calculatingAverageDistances
         float distSum = 0;
         for (int i = 0; i < currentEnemies; i++)
         {
@@ -282,24 +325,65 @@ public class MapGenAutomata : MonoBehaviour
             }
         }
         averageItemDistance = distSumItem / (items.Length * items.Length);
+        #endregion
 
     }
 
+    public bool PreventSpawnOverlap(Vector2 spawnPos, float radius)//função que previne instanciação de inimigos / itens / jogador dentro das paredes
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(spawnPos, radius);//projeta circunferencia 2d em torno da posição sendo testada
+
+        for (int i = 0; i < colliders.Length; i++)//se algum colisor atravessa a circunferencia:
+        {
+            Vector2 centerPoint = colliders[i].bounds.center;
+            float wid = colliders[i].bounds.extents.x;
+            float hei = colliders[i].bounds.extents.y;
+
+            float leftExtent = centerPoint.x - wid;
+            float rightExtent = centerPoint.x + wid;
+            float topExtent = centerPoint.y + hei;
+            float botExtent = centerPoint.y - hei;
+
+            if (spawnPos.x >= leftExtent && spawnPos.x <= rightExtent)
+            {
+                if (spawnPos.y >= botExtent && spawnPos.y <= topExtent)//se a posição testada está dentro da circunferencia que teve colisões
+                {
+                    return false;
+                }
+            }
+        }
+        return true;//somente quando circunferencia não possui intersecções com outros colisores
+    }
+
+    /* usado somente no botão "Recarregar" no menu de pausa, um band-aid enquanto a instanciação do jogador ainda tinha chances de ocorrer dentro das paredes
+     * Agora não possui utilidade, está presente somente para que seja adequadamente removida, junto do botão do menu
+     */
     public void RespawnPlayer()
     {
-        int x = Mathf.FloorToInt(pseudoRandom.Next(0, width - 1));
-        int y = Mathf.FloorToInt(pseudoRandom.Next(0, height - 1));
-        if (map[x, y] == 0)
-        {
-            player.transform.position = new Vector2(x - (width / 2), y - (height / 2));
-            playerStartPos = player.transform.position;
-        }
-    }
-    #region MapGenFunctions
-    void RandomFillMap()
-    {
         
+        bool canRespawn = false;
+        while (!canRespawn)
+        {
+            int x = Mathf.FloorToInt(pseudoRandom.Next(1, width - 2));
+            int y = Mathf.FloorToInt(pseudoRandom.Next(1, height - 2));
+            Vector2 spawnPos = new Vector2(x - (width / 2), y - (height / 2));
+            if (map[x, y] == 0)
+            {
+                canRespawn = PreventSpawnOverlap(spawnPos, 3f);
+            }
+            if (canRespawn)
+            {
+                player.transform.position = spawnPos;
+                playerStartPos = player.transform.position;
+            }
+        }
+        
+            
+    }
 
+    #region MapGenFunctions
+    void RandomFillMap()//preenche mapa aleatoriamente
+    {
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)//percorrendo o mapa todo:
@@ -312,12 +396,11 @@ public class MapGenAutomata : MonoBehaviour
                 {
                     map[i, j] = (pseudoRandom.Next(0, 100) < randomFillPercent) ? 1 : 0;//aleatoriza que áreas serão terreno ou parede
                 }
-
             }
         }
-    }//preenche mapa aleatoriamente
+    }
 
-    void SmoothMap()
+    void SmoothMap()//transforma tiles dependendo da quantidade de paredes ao redor dele
     {
         for (int i = 0; i < width; i++)
         {
@@ -335,9 +418,9 @@ public class MapGenAutomata : MonoBehaviour
 
             }
         }
-    }//transforma tiles dependendo da quantidade de paredes ao redor dele
+    }
 
-    int GetSurroundingWallCount(int gridX, int gridY)//recebe coordenadas do tile
+    int GetSurroundingWallCount(int gridX, int gridY)//"pega" paredes em torno do tile selecionado
     {
         int wallCount = 0;
         for (int neighbourX = gridX - 1; neighbourX <= gridX + 1; neighbourX++) //percorre tiles na esquerda e na direita
@@ -358,9 +441,9 @@ public class MapGenAutomata : MonoBehaviour
             }
         }
         return wallCount;
-    }//"pega" paredes em torno do tile selecionado
+    }
 
-    void ProcessMap()
+    void ProcessMap()//usado para detectar regiões no mapa e eliminá-las se forem muito pequenas, posteriormente será usado para conectá-las
     {
         List<List<Coord>> wallRegions = GetRegions(1);//"pega" regiões de parede, tiles marcados com 1
 
@@ -403,12 +486,9 @@ public class MapGenAutomata : MonoBehaviour
 
 
         ConnectClosestRoom(remainingRooms);
+    }
 
-
-
-    }//usado para detectar regiões no mapa e eliminá-las se forem muito pequenas, posteriormente será usado para conectá-las
-
-    List<List<Coord>> GetRegions(int tileType)
+    List<List<Coord>> GetRegions(int tileType)//forma uma lista de regiões (salas). "Coord" são tiles, "List<Coord>" são salas, "List<List<Coord>>" é uma lista com todas as salas
     {
         List<List<Coord>> regions = new List<List<Coord>>();
         int[,] mapFlags = new int[width, height];//marca tiles verificados
@@ -430,9 +510,9 @@ public class MapGenAutomata : MonoBehaviour
             }
         }
         return regions;
-    }//forma uma lista de regiões
+    }
 
-    List<Coord> GetRegionTiles(int startX, int startY)
+    List<Coord> GetRegionTiles(int startX, int startY)//forma uma lista dos tiles de cada sala
     {
         List<Coord> tiles = new List<Coord>();
         int[,] mapFlags = new int[width, height];//marca tiles verificados
@@ -463,9 +543,9 @@ public class MapGenAutomata : MonoBehaviour
             }
         }
         return tiles;
-    }//forma uma lista dos tiles de cada região
+    }
 
-    struct Coord
+    struct Coord//definição de coordenadas de um tile
     {
         public int tileX;
         public int tileY;
@@ -474,14 +554,14 @@ public class MapGenAutomata : MonoBehaviour
             tileX = x;
             tileY = y;
         }
-    }//definição de coordenadas de um tile
+    }
 
-    bool IsInMapRange(int x, int y)
+    bool IsInMapRange(int x, int y)//função auxiliar para determinar se coordenadas estão dentro do mapa
     {
         return x >= 0 && x < width && y >= 0 && y < height;
-    }//auxiliar, determina se coordenadas estão dentro do mapa
+    }
 
-    void ConnectClosestRoom(List<Room> allRooms, bool forceAcessToMain = false)//com lista de todas as salas
+    void ConnectClosestRoom(List<Room> allRooms, bool forceAcessToMain = false)//com lista de todas as salas, garante que todas as salas estarão conectadas
     {
         List<Room> roomListA = new List<Room>();
         List<Room> roomListB = new List<Room>();//cria 2 sub-listas
@@ -572,20 +652,20 @@ public class MapGenAutomata : MonoBehaviour
         {
             ConnectClosestRoom(allRooms, true);//conecta salas remanescentes
         }
-    }//garante que todas as salas estarão conectadas
+    }
 
-    void CreatePassage(Room roomA, Room roomB, Coord tileA, Coord tileB)
+    void CreatePassage(Room roomA, Room roomB, Coord tileA, Coord tileB)//usa DrawCircle para criar passagens entre as salas
     {
         Room.ConnectRooms(roomA, roomB);//marca que salas devem estar conectadas
         List<Coord> line = GetLine(tileA, tileB);//traça linha entre 2 tiles
         foreach (Coord c in line)//para cada tile por onde a linha passa
         {
             DrawCircle(c, 1);//abre corredor
-            //receber tiles do corredor em uma lista de corredores
+            //receber tiles do corredor em uma lista de corredores potencialmente leva a melhor posicionamento de portas, armadilhas, inimigos, etc...
         }
-    }//usa DrawCircle para criar passagens entre as salas
+    }
 
-    void DrawCircle(Coord c, int r)
+    void DrawCircle(Coord c, int r)//abre corredores entre salas com um determinado raio r
     {
         for (int x = -r; x <= r; x++)
         {
@@ -603,9 +683,9 @@ public class MapGenAutomata : MonoBehaviour
                 }
             }
         }
-    }//abre corredores entre salas com um determinado raio r
+    }
 
-    List<Coord> GetLine(Coord from, Coord to)
+    List<Coord> GetLine(Coord from, Coord to)//descobre distancia em tiles entre salas que serao conectadas
     {
         List<Coord> line = new List<Coord>();
 
@@ -666,9 +746,9 @@ public class MapGenAutomata : MonoBehaviour
         }
 
         return line;//retorna tiles da menor distancia calculada
-    }//descobre distancia em tiles entre salas que serao conectadas
+    }
 
-    class Room : IComparable<Room>
+    class Room : IComparable<Room>//definição do que é uma sala e métodos de set e compare com seus atributos
     {
         public List<Coord> tiles;//tiles pertencentes
         public List<Coord> edgeTiles;//tiles nas arestas
@@ -706,7 +786,7 @@ public class MapGenAutomata : MonoBehaviour
             }
         }
 
-        public void SetAccessibleFromMain()//se sala é acessível a partir da main
+        public void SetAccessibleFromMain()//determina que sala é acessível a partir da main
         {
             if (!isAccessibleFromMain)
             {
@@ -717,7 +797,7 @@ public class MapGenAutomata : MonoBehaviour
                 }
             }
         }
-        public static void ConnectRooms(Room roomA, Room roomB)
+        public static void ConnectRooms(Room roomA, Room roomB)//conecta duas salas
         {
             if (roomA.isAccessibleFromMain)
             {
@@ -738,7 +818,7 @@ public class MapGenAutomata : MonoBehaviour
         {
             return otherRoom.roomSize.CompareTo(roomSize);
         }
-    }//definição do que é uma sala e métodos de set e compare com seus atributos
+    }
     #endregion
 }
 

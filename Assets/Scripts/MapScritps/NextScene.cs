@@ -1,15 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;//
+using UnityEngine.SceneManagement;
+
+//associado ao portal que transporta jogador da cidade para o mapa gerado
 
 public class NextScene : MonoBehaviour
 {
     [SerializeField] GameObject mapConfigMenu;
     MapConfig config;
     bool done = false;
-    //open map config
-    //if map config is accepted, send to next scene
+    public UIManager uiManager;//precisa da UI para ativar menu de configuração ao entrar em contato e mudar de cena ao confirmar parâmetros
     private void Start()
     {
         done = false;
@@ -19,8 +20,9 @@ public class NextScene : MonoBehaviour
     {
         if (config.accept && !done)
         {
+            mapConfigMenu.SetActive(false);
             Time.timeScale = 1f;
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            StartCoroutine(uiManager.FadeOut("MapGeneration", true, 1));
             done = true;
         }
     }
