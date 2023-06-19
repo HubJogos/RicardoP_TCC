@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class MeshGenerator : MonoBehaviour
 {
+
     public SquareGrid squareGrid;//define grid onde os quadrados base serão colocados
     List<Vector3> vertices;
     List<int> triangles;
@@ -12,15 +14,26 @@ public class MeshGenerator : MonoBehaviour
     List<List<int>> outlines = new List<List<int>>();
     HashSet<int> checkedVertices = new HashSet<int>();
     public MeshFilter caveMesh;//objeto onde ficarão as meshes de fato
+    public Tilemap tilemap;
+    public Tile[] tiles;
 
-    public void GenerateMesh(int[,] map, float squareSize)
+    public void GenerateMesh(int[,] map, float squareSize, bool reverse = false)
     {
+
+        int wall = 1;
+        tilemap.size = new Vector3Int(map.GetLength(0), map.GetLength(1), 1);
+        tilemap.transform.position = new Vector3(.5f-map.GetLength(0) / 2, .5f-map.GetLength(1)/2, 0);
+
+        if (reverse)
+        {
+            wall = 0;
+        }
         triangleDictionary.Clear();
         outlines.Clear();
         checkedVertices.Clear();//remove quaisquer dados pré-existentes
 
 
-        squareGrid = new SquareGrid(map, squareSize);//cria nova grid
+        squareGrid = new SquareGrid(map, squareSize, wall);//cria nova grid
 
         vertices = new List<Vector3>();
         triangles = new List<int>();//novas listas de triângulos e vértices
@@ -29,17 +42,18 @@ public class MeshGenerator : MonoBehaviour
         {
             for (int j = 0; j < squareGrid.squares.GetLength(1); j++)
             {
-                TriangulateSquare(squareGrid.squares[i, j]);//gera as meshes relevantes para cada quadrado no mapa
+                TriangulateSquare(squareGrid.squares[i, j], i, j);//gera as meshes relevantes para cada quadrado no mapa
             }
         }
 
         Mesh mesh = new Mesh();
-        caveMesh.mesh = mesh;//aplica meshes no editor
-
+        
         //o que realmente gera as meshes in-game
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
         mesh.RecalculateNormals();
+
+        caveMesh.mesh = mesh;//aplica meshes no editor
         Generate2DColliders();//gera colisores nas paredes
     }
 
@@ -87,64 +101,79 @@ public class MeshGenerator : MonoBehaviour
             }
         }
     }//"traça" as linhas entre os pontos das arestas do mapa
-    void TriangulateSquare(Square square)
+    void TriangulateSquare(Square square, int i, int j)
     {
         switch (square.configuration)
         {
-            case 0://nenhum ponto recebe mesh
+            case 0://"0 pontos" não necessita de mesh
                 break;
             //meshes com 1 ponto
             case 1:
                 MeshFromPoints(square.centerBottom, square.botLeft, square.centerLeft);
+                tilemap.SetTile(new Vector3Int(i, j, 1),tiles[0]);
                 break;
             case 2:
                 MeshFromPoints(square.centerRight, square.botRight, square.centerBottom);
+                tilemap.SetTile(new Vector3Int(i, j, 1), tiles[1]);
                 break;
             case 4:
                 MeshFromPoints(square.centerTop, square.topRight, square.centerRight);
+                tilemap.SetTile(new Vector3Int(i, j, 1), tiles[3]);
                 break;
             case 8:
                 MeshFromPoints(square.topLeft, square.centerTop, square.centerLeft);
+                tilemap.SetTile(new Vector3Int(i, j, 1), tiles[7]);
                 break;
             //meshes com 2 pontos
             case 3:
                 MeshFromPoints(square.centerRight, square.botRight, square.botLeft, square.centerLeft);
+                tilemap.SetTile(new Vector3Int(i, j, 1), tiles[2]);
                 break;
             case 6:
                 MeshFromPoints(square.centerTop, square.topRight, square.botRight, square.centerBottom);
+                tilemap.SetTile(new Vector3Int(i, j, 1), tiles[5]);
                 break;
             case 9:
                 MeshFromPoints(square.topLeft, square.centerTop, square.centerBottom, square.botLeft);
+                tilemap.SetTile(new Vector3Int(i, j, 1), tiles[8]);
                 break;
             case 12:
                 MeshFromPoints(square.topLeft, square.topRight, square.centerRight, square.centerLeft);
+                tilemap.SetTile(new Vector3Int(i, j, 1), tiles[11]);
                 break;
             case 5://2 pontos em diagonais opostas
                 MeshFromPoints(square.centerTop, square.topRight, square.centerRight, square.centerBottom, square.botLeft, square.centerLeft);
+                tilemap.SetTile(new Vector3Int(i, j, 1), tiles[4]);
                 break;
             case 10:
                 MeshFromPoints(square.topLeft, square.centerTop, square.centerRight, square.botRight, square.centerBottom, square.centerLeft);
+                tilemap.SetTile(new Vector3Int(i, j, 1), tiles[9]);
                 break;
             //meshes com 3 pontos
             case 7:
                 MeshFromPoints(square.centerTop, square.topRight, square.botRight, square.botLeft, square.centerLeft);
+                tilemap.SetTile(new Vector3Int(i, j, 1), tiles[6]);
                 break;
             case 11:
                 MeshFromPoints(square.topLeft, square.centerTop, square.centerRight, square.botRight, square.botLeft);
+                tilemap.SetTile(new Vector3Int(i, j, 1), tiles[10]);
                 break;
             case 13:
                 MeshFromPoints(square.topLeft, square.topRight, square.centerRight, square.centerBottom, square.botLeft);
+                tilemap.SetTile(new Vector3Int(i, j, 1), tiles[12]);
                 break;
             case 14:
                 MeshFromPoints(square.topLeft, square.topRight, square.botRight, square.centerBottom, square.centerLeft);
+                tilemap.SetTile(new Vector3Int(i, j, 1), tiles[13]);
                 break;
             //mesh com 4 pontos
             case 15:
                 MeshFromPoints(square.topLeft, square.topRight, square.botRight, square.botLeft);
+                tilemap.SetTile(new Vector3Int(i, j, 1), tiles[14]);
                 break;
 
         }
-    }//individualmente busca por cada configuração possível dos triângulos das meshes (16 ao todo)
+    }//individualmente busca por cada configuração possível dos triângulos das meshes (16 ao todo) e aplica sprite apropriada no tilemap
 
     void AddTriangleToDictionary(int vertexIndexKey, Triangle triangle)
     {
@@ -267,7 +296,7 @@ public class MeshGenerator : MonoBehaviour
     {
         public Square[,] squares;
 
-        public SquareGrid(int[,] map, float squareSize)
+        public SquareGrid(int[,] map, float squareSize, int wallValue)
         {
             int nodeCountX = map.GetLength(0);
             int nodeCountY = map.GetLength(1);
@@ -281,7 +310,7 @@ public class MeshGenerator : MonoBehaviour
                 for(int j = 0; j < nodeCountY; j++)
                 {
                     Vector3 pos = new Vector3(-mapWidth / 2 + i * squareSize + squareSize / 2, 0, -mapHeight / 2 + j * squareSize + squareSize / 2);
-                    controlNodes[i, j] = new ControlNode(pos, map[i, j] == 1, squareSize);
+                    controlNodes[i, j] = new ControlNode(pos, map[i, j] == wallValue, squareSize);
                 }
             }
 

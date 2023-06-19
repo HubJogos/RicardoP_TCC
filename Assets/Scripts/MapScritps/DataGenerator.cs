@@ -6,17 +6,31 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Analytics;
+/* unity analytics é uma ferramenta de coleta e análise de dados mantido pela própria Unity, é o melhor método de coleta/visualização de dados
+ * ao custo de maior complexidade de integração no jogo e menor flexibilidade de tratamento dos dados
+ */
 
+
+/* DataGenerator está associado ao GameObject "GameManager", que é o único objeto que não é destruído ao trocar de cena,
+ * portanto deve existir somente um DataGenerator em qualquer momento, sendo acessível em qualquer cena
+ * Script utilizado para manter e atualizar dados de gameplay.
+ */
 public class DataGenerator : MonoBehaviour
 {
 
-    [SerializeField]
-    float startTime;
+
+    public PlayerData playerData;
+    public GenData genData;
+    public QuestionData questionData;
+    Questionario questionario;
+    MapGenAutomata mapReference;
+    PlayerScript playerScript;
     Scene activeScene;
+
+    [SerializeField] float startTime;
     bool done = false;
     public bool doneGen = false;
 
-    bool victory = false;
     public bool foundSecret = false;
     public int deathCounter = 0;
 
@@ -26,16 +40,8 @@ public class DataGenerator : MonoBehaviour
     public int activeQuests = 0;
 
     public int interactions = 0;
-
-    MapGenAutomata mapReference;
-    PlayerScript playerScript;
-    public PlayerData playerData;
-    public GenData genData;
-    public QuestionData questionData;
-    
-
-    Questionario questionario;
     bool doneQuestion = false;
+    bool victory = false;
 
     [Header("Final Data")]
     //player data for multiple plays
@@ -149,33 +155,31 @@ public class DataGenerator : MonoBehaviour
             
     }
 
-    public void SaveAsCSV()
+    public void SaveAsCSV()//tentativas iniciais de salvar métricas foram com formato CSV, método requer mudança para um nome apropriado
     {
         if(questionario != null)
         {
             questionData = new QuestionData(questionario.answers);
-        }
+        }//inicializa questionário
 
-        if (completedQuests < 2)//se cumpriu todas as quests
+        if (completedQuests < 2)
         {
             victory = false;
-        }
+        }//se cumpriu todas as quests
         else
         {
             victory = true;
         }
 
-
         finalPosition = playerScript.transform.position;
 
-        //data per playthrough is separated
+        //métricas separadas para cada playthrough
         totalLifeLost = playerScript.totalLifeLost.ToString();
         time = Mathf.FloorToInt(Time.time - startTime).ToString();
         steps = playerScript.steps.ToString();
         runLevel = playerScript.playerLevel.ToString();
 
-        //averages
-
+        //médias e proporções
         if (playerScript.attacksAttempted == 0)
         {
             precision = Double.NaN.ToString().Replace(",", ".");
@@ -184,12 +188,11 @@ public class DataGenerator : MonoBehaviour
 
         percentKills = playerScript.percentKills.ToString().Replace(",", ".");
         percentItemPickup = playerScript.percentItemsCollected.ToString().Replace(",", ".");
-
         percentAmmoPickup = playerScript.ammoPickupRate.ToString().Replace(",", ".");
+
         runVictory = victory.ToString();
 
-        //where all player data is stored
-
+        //classe para salver dados do jogador, em seu formato concreto
         playerData = new PlayerData(
             playerScript.totalLifeLost, 
             playerScript.playerLevel, 
@@ -209,7 +212,7 @@ public class DataGenerator : MonoBehaviour
         playerStartPos = mapReference.playerStartPos.ToString().Replace(",", ".");
         exitDoorPos = genData.exitDoor.ToString().Replace(",", ".");
 
-
+        //concatena posições de itens e inimigos para que ocupem somente uma célula na tabela
         for (int i = 0; i < mapReference.currentItems; i++)
         {
             itemPositions += genData.itemPositions[i].ToString().Replace(",",".");
@@ -223,7 +226,7 @@ public class DataGenerator : MonoBehaviour
         done = false;
         doneGen = false;
 
-        //salva os dados como variáveis internas
+        //salva os dados de geração como variáveis internas em forma de string, necessário que seja em string para escrever na tabela do google para onde os dados são enviados
         width = genData.width.ToString();
         height = genData.height.ToString();
         smooth = genData.smooth.ToString();
@@ -255,6 +258,10 @@ public class DataGenerator : MonoBehaviour
     }
 }
 
+
+/* Classes utilizadas para armazenar dados do jogador, dados de geração e respostas do questionário
+ * "Serializable" pois em uma etapa do projeto foram feitas tentativas de salvar os dados em formato JSON
+ */
 
 [System.Serializable]
 public class PlayerData

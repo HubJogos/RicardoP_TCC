@@ -6,19 +6,16 @@ EditorUserSettings:
   serializedVersion: 4
   m_ConfigSettings:
     RecentlyUsedSceneGuid-0:
-      value: 5b05575656020c59595a097b157a5c44404f1a7a2e2b7766797c4a35e4b8626a
+      value: 020455565356080859575d7149760c44104f1b297d787f64297b1b30b5b7606f
       flags: 0
-    RecentlyUsedSceneGuid-1:
-      value: 010151055553585f5e5e087b16770e44474f4c7f742b7032747b1b64b0e16c3c
+    UnityEditor.ShaderGraph.Blackboard:
+      value: 18135939215a0a5004000b0e15254b524c030a3f2964643d120d1230e9e93a3fd6e826abbd2e2d293c4ead313b08042de6030a0afa240c0d020be94c4ba75e435d8715fa32c70d15d11612dacc11fee5d3c5d1fe9ab1bf968e93e2ffcbc3e7e2f0b3ffe0e8b0be9af8ffaeffff8e85dd8390e3949c8899daa7
       flags: 0
-    RecentlyUsedSceneGuid-2:
-      value: 5253560551535a0b0c0a587b11260644414e4e292a2b74687d281832bae5323e
+    UnityEditor.ShaderGraph.FloatingWindowsLayout2:
+      value: 181344140043005e1a220d3b1f364b524c0c5a27130c293326201334cee5322ca0bd22fbf23f737e343dcb3307350831f53e061bb4510c0a1d1df84253f22f2514d70ccc19c91333cd1f0fcbd95f8bb18d9884a69ae6d8f0d1cda9e8fbfefaf9f9dea3fdb9ade882f0fea9ffff8e85c9fef9bedec98493dcf8ca9389ef84829d899ac7cf9bdd898c89c3f090bf8d
       flags: 0
-    RecentlyUsedSceneGuid-3:
-      value: 0600560056065b0f08085e2713720944474e1a7f2a2e7561297e4c6ab6b56c61
-      flags: 0
-    RecentlyUsedSceneGuid-4:
-      value: 5353575457070b095b080976467a0844444e4b2c7e7173687e2c4836e3b8666c
+    UnityEditor.ShaderGraph.InspectorWindow:
+      value: 18135939215a0a5004000b0e15254b524c1119263f2d6a722016393ce1eb3d36e5d339f9a5602b2e2c07a37e0901373ae01e0008f707250d171df81a53a5405d41895ac825e0100ec20313c0d91cddccd3d0c7efcca9bd81908fecb0f9cfddf1eff4e7a1b1eae482f0fdade6e1928b86d888ed9199908797a7cf
       flags: 0
     vcSharedLogLevel:
       value: 0d5e400f0650
@@ -28,13 +25,13 @@ EditorUserSettings:
   m_VCDebugCmd: 0
   m_VCDebugOut: 0
   m_SemanticMergeMode: 2
-  m_DesiredImportWorkerCount: 2
-  m_StandbyImportWorkerCount: 2
+  m_DesiredImportWorkerCount: 1
+  m_StandbyImportWorkerCount: 1
   m_IdleImportWorkerShutdownDelay: 60000
   m_VCShowFailedCheckout: 1
   m_VCOverwriteFailedCheckoutAssets: 1
   m_VCProjectOverlayIcons: 1
   m_VCHierarchyOverlayIcons: 1
   m_VCOtherOverlayIcons: 1
-  m_VCAllowAsyncUpdate: 1
+  m_VCAllowAsyncUpdate: 0
   m_ArtifactGarbageCollection: 1

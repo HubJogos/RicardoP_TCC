@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 using System.Runtime.InteropServices;
 using UnityEngine.SceneManagement;
-
+//Questionário foi removido do ciclo de gameplay do jogo
 public class Questionario : MonoBehaviour
 {
     [DllImport("__Internal")]

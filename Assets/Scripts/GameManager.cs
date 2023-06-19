@@ -1,21 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
 
+//usado somente para garantir a permanência do GameObject "GameManager"
 public class GameManager : MonoBehaviour
 {
-    
     private void Awake()
     {
-        DontDestroyOnLoad(gameObject);
-    }
-   
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-    
+        DontDestroyOnLoad(gameObject);//não destroi objeto na troca de cenas
+    }    
 }

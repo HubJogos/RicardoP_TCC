@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//Script associado ao objeto "OnScreenPopUps", controla comportamento da interface do tutorial
+
 public class Tutorial : MonoBehaviour
 {
     public GameObject tutorialScreen;
@@ -14,6 +16,13 @@ public class Tutorial : MonoBehaviour
         if (!persistentStats.closedTutorial)
         {
             OpenTutorial();
+        }
+    }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape) && tutorialScreen.activeSelf)
+        {
+            CloseTutorial();
         }
     }
     public void OpenTutorial()

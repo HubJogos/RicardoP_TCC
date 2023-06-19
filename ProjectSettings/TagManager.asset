@@ -62,3 +62,9 @@ TagManager:
   - name: Player
     uniqueID: 3654314417
     locked: 0
+  - name: DrawOnTop
+    uniqueID: 2948913825
+    locked: 0
+  - name: UI
+    uniqueID: 3245139019
+    locked: 0

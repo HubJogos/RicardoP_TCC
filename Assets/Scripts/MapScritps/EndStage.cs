@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+//script utilizado para criar um portal de saída para o jogador após cumprir missões ativas
+
 public class EndStage : MonoBehaviour
 {
     DataGenerator dataGen;
@@ -30,7 +32,7 @@ public class EndStage : MonoBehaviour
         if (other.gameObject.CompareTag("Player")){
 
             dataGen.SaveAsCSV();
-            SceneManager.LoadScene("Questionario");//vai pro questionario
+            SceneManager.LoadScene("Game");//volta para a cidade inicial
         }
     }
 

@@ -1,6 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+/*
+ * Script utilizado para controlar e acessar dados que precisam permanecer em mais de uma cena
+ * Somente uma instância associada ao objeto "GameManager" na cena "Preload"
+ * Controla o acesso aos dados do jogador e da configuração do mapa.
+ * São todos públicos para poderem ser acessados por outros scripts
+ */
 
 public class PersistentStats : MonoBehaviour
 {   
@@ -22,30 +28,30 @@ public class PersistentStats : MonoBehaviour
 
     [Header("Health Variables")]
     public int maxHealth = 50;
-    public bool closedTutorial;
+    public bool closedTutorial;//variável que garante que a tela de tutorial aparece somente ao entrar no jogo.
 
     [Header("Map configuration")]
-    public int width = 100;
-    public int height = 60;//largura e altura do mapa
-    public int smooth = 2;//grau de suavização dos quadrados gerados
-    public int minRegionSize = 50;//tamanho mínimo das regiões geradas (exclui o que estiver abaixo)
+    public int width = 100;//largura e altura do mapa
+    public int height = 60;
+
+    public int smooth = 2;//grau de suavização dos quadrados gerados, "escava" as paredes do mapa
+    public int minRegionSize = 50;//tamanho mínimo das regiões geradas, exclui o que estiver abaixo
 
     public bool useRandomSeed = true;
     public string seed = "0";
 
     [Range(0, 100)]
     public int randomFillPercent = 55;//porcentagem de terreno/parede
-
     [Range(0, 100)]
-    public int enemyDensity = 50;
+    public int enemyDensity = 50;//medidor de frequência de posicionamento de inimigos e itens
     [Range(0, 100)]
     public int itemDensity = 20;
 
     public int minEnemyDistance = 15;
     public int minItemDistance = 25;
 
-    public int maxEnemies=19;
-    public int maxItems=12;
+    public int maxEnemies= 99;//garante maior eficácia nos parâmetros de posicionamento
+    public int maxItems=99;
     
     public void SetNewGeneratedMap(Predictions predictions){
 

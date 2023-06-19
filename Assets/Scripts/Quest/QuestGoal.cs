@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//Script utilizado para definir o que é uma missão, e as funções associadas
+
 [System.Serializable]
 public class QuestGoal
 {

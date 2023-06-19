@@ -1,6 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+//Script utilizado para projetar um "cone" de visão do jogador, similar ao jogo "Darkwood"
+//Removido do jogo após complicações na aplicação. Em retrospecto, talvez a ordenação dos vértices do cone esteja invertida
+
+
 
 public class FOV : MonoBehaviour
 {

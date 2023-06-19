@@ -17,7 +17,4 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Questionario.unity
     guid: e1bf3324ef2ec16419b5ff31d7194589
-  - enabled: 0
-    path: Assets/Scenes/CallAI.unity
-    guid: b0ec0f1d30d9f41418458c6b92f72a8d
   m_configObjects: {}

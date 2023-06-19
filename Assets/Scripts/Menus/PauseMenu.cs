@@ -36,6 +36,7 @@ public class PauseMenu : MonoBehaviour
         GameIsPaused = true;
     }
     /*
+    //Requer implementação do sistema de save/load, a qual foi interrompida dada a data de entrega do projeto na época em que estava em implementação
     public void SavePlayer()
     {
         SaveSystem.SavePlayer(script);
@@ -58,9 +59,9 @@ public class PauseMenu : MonoBehaviour
     */
     public void Reload()
     {
-        //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        //SceneManager.LoadScene(SceneManager.GetActiveScene().name);//controle de cenas foi movido para o script "UIManager"
         FindObjectOfType<MapGenAutomata>().RespawnPlayer();
-        Time.timeScale = 1f;
+        Resume();
     }
     public void QuitGame()
     {

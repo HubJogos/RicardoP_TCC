@@ -2,32 +2,45 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+
+//Script que define os parâmetros de geração do mapa
+
+
 public class MapConfig : MonoBehaviour
 {
     PersistentStats stats;
-    public GameObject[] mapGenData;
+    DataGenerator dataGen;
+    public GameObject missionCheck;//aviso que é mostrado caso o jogador tenha zero missões ativas
+    public GameObject startingMenu;//tela inicial do menu
+    public GameObject configMenu;//menu de configuração de parâmetros
+    public GameObject[] mapGenData;//parâmetros em si
     public bool accept = false;
 
-    // Start is called before the first frame update
+
     void Start()
     {
+        dataGen = FindObjectOfType<DataGenerator>();
         accept = false;
         stats = FindObjectOfType<PersistentStats>();
-        Load();
+        Load();//ao abrir menu, carrega últimas configurações
     }
     private void Update()
     {
-        if (mapGenData[6].GetComponent<Toggle>().isOn)
+        if (mapGenData[6].GetComponent<Toggle>().isOn)//componente para usar seed aleatória
         {
             mapGenData[7].SetActive(false);
         }else
         {
             mapGenData[7].SetActive(true);
         }
+        if (dataGen.activeQuests == 0)
+        {
+            missionCheck.SetActive(true);
+        }else missionCheck.SetActive(false);
     }
     public void Load()//loads previously used parameters
     {
-
+        //carrega valores usados anteriormente
         mapGenData[0].GetComponent<InputField>().text = stats.width.ToString();
         mapGenData[1].GetComponent<InputField>().text = stats.height.ToString();
         mapGenData[2].GetComponent<InputField>().text = stats.minRegionSize.ToString();
@@ -43,8 +56,9 @@ public class MapConfig : MonoBehaviour
         mapGenData[11].GetComponent<InputField>().text = stats.maxEnemies.ToString();
         mapGenData[12].GetComponent<InputField>().text = stats.maxItems.ToString();
     }
-    public void Accept()//changes generation parameters
+    public void Accept()
     {
+        //converte parâmetros de texto para int
         int.TryParse(mapGenData[0].GetComponent<InputField>().text, out stats.width);
         int.TryParse(mapGenData[1].GetComponent<InputField>().text, out stats.height);
         int.TryParse(mapGenData[2].GetComponent<InputField>().text, out stats.minRegionSize);
@@ -62,11 +76,23 @@ public class MapConfig : MonoBehaviour
         int.TryParse(mapGenData[12].GetComponent<InputField>().text, out stats.maxItems);
 
         accept = true;
-        //send player to next scene
+        //ao aceitar, jogador é enviado ao mapa configurado
+        
+    }
+    public void DefaultGen()
+    {
+        accept = true;
+    }
+    public void ConfigureGen()
+    {
+        startingMenu.SetActive(false);
+        configMenu.SetActive(true);
     }
     public void Cancel()
     {
-        accept = false;
+        accept = false; 
+        startingMenu.SetActive(true);
+        configMenu.SetActive(false);
         gameObject.SetActive(false);
         Time.timeScale = 1;
         //close popup

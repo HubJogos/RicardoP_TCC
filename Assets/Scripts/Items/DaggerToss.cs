@@ -1,27 +1,35 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+
+//script associado ao projétil disparado pelo jogador
 
 public class DaggerToss : MonoBehaviour
 {
     public GameObject daggerDrop;
-    //public GameObject hitEffect;//animation for projectile explosion
+    public GameObject damageTextPrefab;
+    public int damage;
     public void OnTriggerEnter2D(Collider2D other)
     {
-        //GameObject effect = Instantiate(hitEffect, transform.position, Quaternion.identity); //para efeitos após acerto
-        //Destroy(effect, 2f);
         if (other.gameObject.CompareTag("Enemy"))
         {
-            other.gameObject.GetComponent<EnemyHealthManager>().heldAmmo++;
-            other.gameObject.GetComponent<EnemyHealthManager>().HurtEnemy(2);//causa 2 de dano ao acertar inimigo
+            EnemyHealthManager enemy = other.gameObject.GetComponent<EnemyHealthManager>();
+            Transform pos = other.transform;
+            enemy.heldAmmo++;
+            enemy.HurtEnemy(damage);
+
+            GameObject damageTextInstance = Instantiate(damageTextPrefab, pos);
+            damageTextInstance.transform.GetChild(0).GetComponent<TextMeshPro>().color = new Color32(255, 255, 255, 255);
+            damageTextInstance.transform.GetChild(0).GetComponent<TextMeshPro>().SetText(damage.ToString());
             Destroy(gameObject);
-        }
+        }//se acerta inimigo
 
         if (!other.gameObject.CompareTag("Player") && !other.gameObject.CompareTag("Enemy"))
         {
             Instantiate(daggerDrop, transform.position, Quaternion.identity);
             Destroy(gameObject);
-        }
+        }//se acerta cenário
 
     }
 }
