@@ -22,9 +22,9 @@ public class EnemyProjectile : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             other.gameObject.GetComponent<PlayerScript>().HurtPlayer(damage);//causa dano ao acertar jogador
-            GameObject damageTextInstance = Instantiate(damageTextPrefab, other.transform);
-            damageTextInstance.transform.GetChild(0).GetComponent<TextMeshPro>().color = new Color32(200, 100, 100, 255);
-            damageTextInstance.transform.GetChild(0).GetComponent<TextMeshPro>().SetText(damage.ToString());
+            //GameObject damageTextInstance = Instantiate(damageTextPrefab, other.transform);
+            //damageTextInstance.transform.GetChild(0).GetComponent<TextMeshPro>().color = new Color32(200, 100, 100, 255);
+            //damageTextInstance.transform.GetChild(0).GetComponent<TextMeshPro>().SetText(damage.ToString());
             Instantiate(explosionVFX, transform.position, Quaternion.identity);
             Destroy(gameObject);
             
