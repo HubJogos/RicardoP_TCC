@@ -155,12 +155,20 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         "Vá embora. Você não é bem-vindo aqui, e não temos tempo para perder com forasteiros."
     };
 
+    public string getFraseAleatoriaBasica()
+    {
+        int index = Random.Range(0, dialogosAleatoriosBasicos.Length-1);
+        return dialogosAleatoriosBasicos[index];
+    }
+
     void Start()
     {
 
         dataGen = FindObjectOfType<DataGenerator>();
         stats = FindObjectOfType<PersistentStats>();
 
+        var output = JsonUtility.ToJson(stats, true);
+        Debug.Log("Stats: " + output);
 
     }
 
