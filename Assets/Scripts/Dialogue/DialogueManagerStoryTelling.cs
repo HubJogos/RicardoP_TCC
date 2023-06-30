@@ -9,6 +9,17 @@ public class DialogueManagerStoryTelling : MonoBehaviour
     PersistentStats stats;
     DataGenerator dataGen;
 
+    public int ato = 1;
+
+    [SerializeField]
+    public string[] dialogoHomemMisterioso =
+    {
+        ""
+    };
+
+
+
+
     [SerializeField]
     public string[] dialogosAleatoriosBasicos = 
     {
@@ -155,6 +166,32 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         "Vá embora. Você não é bem-vindo aqui, e não temos tempo para perder com forasteiros."
     };
 
+    public string[] dialogosNpcsJogadorMorreu =
+    {
+        "Hahaha! Parece que alguém se perdeu nas cavernas! Precisando de uma ajudinha?",
+        "Olha só quem voltou... Todo ensanguentado e derrotado! Não disse para tomar cuidado?",
+        "Morreu nas profundezas escuras, hein? Aposto que nem encontrou o tesouro!",
+        "Bem-vindo de volta, fracassado! Parece que as cavernas não são tão amigáveis assim, né?",
+        "Não se preocupe, o herói da história chegou! Só que não...",
+        "Mais um que se aventurou e falhou miseravelmente! Quando você aprenderá a lição?",
+        "Risos ecoam nas profundezas... Será que você será resgatado dessa vez?",
+        "Hahaha! Aquele que se dizia valente agora está preso nas garras das cavernas!",
+        "Aqui estamos novamente... Você sempre encontrando problemas onde quer que vá!",
+        "Eu diria para tomar cuidado, mas você claramente não sabe o que isso significa!",
+        "Outro dia, outra derrota! Você realmente não aprende, não é mesmo?",
+        "É tão divertido vê-lo tropeçando e caindo... Uma e outra vez!",
+        "Parece que as cavernas estão se alimentando bem desses aventureiros fracassados!",
+        "Hahaha! Você é um verdadeiro comediante... mas nem sabe disso!",
+        "Não se preocupe, herói de araque! Alguém irá salvá-lo... talvez!",
+        "Você morreu? Ah, que pena! Mas alguém precisa manter as cavernas ocupadas com suas falhas!",
+        "Mais uma vez, você nos brinda com sua falta de habilidade. É quase hilário!",
+        "Dizem que as cavernas estão cheias de perigos mortais... e você só confirma isso!",
+        "Vamos lá, dê o seu melhor! Ou talvez nem seja necessário... afinal, você vai falhar!",
+        "Risos ecoam enquanto você tropeça nas sombras. Não perca a esperança... ou talvez perca!"
+    };
+
+
+
     public string getFraseAleatoriaBasica()
     {
         int index = Random.Range(0, dialogosAleatoriosBasicos.Length-1);
@@ -166,6 +203,16 @@ public class DialogueManagerStoryTelling : MonoBehaviour
 
         dataGen = FindObjectOfType<DataGenerator>();
         stats = FindObjectOfType<PersistentStats>();
+
+        if (dataGen.playthroughs == 1)
+        {
+            Debug.Log("Estou de volta, vivo ?");
+        } else {
+            if (dataGen.playthroughs > 1){
+                Debug.Log("Voltei tantas vezes que nem me importo mais.");
+            }
+
+        }
 
         var output = JsonUtility.ToJson(stats, true);
         Debug.Log("Stats: " + output);
