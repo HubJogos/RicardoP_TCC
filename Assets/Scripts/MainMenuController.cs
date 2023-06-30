@@ -22,4 +22,11 @@ public class MainMenuController : MonoBehaviour
         SceneManager.LoadScene("Preload");
     }
 
+    public void quitGame()
+    {
+        Application.Quit();
+    }
+
+
+
 }

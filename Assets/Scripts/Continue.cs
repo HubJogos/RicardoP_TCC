@@ -34,8 +34,9 @@ public class Continue : MonoBehaviour
     }
     public void EndGame()
     {
-        dataGen.SaveAsCSV();
-        StartCoroutine(WaitToQuit());
+        //dataGen.SaveAsCSV();
+        //StartCoroutine(WaitToQuit());
+        SceneManager.LoadScene("MainMenuCave");
     }
     public void Restart()//caso o jogador queira jogar novamente, recarrega a cidade inicial
     {
