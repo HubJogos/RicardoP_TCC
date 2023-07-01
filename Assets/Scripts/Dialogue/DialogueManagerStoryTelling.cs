@@ -14,6 +14,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
 
     public bool firstTime = true;
     public bool backToThePortal = false;
+    public bool dialogueStarted = false;
     public GameObject portal;
 
 
@@ -27,16 +28,19 @@ public class DialogueManagerStoryTelling : MonoBehaviour
 
     private int ato = 1;
 
+    [SerializeField]
+    public string fraseNPC = "";
+
+    [SerializeField]
+    public Dictionary<string, int> Dialogo;
+    public int dialogoAux = 0;
+
     private string[] dialogoHomemMisteriosoAto1 =
     {
         "Ah, finalmente você chegou, me lembro uma outra pessoa que já esteve aqui antes. Sinto a presença de seu coração valente. Meu nome não importa.",
         "Não tenha pressa em saber meu nome, pois agora sou apenas um guia neste plano de existência. Sua vinda foi prevista nas entrelinhas do tempo e espaço. Recebeste uma mensagem de seu avô, não foi? Um sinal de que és o escolhido para cumprir um destino maior.",
         "Então, sua jornada começa agora. Nesta ilha escondida, o portal das sombras aguarda seu toque. Porém, tenha em mente que o poder que ele concede também despertou forças sombrias. Cabe a você encontrar um equilíbrio entre luz e sombras.",
     };
-
-    [SerializeField]
-    public Dictionary<string, int> Dialogo;
-    public int dialogoAux = 0;
 
     private string[] dialogosAleatoriosBasicos = 
     {
@@ -221,6 +225,12 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         dataGen = FindObjectOfType<DataGenerator>();
         stats = FindObjectOfType<PersistentStats>();
 
+        if (npcNormal == true && fraseNPC == "")
+        {
+            fraseNPC = getFraseAleatoriaBasica();
+        } 
+
+
         if (dataGen.playthroughs == 1)
         {
             Debug.Log("Estou de volta, vivo ?");
@@ -231,15 +241,17 @@ public class DialogueManagerStoryTelling : MonoBehaviour
 
         }
 
-        var output = JsonUtility.ToJson(stats, true);
-        Debug.Log("Stats: " + output);
+        var outputStats = JsonUtility.ToJson(stats, true);
+        var outputDataGen = JsonUtility.ToJson(dataGen, true);
+        Debug.Log("Stats: " + outputStats);
+        Debug.Log("DataGen: " + outputDataGen);
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (HudDialogue.active)
+        if (HudDialogue.active && dialogueStarted)
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -254,27 +266,34 @@ public class DialogueManagerStoryTelling : MonoBehaviour
     public void rodaDialogo()
     {
 
-        if (firstTime == true)
+        if (npcNormal == false)
         {
-            if (dialogoAux < dialogoHomemMisteriosoAto1.Length)
+            if (firstTime == true)
             {
-                textDialogue.text = dialogoHomemMisteriosoAto1[dialogoAux];
-                dialogoAux++;
+                if (dialogoAux < dialogoHomemMisteriosoAto1.Length)
+                {
+                    textDialogue.text = dialogoHomemMisteriosoAto1[dialogoAux];
+                    dialogoAux++;
+                }
+                else
+                {
+                    if (HudDialogue.active)
+                    {
+                        //buttonLiberatePortal.SetActive(true);
+
+                    }
+                }
+
             }
             else
             {
-                if (HudDialogue.active)
-                {
-                    //buttonLiberatePortal.SetActive(true);
-
-                }
+                textDialogue.text = "Vá. o Portal para a caverna está liberado.";
             }
-
-        }
-        else
+        } else
         {
-            textDialogue.text = "Vá. o Portal para a caverna está liberado.";
+            textDialogue.text = fraseNPC;
         }
+        
 
     }
 
@@ -301,6 +320,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.E))
             {
                 Debug.Log("iniciou dialogo 1");
+                dialogueStarted = true;
                 HudDialogue.SetActive(true);
                 rodaDialogo();
                 //TriggerDialogue();
@@ -327,6 +347,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             Debug.Log("Saiu");
+            dialogueStarted = false;
             HudDialogue.SetActive(false);
             //soundEnviroment.Play();
             //firstTime = false;
