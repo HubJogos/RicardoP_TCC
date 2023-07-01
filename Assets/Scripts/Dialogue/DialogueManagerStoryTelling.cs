@@ -1,27 +1,44 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+
 
 public class DialogueManagerStoryTelling : MonoBehaviour
 {
     // Start is called before the first frame update
 
+
+    public string NomeNPC;
+    public bool npcNormal = true;
+
+    public bool firstTime = true;
+    public bool backToThePortal = false;
+    public GameObject portal;
+
+
     PersistentStats stats;
     DataGenerator dataGen;
 
-    public int ato = 1;
-
+    public GameObject HudDialogue;
     [SerializeField]
-    public string[] dialogoHomemMisterioso =
+    private TextMeshProUGUI textDialogue;
+    public AudioSource soundEnviroment;
+
+    private int ato = 1;
+
+    private string[] dialogoHomemMisteriosoAto1 =
     {
-        ""
+        "Ah, finalmente você chegou, me lembro uma outra pessoa que já esteve aqui antes. Sinto a presença de seu coração valente. Meu nome não importa.",
+        "Não tenha pressa em saber meu nome, pois agora sou apenas um guia neste plano de existência. Sua vinda foi prevista nas entrelinhas do tempo e espaço. Recebeste uma mensagem de seu avô, não foi? Um sinal de que és o escolhido para cumprir um destino maior.",
+        "Então, sua jornada começa agora. Nesta ilha escondida, o portal das sombras aguarda seu toque. Porém, tenha em mente que o poder que ele concede também despertou forças sombrias. Cabe a você encontrar um equilíbrio entre luz e sombras.",
     };
 
-
-
-
     [SerializeField]
-    public string[] dialogosAleatoriosBasicos = 
+    public Dictionary<string, int> Dialogo;
+    public int dialogoAux = 0;
+
+    private string[] dialogosAleatoriosBasicos = 
     {
         "Não tenho tempo para conversar. Tenho muito trabalho a fazer.",
         "As cavernas mágicas são um lugar amaldiçoado. Você não deveria ir lá.",
@@ -222,6 +239,101 @@ public class DialogueManagerStoryTelling : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (HudDialogue.active)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                print("The Left mouse button was pressed");
+                rodaDialogo();
+            }
+        }
+
     }
+
+
+    public void rodaDialogo()
+    {
+
+        if (firstTime == true)
+        {
+            if (dialogoAux < dialogoHomemMisteriosoAto1.Length)
+            {
+                textDialogue.text = dialogoHomemMisteriosoAto1[dialogoAux];
+                dialogoAux++;
+            }
+            else
+            {
+                if (HudDialogue.active)
+                {
+                    //buttonLiberatePortal.SetActive(true);
+
+                }
+            }
+
+        }
+        else
+        {
+            textDialogue.text = "Vá. o Portal para a caverna está liberado.";
+        }
+
+    }
+
+    public void rodaPergunta()
+    {
+
+    }
+
+    public void liberaPortal()
+    {
+        HudDialogue.SetActive(false);
+        firstTime = false;
+
+        portal.SetActive(true);
+
+    }
+
+    void OnTriggerStay2D(Collider2D other)
+    {
+
+        if (other.gameObject.CompareTag("Player"))
+        {
+            //Debug.Log("Entrou.....");
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                Debug.Log("iniciou dialogo 1");
+                HudDialogue.SetActive(true);
+                rodaDialogo();
+                //TriggerDialogue();
+            }
+        }
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            //Debug.Log("Entrou ############");
+            soundEnviroment.Pause();
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+
+                //Debug.Log("Iniciou dialogo 2");
+                //TriggerDialogue();
+            }
+            //interactionText.SetActive(true);
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            Debug.Log("Saiu");
+            HudDialogue.SetActive(false);
+            //soundEnviroment.Play();
+            //firstTime = false;
+
+            //liberaPortal();
+            //interactionText.SetActive(false);
+        }
+    }
+
 }

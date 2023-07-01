@@ -9,9 +9,15 @@ public class DialogueTrigger : MonoBehaviour
     public Dialogue dialogue;
     public GameObject interactionText;
     DialogueManager dialogueManager;
+
+    //public GameObject HudDialogue;
+
+    public bool npcAleatorio = true;
+
     void Start()
     {
         dialogueManager = FindObjectOfType<DialogueManager>();//referência ao controlador
+        
     }
 
     public void TriggerDialogue()
@@ -35,6 +41,8 @@ public class DialogueTrigger : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.E))
             {
                 TriggerDialogue();
+                //Debug.Log("Abrir o dialogo text");
+                //HudDialogue.SetActive(true);
             }
             interactionText.SetActive(true);
         }
@@ -46,8 +54,13 @@ public class DialogueTrigger : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.E))
             {
+                //Debug.Log("Abrir o dialogo text stay");
+                //HudDialogue.SetActive(true);
+                //interactionText.SetActive(false);
+                //PauseGame();
                 TriggerDialogue();
             }
+
         }
     }
     private void OnTriggerExit2D(Collider2D collision)
@@ -55,7 +68,16 @@ public class DialogueTrigger : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             interactionText.SetActive(false);
-            dialogueManager.EndDialogue();
+            //dialogueManager.EndDialogue();
         }
     }
+
+    void PauseGame()
+    {
+        Time.timeScale = 0f; // Pausa o jogo
+    }
+
+    
+
+
 }
