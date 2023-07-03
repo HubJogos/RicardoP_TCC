@@ -114,6 +114,7 @@ public class PlayerScript : MonoBehaviour
     public float percentKills;
     [HideInInspector] public float enemiesDefeated;
     public int steps = 0;
+    [SerializeField]
     public int coins = 0;
     Scene activeScene;
 
