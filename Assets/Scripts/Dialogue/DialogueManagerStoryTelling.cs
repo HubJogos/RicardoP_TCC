@@ -251,7 +251,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (HudDialogue.active && dialogueStarted)
+        if (dialogueStarted)
         {
             if (Input.GetMouseButtonDown(0))
             {
