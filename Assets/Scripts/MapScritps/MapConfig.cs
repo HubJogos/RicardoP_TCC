@@ -22,7 +22,7 @@ public class MapConfig : MonoBehaviour
         dataGen = FindObjectOfType<DataGenerator>();
         accept = false;
         stats = FindObjectOfType<PersistentStats>();
-        Load();//ao abrir menu, carrega últimas configurações
+        //Load();//ao abrir menu, carrega últimas configurações
     }
     private void Update()
     {
@@ -96,6 +96,11 @@ public class MapConfig : MonoBehaviour
         gameObject.SetActive(false);
         Time.timeScale = 1;
         //close popup
+    }
+
+    public void configureGame()
+    {
+
     }
 
 }

@@ -61,7 +61,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         { "Ele nunca voltou de lá. Por que você acha que está preparado para entrar lá também?", new List<string> { "Treinei durante anos para este dia. Minha espada será o suficiente", "Sei me cuidar muito bem em uma caverna", "Cale-se e deixe eu passar logo." } },
         { "Você não viria de tão longe apenas para isso… Você com certeza já ouviu falar das riquezas que tem lá dentro... E você pode não ter tempo suficiente para encontrar o que está procurando e ainda sair com riquezas… MUAHAHAHAHAHA ", new List<string> { "Vim para encontrar o meu pai, é só isso que importa", "Também estou precisando de dinheiro.", "Está vendo essa espada? Ela pode conquistar o que eu quiser." } },
         { "Você lembra mesmo muito a pessoa que entrou antes aqui neste portal, talvez seja por esse motivo que ele nunca voltou, ou falta de tempo. Muahahaha Entre, mas lembre-se, todas as suas ações terão consequências… muahahahahaha", new List<string>()},
-        { "O que você quer? o portal está liberado, não perca tempo. MUAHAHAH ", new List<string>()},
+        { "O o portal está liberado, não perca tempo. Encontre o que você procura... ou não... MUAHAHAHAH ", new List<string>()},
     };
 
     private string[] dialogosAleatoriosBasicos =
@@ -227,53 +227,67 @@ public class DialogueManagerStoryTelling : MonoBehaviour
     }
 
 
-    public void rodaDialogo()
+    public void rodaDialogo(int dialogo = -1)
     {
 
         if (npcNormal == false)
         {
-            if (dialogoHomemMisteriosoAto1.Count > 0)
+            switch (dataGen.playthroughs)
             {
-                if (dialogoAux <= dialogoHomemMisteriosoAto1.Count)
-                {
-                    KeyValuePair<string, List<string>> primeiroDialogo = dialogoHomemMisteriosoAto1.ElementAt(dialogoAux);
-
-                    dialogoAux++;
-
-                    List<string> respostas = primeiroDialogo.Value;
-                    textDialogue.text = primeiroDialogo.Key;
-
-                    if (respostas.Count > 0)
+                case 0: //ato 1
+                    if (dialogoHomemMisteriosoAto1.Count > 0)
                     {
-                        buttonChoice1.SetActive(true);
-                        buttonChoice2.SetActive(true);
-                        buttonChoice3.SetActive(true);
-                        buttonChoicesContinue.SetActive(false);
+                        if (dialogoAux < dialogoHomemMisteriosoAto1.Count)
+                        {
+                            int dialogueToRun = dialogoAux;
+                            if (dialogo != -1)
+                            {
+                                dialogueToRun = dialogo;
+                            }
 
-                        // ativar botões de decisões 1, 2 e 3
-                        string resposta1 = respostas[0];
-                        string resposta2 = respostas[1];
-                        string resposta3 = respostas[2];
 
-                        textChoice1.text = resposta1;
-                        textChoice2.text = resposta2;
-                        textChoice3.text = resposta3;
+                            int activeQuests = dataGen.activeQuests;
+                            bool foundSecret = dataGen.foundSecret;
+
+                            KeyValuePair<string, List<string>> primeiroDialogo = dialogoHomemMisteriosoAto1.ElementAt(dialogueToRun);
+
+                            List<string> respostas = primeiroDialogo.Value;
+                            textDialogue.text = primeiroDialogo.Key;
+
+                            if (respostas.Count > 0)
+                            {
+                                buttonChoice1.SetActive(true);
+                                buttonChoice2.SetActive(true);
+                                buttonChoice3.SetActive(true);
+                                buttonChoicesContinue.SetActive(false);
+
+                                // ativar botões de decisões 1, 2 e 3
+                                string resposta1 = respostas[0];
+                                string resposta2 = respostas[1];
+                                string resposta3 = respostas[2];
+
+                                textChoice1.text = resposta1;
+                                textChoice2.text = resposta2;
+                                textChoice3.text = resposta3;
+
+                            }
+                            else
+                            {
+                                // colocar botão de continuar
+                                buttonChoice1.SetActive(false);
+                                buttonChoice2.SetActive(false);
+                                buttonChoice3.SetActive(false);
+                                buttonChoicesContinue.SetActive(true);
+
+                            }
+                        }
+                        else
+                        {
+                            continueChoices();
+                        }
 
                     }
-                    else
-                    {
-                        // colocar botão de continuar
-                        buttonChoice1.SetActive(false);
-                        buttonChoice2.SetActive(false);
-                        buttonChoice3.SetActive(false);
-                        buttonChoicesContinue.SetActive(true);
-
-                    }
-                } else
-                {
-                    Debug.LogError("Estourou memoria");
-                }
-
+                    break;
             }
                 
         } else
@@ -281,16 +295,72 @@ public class DialogueManagerStoryTelling : MonoBehaviour
             textDialogue.text = fraseNPC;
         }
         
-
     }
 
-    public void rodaPergunta()
+    public void playerChoice(int decisao)
     {
+        string escolha = textDialogue.text;
 
+        switch (escolha)
+        {
+            case ("Você me lembra alguém que entrou nesse mesmo portal a uns anos atrás…"):
+                switch (decisao)
+                {
+                    case 1:
+                        string texto = "Seu pai? Então isso envolve sentimentalismo? ahahaha Acho que você pode se arrepender disso no final...";
+                        adicionaNovoTextoDuranteFala(texto);
+                        break;
+                    case 2:
+                        string texto2 = "Você está bem interessado para alguém que não conhece, não é mesmo? muahahahaha";
+                        adicionaNovoTextoDuranteFala(texto2);
+                        break;
+                    case 3:
+                        string texto3 = "Você tem poucas palavras... misterioso você... Vamos ver quanto tempo isso irá durar.";
+                        adicionaNovoTextoDuranteFala(texto3);
+                        break;
+                }
+                break;
+        }
+        continueChoices();
+    }
+
+    private void adicionaNovoTextoDuranteFala(string texto)
+    {
+        KeyValuePair<string, List<string>> novoDialogo = new KeyValuePair<string, List<string>>(texto, new List<string>());
+        Dictionary<string, List<string>> novoDicionario = new Dictionary<string, List<string>>();
+        if (dialogoAux + 1 >= 0 && dialogoAux + 1 < dialogoHomemMisteriosoAto1.Count)
+        {
+            // Copia os diálogos existentes até chegar à posição desejada
+            int contador = 0;
+            foreach (var dialogo in dialogoHomemMisteriosoAto1)
+            {
+                if (contador == dialogoAux + 1)
+                {
+                    novoDicionario.Add(novoDialogo.Key, novoDialogo.Value); // Insere o novo diálogo
+                }
+
+                novoDicionario.Add(dialogo.Key, dialogo.Value);
+                contador++;
+            }
+        }
+        else
+        {
+            // Caso o índice desejado seja maior ou igual ao número de diálogos existentes,
+            // o novo diálogo será adicionado no final do dicionário
+            novoDicionario = new Dictionary<string, List<string>>(dialogoHomemMisteriosoAto1);
+            novoDicionario.Add(novoDialogo.Key, novoDialogo.Value);
+        }
+
+        dialogoHomemMisteriosoAto1 = novoDicionario;
     }
 
     public void liberaPortal()
     {
+
+        // gera o mundo aqui
+
+
+
         HudDialogue.SetActive(false);
         firstTime = false;
 
@@ -304,7 +374,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             //Debug.Log("Entrou.....");
-            if (Input.GetKeyDown(KeyCode.E))
+            if (Input.GetKeyUp(KeyCode.E))
             {
                 Debug.Log("iniciou dialogo 1");
                 dialogueStarted = true;
@@ -348,9 +418,12 @@ public class DialogueManagerStoryTelling : MonoBehaviour
     {
         if (dialogoAux <= dialogoHomemMisteriosoAto1.Count)
         {
+            dialogoAux++;
             rodaDialogo();
         } else
         {
+            dialogoAux++;
+            liberaPortal();
             fechaHud();
         }
     }
