@@ -64,6 +64,7 @@ public class DialogueMarket : MonoBehaviour
     {
         if (playerScript.coins >= 1)
         {
+            Debug.Log("Jogador quer coins");
             playerScript.UpgradeHealth(25);
             playerScript.coins--;
             Debug.Log("Upgrade de vida");
@@ -76,13 +77,32 @@ public class DialogueMarket : MonoBehaviour
 
     public void comprarVelocidade()
     {
-        Debug.Log("Em falta");
+        if (playerScript.coins >= 1)
+        {
+            Debug.Log("Jogador gosta de explorar");
+            playerScript.coins--;
+            Debug.Log("Upgrade de vida");
+        }
+        else
+        {
+            Debug.Log("Não tem dinheiro");
+        }
         numberOfCoins.text = playerScript.coins.ToString();
     }
 
     public void comprarForca()
     {
-        Debug.Log("Em falta");
+        if (playerScript.coins >= 1)
+        {
+            Debug.Log("Jogador gosta de combate.");
+            playerScript.UpgradeHealth(25);
+            playerScript.coins--;
+            Debug.Log("Upgrade de vida");
+        }
+        else
+        {
+            Debug.Log("Não tem dinheiro");
+        }
         numberOfCoins.text = playerScript.coins.ToString();
     }
 
