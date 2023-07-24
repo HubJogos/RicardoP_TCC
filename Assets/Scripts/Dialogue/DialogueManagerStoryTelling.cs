@@ -35,11 +35,13 @@ public class DialogueManagerStoryTelling : MonoBehaviour
     private TextMeshProUGUI textChoice3;
 
     [SerializeField]
-    private Button buttonChoice1;
+    private GameObject buttonChoice1;
     [SerializeField]
-    private Button buttonChoice2;
+    private GameObject buttonChoice2;
     [SerializeField]
-    private Button buttonChoice3;
+    private GameObject buttonChoice3;
+    [SerializeField]
+    private GameObject buttonChoicesContinue;
 
     public AudioSource soundEnviroment;
 
@@ -56,8 +58,10 @@ public class DialogueManagerStoryTelling : MonoBehaviour
     Dictionary<string, List<string>> dialogoHomemMisteriosoAto1 = new Dictionary<string, List<string>>
     {
         { "Você me lembra alguém que entrou nesse mesmo portal a uns anos atrás…", new List<string> { "Era o meu pai.", "E o que aconteceu com este homem?", "..." } },
-        { "Não tenha pressa em saber meu nome, pois agora sou apenas um guia neste plano de existência. Sua vinda foi prevista nas entrelinhas do tempo e espaço. Recebeste uma mensagem de seu avô, não foi? Um sinal de que és o escolhido para cumprir um destino maior.", new List<string> { "Cale a boca!", "Não sei dizer.", "Vá embora." } },
-        { "Então, sua jornada começa agora. Nesta ilha escondida, o portal das sombras aguarda seu toque. Porém, tenha em mente que o poder que ele concede também despertou forças sombrias. Cabe a você encontrar um equilíbrio entre luz e sombras.", new List<string>() },
+        { "Ele nunca voltou de lá. Por que você acha que está preparado para entrar lá também?", new List<string> { "Treinei durante anos para este dia. Minha espada será o suficiente", "Sei me cuidar muito bem em uma caverna", "Cale-se e deixe eu passar logo." } },
+        { "Você não viria de tão longe apenas para isso… Você com certeza já ouviu falar das riquezas que tem lá dentro... E você pode não ter tempo suficiente para encontrar o que está procurando e ainda sair com riquezas… MUAHAHAHAHAHA ", new List<string> { "Vim para encontrar o meu pai, é só isso que importa", "Também estou precisando de dinheiro.", "Está vendo essa espada? Ela pode conquistar o que eu quiser." } },
+        { "Você lembra mesmo muito a pessoa que entrou antes aqui neste portal, talvez seja por esse motivo que ele nunca voltou, ou falta de tempo. Muahahaha Entre, mas lembre-se, todas as suas ações terão consequências… muahahahahaha", new List<string>()},
+        { "O que você quer? o portal está liberado, não perca tempo. MUAHAHAH ", new List<string>()},
     };
 
     private string[] dialogosAleatoriosBasicos =
@@ -216,7 +220,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
             {
                 print("The Left mouse button was pressed");
-                rodaDialogo();
+                //rodaDialogo();
             }
         }
 
@@ -230,27 +234,44 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         {
             if (dialogoHomemMisteriosoAto1.Count > 0)
             {
-                // Obtém o primeiro diálogo (pergunta) do dicionário
-                KeyValuePair<string, List<string>> primeiroDialogo = dialogoHomemMisteriosoAto1.First();
-  
-                List<string> respostas = primeiroDialogo.Value;
-                textDialogue.text = primeiroDialogo.Key;
-
-                if (respostas.Count > 0)
+                if (dialogoAux <= dialogoHomemMisteriosoAto1.Count)
                 {
-                    // ativar botões de decisões 1, 2 e 3
-                    string resposta1 = respostas[0];
-                    string resposta2 = respostas[1];
-                    string resposta3 = respostas[2];
-  
-                    textChoice1.text = resposta1;
-                    textChoice2.text = resposta2;
-                    textChoice3.text = resposta3;
+                    KeyValuePair<string, List<string>> primeiroDialogo = dialogoHomemMisteriosoAto1.ElementAt(dialogoAux);
 
+                    dialogoAux++;
 
+                    List<string> respostas = primeiroDialogo.Value;
+                    textDialogue.text = primeiroDialogo.Key;
+
+                    if (respostas.Count > 0)
+                    {
+                        buttonChoice1.SetActive(true);
+                        buttonChoice2.SetActive(true);
+                        buttonChoice3.SetActive(true);
+                        buttonChoicesContinue.SetActive(false);
+
+                        // ativar botões de decisões 1, 2 e 3
+                        string resposta1 = respostas[0];
+                        string resposta2 = respostas[1];
+                        string resposta3 = respostas[2];
+
+                        textChoice1.text = resposta1;
+                        textChoice2.text = resposta2;
+                        textChoice3.text = resposta3;
+
+                    }
+                    else
+                    {
+                        // colocar botão de continuar
+                        buttonChoice1.SetActive(false);
+                        buttonChoice2.SetActive(false);
+                        buttonChoice3.SetActive(false);
+                        buttonChoicesContinue.SetActive(true);
+
+                    }
                 } else
                 {
-                    // colocar botão de continuar
+                    Debug.LogError("Estourou memoria");
                 }
 
             }
@@ -323,6 +344,16 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         }
     }
 
+    public void continueChoices()
+    {
+        if (dialogoAux <= dialogoHomemMisteriosoAto1.Count)
+        {
+            rodaDialogo();
+        } else
+        {
+            fechaHud();
+        }
+    }
 
     public void fechaHud(){
         HudDialogue.SetActive(false);
