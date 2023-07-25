@@ -64,6 +64,15 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         { "O o portal está liberado, não perca tempo. Encontre o que você procura... ou não... MUAHAHAHAH ", new List<string>()},
     };
 
+    Dictionary<string, List<string>> dialogoHomemMisteriosoAto2 = new Dictionary<string, List<string>>
+    {
+        { "Sua ambição fez com que causasse uma guerra do mundo mágico com o nosso, parabéns. MUAHAHAHAHAH", new List<string> { "Você armou para mim, era tudo que você queria.", "Eu não tive culpa de nada, a culpa é sua!", "?????? (espanto irônico)" } },
+        { "", new List<string> { "", "", "" } },
+        { "", new List<string> { "", "" } },
+        { "", new List<string>()},
+        { "", new List<string>()},
+    };
+
     private string[] dialogosAleatoriosBasicos =
     {
         "Não tenho tempo para conversar. Tenho muito trabalho a fazer.",
@@ -357,7 +366,13 @@ public class DialogueManagerStoryTelling : MonoBehaviour
     public void liberaPortal()
     {
 
-        // gera o mundo aqui
+        // se for a segunda passagem, checa se o mapa veio gerado pela regressão
+
+        // verifica se o jogador é combatente, velocista ou explorador
+
+        // gera o mundo aqui na hora que libra o portal
+
+        // Presets de várias variáveis que mudam em tempo real com a história
 
 
 
