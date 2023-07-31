@@ -182,13 +182,13 @@ public class NecroBoss : MonoBehaviour
         switch (decider)
         {
             case 0:
-                ChargeAttack();
+                //ChargeAttack();
                 break;
             case 1:
-                ProjectileAttack();
+                //ProjectileAttack();
                 break;
             case 2:
-                GroundAttack();
+                //GroundAttack();
                 break;
         }
     }
@@ -312,7 +312,7 @@ public class NecroBoss : MonoBehaviour
             projectileDamage = 0;
             tentacleDamage = 0;
             spriteRenderer.color = new Color(1f, 1f, 1f, 0f);//torna inimigo invisível
-            afterFightDrops.SetActive(true);//abre menu de seleção de recompensa
+            //afterFightDrops.SetActive(true);//abre menu de seleção de recompensa
             endingFight = true;//garante que essa função seja chamada somente uma vez
             audioManager.PlayUnrestricted("BossDeath");
             StopAllCoroutines();//para quaisquer execuções ativas
@@ -328,7 +328,7 @@ public class NecroBoss : MonoBehaviour
         //-------------------------------------------------------------------
 
         Time.timeScale = 1;//despausa jogo após seleção
-        StartCoroutine(uiManager.FadeOut("Game", true, 1));//retorna para a cena da cidade inicial
+        StartCoroutine(uiManager.FadeOut("Game2", true, 1));//retorna para a cena da cidade inicial
         StartCoroutine(WaitToDie(2));
     }
     IEnumerator WaitToDie(int secs)
