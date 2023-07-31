@@ -21,18 +21,19 @@ public class EndStage : MonoBehaviour
     }
     private void Update()
     {
-        if (dataGen.activeQuests <= 0 && !finished)
-        {
-            transform.position = FindSpawningPoint();
-            finished = true;
-        }
+        //if (dataGen.activeQuests <= 0 && !finished)
+        //{
+        //    transform.position = FindSpawningPoint();
+        //    finished = true;
+        //}
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Player")){
 
             dataGen.SaveAsCSV();
-            SceneManager.LoadScene("Game");//volta para a cidade inicial
+            dataGen.ato = 2;
+            SceneManager.LoadScene("Game2");//volta para a cidade inicial
         }
     }
 

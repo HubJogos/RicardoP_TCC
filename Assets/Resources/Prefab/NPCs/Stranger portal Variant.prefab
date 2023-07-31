@@ -1,0 +1,298 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &3428556851994576517
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3426627581277845169, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 0.39098337
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426627581277845169, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_Size.y
+      value: 0.6706823
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426627581277845169, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_Offset.x
+      value: 0.110100135
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426627581277845169, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_Offset.y
+      value: -0.1520803
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426627581277845169, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.x
+      value: 1.1636363
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426627581277845169, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.y
+      value: 1.1636363
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426627581277845170, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_FlipX
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426627581277845170, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_FlipY
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426627581277845170, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 69df12d67da21ce4da5a5326b575734e,
+        type: 3}
+    - target: {fileID: 3426627581277845170, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_DrawMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426627581277845170, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_SpriteSortPoint
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426627581277845171, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426627581277845171, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426627581277845171, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426627581277845171, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426627581277845171, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 23.51
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426627581277845171, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.46961197
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426627581277845171, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426627581277845171, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426627581277845171, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426627581277845171, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426627581277845171, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426627581277845171, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426627581277845171, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426627581277845183, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_Name
+      value: Stranger portal
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426627581277845183, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426627581926679956, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426627581926679958, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_Radius
+      value: 0.6628759
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426627581926679958, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_Offset.x
+      value: 0.29735732
+      objectReference: {fileID: 0}
+    - target: {fileID: 3426627581926679958, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_Offset.y
+      value: 0.022442102
+      objectReference: {fileID: 0}
+    - target: {fileID: 7140114498231377536, guid: cae3ea7c24f687447addf244defada6d,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 3426627581926679959, guid: cae3ea7c24f687447addf244defada6d, type: 3}
+  m_SourcePrefab: {fileID: 100100000, guid: cae3ea7c24f687447addf244defada6d, type: 3}
+--- !u!1 &7175326196425489 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3426627581926679956, guid: cae3ea7c24f687447addf244defada6d,
+    type: 3}
+  m_PrefabInstance: {fileID: 3428556851994576517}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1697235933
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7175326196425489}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 604e73fcd6e619a46b216d9e76b469da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NomeNPC: 
+  npcNormal: 0
+  firstTime: 1
+  backToThePortal: 0
+  dialogueStarted: 0
+  portal: {fileID: 0}
+  HudDialogue: {fileID: 0}
+  textDialogue: {fileID: 0}
+  textChoice1: {fileID: 0}
+  textChoice2: {fileID: 0}
+  textChoice3: {fileID: 0}
+  buttonChoice1: {fileID: 0}
+  buttonChoice2: {fileID: 0}
+  buttonChoice3: {fileID: 0}
+  buttonChoicesContinue: {fileID: 0}
+  soundStoryTelling: {fileID: 0}
+  fraseNPC: 
+  dialogoAux: 0
+  dialogosNpcsJogadorMorreu:
+  - "Hahaha! Parece que algu\xE9m se perdeu nas cavernas! Precisando de uma ajudinha?"
+  - "Olha s\xF3 quem voltou... Todo ensanguentado e derrotado! N\xE3o disse para
+    tomar cuidado?"
+  - Morreu nas profundezas escuras, hein? Aposto que nem encontrou o tesouro!
+  - "Bem-vindo de volta, fracassado! Parece que as cavernas n\xE3o s\xE3o t\xE3o
+    amig\xE1veis assim, n\xE9?"
+  - "N\xE3o se preocupe, o her\xF3i da hist\xF3ria chegou! S\xF3 que n\xE3o..."
+  - "Mais um que se aventurou e falhou miseravelmente! Quando voc\xEA aprender\xE1
+    a li\xE7\xE3o?"
+  - "Risos ecoam nas profundezas... Ser\xE1 que voc\xEA ser\xE1 resgatado dessa vez?"
+  - "Hahaha! Aquele que se dizia valente agora est\xE1 preso nas garras das cavernas!"
+  - "Aqui estamos novamente... Voc\xEA sempre encontrando problemas onde quer que
+    v\xE1!"
+  - "Eu diria para tomar cuidado, mas voc\xEA claramente n\xE3o sabe o que isso significa!"
+  - "Outro dia, outra derrota! Voc\xEA realmente n\xE3o aprende, n\xE3o \xE9 mesmo?"
+  - "\xC9 t\xE3o divertido v\xEA-lo trope\xE7ando e caindo... Uma e outra vez!"
+  - "Parece que as cavernas est\xE3o se alimentando bem desses aventureiros fracassados!"
+  - "Hahaha! Voc\xEA \xE9 um verdadeiro comediante... mas nem sabe disso!"
+  - "N\xE3o se preocupe, her\xF3i de araque! Algu\xE9m ir\xE1 salv\xE1-lo... talvez!"
+  - "Voc\xEA morreu? Ah, que pena! Mas algu\xE9m precisa manter as cavernas ocupadas
+    com suas falhas!"
+  - "Mais uma vez, voc\xEA nos brinda com sua falta de habilidade. \xC9 quase hil\xE1rio!"
+  - "Dizem que as cavernas est\xE3o cheias de perigos mortais... e voc\xEA s\xF3
+    confirma isso!"
+  - "Vamos l\xE1, d\xEA o seu melhor! Ou talvez nem seja necess\xE1rio... afinal,
+    voc\xEA vai falhar!"
+  - "Risos ecoam enquanto voc\xEA trope\xE7a nas sombras. N\xE3o perca a esperan\xE7a...
+    ou talvez perca!"
+--- !u!1 &7175326593544250 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3426627581277845183, guid: cae3ea7c24f687447addf244defada6d,
+    type: 3}
+  m_PrefabInstance: {fileID: 3428556851994576517}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1275891439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7175326593544250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 604e73fcd6e619a46b216d9e76b469da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  NomeNPC: 
+  npcNormal: 1
+  firstTime: 1
+  backToThePortal: 0
+  dialogueStarted: 0
+  portal: {fileID: 0}
+  HudDialogue: {fileID: 0}
+  textDialogue: {fileID: 0}
+  textChoice1: {fileID: 0}
+  textChoice2: {fileID: 0}
+  textChoice3: {fileID: 0}
+  buttonChoice1: {fileID: 0}
+  buttonChoice2: {fileID: 0}
+  buttonChoice3: {fileID: 0}
+  buttonChoicesContinue: {fileID: 0}
+  soundStoryTelling: {fileID: 0}
+  fraseNPC: 
+  dialogoAux: 0
+  dialogosNpcsJogadorMorreu:
+  - "Hahaha! Parece que algu\xE9m se perdeu nas cavernas! Precisando de uma ajudinha?"
+  - "Olha s\xF3 quem voltou... Todo ensanguentado e derrotado! N\xE3o disse para
+    tomar cuidado?"
+  - Morreu nas profundezas escuras, hein? Aposto que nem encontrou o tesouro!
+  - "Bem-vindo de volta, fracassado! Parece que as cavernas n\xE3o s\xE3o t\xE3o
+    amig\xE1veis assim, n\xE9?"
+  - "N\xE3o se preocupe, o her\xF3i da hist\xF3ria chegou! S\xF3 que n\xE3o..."
+  - "Mais um que se aventurou e falhou miseravelmente! Quando voc\xEA aprender\xE1
+    a li\xE7\xE3o?"
+  - "Risos ecoam nas profundezas... Ser\xE1 que voc\xEA ser\xE1 resgatado dessa vez?"
+  - "Hahaha! Aquele que se dizia valente agora est\xE1 preso nas garras das cavernas!"
+  - "Aqui estamos novamente... Voc\xEA sempre encontrando problemas onde quer que
+    v\xE1!"
+  - "Eu diria para tomar cuidado, mas voc\xEA claramente n\xE3o sabe o que isso significa!"
+  - "Outro dia, outra derrota! Voc\xEA realmente n\xE3o aprende, n\xE3o \xE9 mesmo?"
+  - "\xC9 t\xE3o divertido v\xEA-lo trope\xE7ando e caindo... Uma e outra vez!"
+  - "Parece que as cavernas est\xE3o se alimentando bem desses aventureiros fracassados!"
+  - "Hahaha! Voc\xEA \xE9 um verdadeiro comediante... mas nem sabe disso!"
+  - "N\xE3o se preocupe, her\xF3i de araque! Algu\xE9m ir\xE1 salv\xE1-lo... talvez!"
+  - "Voc\xEA morreu? Ah, que pena! Mas algu\xE9m precisa manter as cavernas ocupadas
+    com suas falhas!"
+  - "Mais uma vez, voc\xEA nos brinda com sua falta de habilidade. \xC9 quase hil\xE1rio!"
+  - "Dizem que as cavernas est\xE3o cheias de perigos mortais... e voc\xEA s\xF3
+    confirma isso!"
+  - "Vamos l\xE1, d\xEA o seu melhor! Ou talvez nem seja necess\xE1rio... afinal,
+    voc\xEA vai falhar!"
+  - "Risos ecoam enquanto voc\xEA trope\xE7a nas sombras. N\xE3o perca a esperan\xE7a...
+    ou talvez perca!"

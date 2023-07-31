@@ -386,6 +386,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                 case 1: //ato 1
                     if (dialogoHomemMisteriosoAto1.Count > 0)
                     {
+                        Debug.Log(dialogoAux + " " + dialogoHomemMisteriosoAto1.Count);
                         if (dialogoAux < dialogoHomemMisteriosoAto1.Count)
                         {
                             int dialogueToRun = dialogoAux;
