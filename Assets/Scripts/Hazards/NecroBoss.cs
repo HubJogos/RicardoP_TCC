@@ -11,6 +11,8 @@ public class NecroBoss : MonoBehaviour
     [SerializeField] GameObject afterFightDrops;
     [SerializeField] GameObject[] rewards;
 
+    DataGenerator dataGen;
+
     public Slider healthBar;
     public Text hpText;
     public Transform target;
@@ -72,6 +74,8 @@ public class NecroBoss : MonoBehaviour
         chargeDir.SetActive(false);
         healthBar.gameObject.SetActive(false);
         lineRenderer.enabled = false;
+
+        dataGen = FindObjectOfType<DataGenerator>();
     }
 
 
@@ -328,6 +332,8 @@ public class NecroBoss : MonoBehaviour
         //-------------------------------------------------------------------
 
         Time.timeScale = 1;//despausa jogo após seleção
+        dataGen.ato = 2;
+
         StartCoroutine(uiManager.FadeOut("Game2", true, 1));//retorna para a cena da cidade inicial
         StartCoroutine(WaitToDie(2));
 

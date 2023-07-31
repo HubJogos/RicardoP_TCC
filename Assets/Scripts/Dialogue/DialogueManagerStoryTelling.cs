@@ -67,8 +67,8 @@ public class DialogueManagerStoryTelling : MonoBehaviour
     Dictionary<string, List<string>> dialogoHomemMisteriosoAto2 = new Dictionary<string, List<string>>
     {
         { "Sua ambição fez com que causasse uma guerra do mundo mágico com o nosso, parabéns. MUAHAHAHAHAH", new List<string> { "Você armou para mim, era tudo que você queria.", "Eu não tive culpa de nada, a culpa é sua!", "?????? (espanto irônico)" } },
-        { "O mundo que você conhece não existirá mais em breve, o mundo mágico irá dominar todo ele", new List<string> { "", "", "" } },
-        { "Desde que você entrou na caverna, passaram 7 anos de guerra entre o seu mundo e o mundo mágico. Claramente o seu mundo está perdendo...", new List<string> { "", "" } },
+        { "O mundo que você conhece não existirá mais em breve, o mundo mágico irá dominar todo ele", new List<string>() },
+        { "Desde que você entrou na caverna, passaram 7 anos de guerra entre o seu mundo e o mundo mágico. Claramente o seu mundo está perdendo...", new List<string>() },
         { "Não, você não pode entrar, não permitirei.", new List<string>()},
         { "Se você entrar irá enfrentar consequências! Não permitirei! Não ouse! ", new List<string>()},
         { "Nos encontraremos novamente mais tarde. Muahahahahaah ", new List<string>()},
@@ -381,9 +381,9 @@ public class DialogueManagerStoryTelling : MonoBehaviour
 
         if (npcNormal == false)
         {
-            switch (dataGen.playthroughs)
+            switch (dataGen.ato)
             {
-                case 0: //ato 1
+                case 1: //ato 1
                     if (dialogoHomemMisteriosoAto1.Count > 0)
                     {
                         if (dialogoAux < dialogoHomemMisteriosoAto1.Count)
@@ -399,6 +399,60 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                             bool foundSecret = dataGen.foundSecret;
 
                             KeyValuePair<string, List<string>> primeiroDialogo = dialogoHomemMisteriosoAto1.ElementAt(dialogueToRun);
+
+                            List<string> respostas = primeiroDialogo.Value;
+                            textDialogue.text = primeiroDialogo.Key;
+
+                            if (respostas.Count > 0)
+                            {
+                                buttonChoice1.SetActive(true);
+                                buttonChoice2.SetActive(true);
+                                buttonChoice3.SetActive(true);
+                                buttonChoicesContinue.SetActive(false);
+
+                                // ativar botões de decisões 1, 2 e 3
+                                string resposta1 = respostas[0];
+                                string resposta2 = respostas[1];
+                                string resposta3 = respostas[2];
+
+                                textChoice1.text = resposta1;
+                                textChoice2.text = resposta2;
+                                textChoice3.text = resposta3;
+
+                            }
+                            else
+                            {
+                                // colocar botão de continuar
+                                buttonChoice1.SetActive(false);
+                                buttonChoice2.SetActive(false);
+                                buttonChoice3.SetActive(false);
+                                buttonChoicesContinue.SetActive(true);
+
+                            }
+                        }
+                        else
+                        {
+                            continueChoices();
+                        }
+
+                    }
+                    break;
+                case 2:
+                    if (dialogoHomemMisteriosoAto2.Count > 0)
+                    {
+                        if (dialogoAux < dialogoHomemMisteriosoAto2.Count)
+                        {
+                            int dialogueToRun = dialogoAux;
+                            if (dialogo != -1)
+                            {
+                                dialogueToRun = dialogo;
+                            }
+
+
+                            int activeQuests = dataGen.activeQuests;
+                            bool foundSecret = dataGen.foundSecret;
+
+                            KeyValuePair<string, List<string>> primeiroDialogo = dialogoHomemMisteriosoAto2.ElementAt(dialogueToRun);
 
                             List<string> respostas = primeiroDialogo.Value;
                             textDialogue.text = primeiroDialogo.Key;
@@ -561,17 +615,28 @@ public class DialogueManagerStoryTelling : MonoBehaviour
             Debug.Log("Saiu");
             dialogueStarted = false;
             HudDialogue.SetActive(false);
-            //soundEnviroment.Play();
-            //firstTime = false;
-
-            //liberaPortal();
-            //interactionText.SetActive(false);
         }
     }
 
     public void continueChoices()
     {
-        if (dialogoAux <= dialogoHomemMisteriosoAto1.Count)
+        int countProxDialogo = 0;
+
+        switch (dataGen.ato)
+        {
+            case 1:
+                countProxDialogo = dialogoHomemMisteriosoAto1.Count;
+                break;
+            case 2:
+                countProxDialogo = dialogoHomemMisteriosoAto2.Count;
+                break;
+            case 3:
+                break;
+            default:
+                break;
+        }
+
+        if (dialogoAux <= countProxDialogo)
         {
             dialogoAux++;
             rodaDialogo();
@@ -579,12 +644,22 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         {
             dialogoAux++;
             liberaPortal();
+            homemEncapuzadoSome();
             fechaHud();
         }
     }
 
     public void fechaHud(){
         HudDialogue.SetActive(false);
+    }
+
+    public void homemEncapuzadoSome()
+    {
+        gameObject.SetActive(false);
+        if (transform.parent != null)
+        {
+            transform.parent.gameObject.SetActive(false);
+        } 
     }
 
 }
