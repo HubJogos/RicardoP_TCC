@@ -43,7 +43,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
     [SerializeField]
     private GameObject buttonChoicesContinue;
 
-    public AudioSource soundEnviroment;
+    public AudioManager soundStoryTelling;
 
     private int ato = 1;
 
@@ -352,26 +352,12 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         dataGen = FindObjectOfType<DataGenerator>();
         stats = FindObjectOfType<PersistentStats>();
 
+        soundStoryTelling = FindObjectOfType<AudioManager>();
+
         if (npcNormal == true && fraseNPC == "")
         {
             fraseNPC = getFraseAleatoriaBasica();
-        } 
-
-
-        if (dataGen.playthroughs == 1)
-        {
-            Debug.Log("Estou de volta, vivo ?");
-        } else {
-            if (dataGen.playthroughs > 1){
-                Debug.Log("Voltei tantas vezes que nem me importo mais.");
-            }
-
         }
-
-        var outputStats = JsonUtility.ToJson(stats, true);
-        var outputDataGen = JsonUtility.ToJson(dataGen, true);
-        Debug.Log("Stats: " + outputStats);
-        Debug.Log("DataGen: " + outputDataGen);
 
     }
 
@@ -558,7 +544,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             //Debug.Log("Entrou ############");
-            soundEnviroment.Pause();
+            //soundEnviroment.Pause();
             if (Input.GetKeyDown(KeyCode.E))
             {
 

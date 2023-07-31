@@ -81,6 +81,8 @@ public class DataGenerator : MonoBehaviour
     public string itemPositions;
     public string enemyPositions;
     public int playthroughs = 0;
+    public int ato = 1;
+    public int deaths = 0;
     [Header("Questions")]
     //Partial questions answers for multiple plays
     public string[] answers = new string[6];

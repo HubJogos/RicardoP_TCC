@@ -124,6 +124,7 @@ public class PlayerScript : MonoBehaviour
     #region Sounds
     [Header ("Sounds")]
     AudioManager audioManager;
+    AudioManager audioManagerStoryTelling;
     #endregion
 
     #region Inventory
@@ -140,6 +141,9 @@ public class PlayerScript : MonoBehaviour
     #endregion
     void Start()
     {
+
+        Application.targetFrameRate = 60;
+
         dataGen = FindObjectOfType<DataGenerator>();
         stats = FindObjectOfType<PersistentStats>();
         tracker = FindObjectOfType<QuestTracker>();
@@ -186,6 +190,48 @@ public class PlayerScript : MonoBehaviour
         currentAmmo = maxAmmo;
         slashHitbox.SetActive(false);
         playerUI.UpdateHealth();
+
+
+        switch (SceneManager.GetActiveScene().name.ToString())
+        {
+            case "Game":
+                if (dataGen.playthroughs >= 1 && dataGen.ato == 1)
+                {
+                    Debug.Log("Estou de volta, vivo ? Fui derrotado!");
+                }
+                else
+                {
+                    if (dataGen.playthroughs > 1)
+                    {
+                        Debug.Log("Voltei tantas vezes que nem me importo mais. Essa caverna é bem dificil.");
+                    } else
+                    {
+                        Invoke("PlaySoundStartGame1", 0.5f);
+                    }
+
+                }
+                break;
+            case "Game2":
+                Invoke("PlaySoundStartGame2", 0.5f);
+                Debug.Log("O mundo está devastado!");
+                break;
+        }
+
+        
+        var outputStats = JsonUtility.ToJson(stats, true);
+        var outputDataGen = JsonUtility.ToJson(dataGen, true);
+        Debug.Log("Stats: " + outputStats);
+        Debug.Log("DataGen: " + outputDataGen);
+
+    }
+
+    void PlaySoundStartGame1()
+    {
+        audioManager.PlayUnrestricted("StoryFalaInicioFase1");
+    }
+    void PlaySoundStartGame2()
+    {
+        audioManager.PlayUnrestricted("StoryFalaInicioFase2");
     }
 
 

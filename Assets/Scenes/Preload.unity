@@ -184,13 +184,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe0c47c6d6b8e0440833f300e8be369a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startTime: 0
-  doneGen: 0
-  foundSecret: 0
-  deathCounter: 0
-  completedQuests: 0
-  activeQuests: 0
-  interactions: 0
   playerData:
     totalLifeLost: 0
     playerLevel: 0
@@ -226,6 +219,13 @@ MonoBehaviour:
     exitDoor: {x: 0, y: 0}
     itemPositions: []
     enemyPositions: []
+  startTime: 0
+  doneGen: 0
+  foundSecret: 0
+  deathCounter: 0
+  completedQuests: 0
+  activeQuests: 0
+  interactions: 0
   totalLifeLost: 
   time: 
   steps: 
@@ -258,6 +258,8 @@ MonoBehaviour:
   itemPositions: 
   enemyPositions: 
   playthroughs: 0
+  ato: 1
+  deaths: 0
   answers:
   - 
   - 
@@ -450,6 +452,18 @@ MonoBehaviour:
     loop: 0
   - name: BossProjectile
     clip: {fileID: 8300000, guid: 431550a5f8828374c890ec2724f5b647, type: 3}
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+    loop: 0
+  - name: StoryFalaInicioFase2
+    clip: {fileID: 8300000, guid: 03f2f1ad4b9992a4f938f0c1e77ecb32, type: 3}
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+    loop: 0
+  - name: StoryFalaInicioFase1
+    clip: {fileID: 8300000, guid: 17be6a8e85b62bc4e93524dc5ec9be8a, type: 3}
     volume: 1
     pitch: 1
     source: {fileID: 0}
