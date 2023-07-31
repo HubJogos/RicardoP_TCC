@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 
@@ -64,6 +65,21 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         { "O o portal está liberado, não perca tempo. Encontre o que você procura... ou não... MUAHAHAHAH ", new List<string>()},
     };
 
+    Dictionary<string, List<string>> dialogoHomemMisteriosoAto1Cave = new Dictionary<string, List<string>>
+    {
+        { "Olá querido aventureiro... Tenho algumas coisas para conversar com você.", new List<string> () },
+        { "Primeiro de tudo, muitas respostas suas serão respondidas em breve... ", new List<string>() },
+        { "Vamos falar como foi lá dentro... antes de tudo, você achou dificil? Muahahahah", new List<string> { "Achei fácil, pensava que seria mais difícil", "Foi mais ou menos, tive algumas dificuldades.", "Achei difícil, saí lá de dentro por pouco." } },
+        { "E você achou divertido?", new List<string>{"Bastante divertido, a caverna realmente é interessante.", "Não muito.", "Não achei divertido, foi chato." } },
+        { "Você ter atacado os inimigos e levado seus tesouros pode ter gerado algumas consequências... ", new List<string>()},
+        { "As riquezas e tesouros dentro das cavernas são tentadores, mas o verdadeiro perigo está no poder que elas podem conceder. Um poder que pode levar à dominação ", new List<string>()},
+        { "Essas cavernas mágicas são apenas a ponta do iceberg. Seu potencial para o caos é inigualável, e um dia, elas se espalharão como uma praga ", new List<string>()},
+        { "Você se mostrou habilidoso lá dentro das cavernas e passou na sua provação... ", new List<string>()},
+        { "Junte-se a mim! Não faça como seu pai fez! MUAHAHAHAHAH ", new List<string>{"Como assim? O que meu pai tem a ver com isso?", "Nunca! Jamais me unirei a você Explique-se!", "Meu pai? Dominação do mundo mágico? Quê?" } },
+        { "As sombras que habitam nas profundezas das cavernas mágicas são apenas o começo. Logo, elas se espalharão e dominarão tudo. ", new List<string>{"Você é louco!", "Esse mundo mágico não vai dominar nada!", "O que você fez com meu pai?" } },
+        { "Sofra as consequências então! Não ouse entrar nas cavernas nunca mais ou será exterminado assim como o seu pai foi.", new List<string>() },
+    };
+
     Dictionary<string, List<string>> dialogoHomemMisteriosoAto2 = new Dictionary<string, List<string>>
     {
         { "Sua ambição fez com que causasse uma guerra do mundo mágico com o nosso, parabéns. MUAHAHAHAHAH", new List<string> { "Você armou para mim, era tudo que você queria.", "Eu não tive culpa de nada, a culpa é sua!", "?????? (espanto irônico)" } },
@@ -72,6 +88,11 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         { "Não, você não pode entrar, não permitirei.", new List<string>()},
         { "Se você entrar irá enfrentar consequências! Não permitirei! Não ouse! ", new List<string>()},
         { "Nos encontraremos novamente mais tarde. Muahahahahaah ", new List<string>()},
+    };
+
+    Dictionary<string, List<string>> dialogoHomemMisteriosoAto2Cave = new Dictionary<string, List<string>>
+    {
+        { "Você será exterminado.", new List<string> () },
     };
 
     private string[] dialogosAleatoriosBasicos =
@@ -368,7 +389,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                print("The Left mouse button was pressed");
+                //print("The Left mouse button was pressed");
                 //rodaDialogo();
             }
         }
@@ -384,59 +405,119 @@ public class DialogueManagerStoryTelling : MonoBehaviour
             switch (dataGen.ato)
             {
                 case 1: //ato 1
-                    if (dialogoHomemMisteriosoAto1.Count > 0)
+                    // quer dizer que o jogador está falando com o homem encapuzado dentro da caverna
+                    if (SceneManager.GetActiveScene().name.ToString() == "MapGeneration")
                     {
-                        Debug.Log(dialogoAux + " " + dialogoHomemMisteriosoAto1.Count);
-                        if (dialogoAux < dialogoHomemMisteriosoAto1.Count)
+                        if (dialogoHomemMisteriosoAto1Cave.Count > 0)
                         {
-                            int dialogueToRun = dialogoAux;
-                            if (dialogo != -1)
+                            Debug.Log(dialogoAux + " " + dialogoHomemMisteriosoAto1Cave.Count);
+                            if (dialogoAux < dialogoHomemMisteriosoAto1Cave.Count)
                             {
-                                dialogueToRun = dialogo;
-                            }
+                                int dialogueToRun = dialogoAux;
+                                if (dialogo != -1)
+                                {
+                                    dialogueToRun = dialogo;
+                                }
 
 
-                            int activeQuests = dataGen.activeQuests;
-                            bool foundSecret = dataGen.foundSecret;
+                                int activeQuests = dataGen.activeQuests;
+                                bool foundSecret = dataGen.foundSecret;
 
-                            KeyValuePair<string, List<string>> primeiroDialogo = dialogoHomemMisteriosoAto1.ElementAt(dialogueToRun);
+                                KeyValuePair<string, List<string>> primeiroDialogo = dialogoHomemMisteriosoAto1Cave.ElementAt(dialogueToRun);
 
-                            List<string> respostas = primeiroDialogo.Value;
-                            textDialogue.text = primeiroDialogo.Key;
+                                List<string> respostas = primeiroDialogo.Value;
+                                textDialogue.text = primeiroDialogo.Key;
 
-                            if (respostas.Count > 0)
-                            {
-                                buttonChoice1.SetActive(true);
-                                buttonChoice2.SetActive(true);
-                                buttonChoice3.SetActive(true);
-                                buttonChoicesContinue.SetActive(false);
+                                if (respostas.Count > 0)
+                                {
+                                    buttonChoice1.SetActive(true);
+                                    buttonChoice2.SetActive(true);
+                                    buttonChoice3.SetActive(true);
+                                    buttonChoicesContinue.SetActive(false);
 
-                                // ativar botões de decisões 1, 2 e 3
-                                string resposta1 = respostas[0];
-                                string resposta2 = respostas[1];
-                                string resposta3 = respostas[2];
+                                    // ativar botões de decisões 1, 2 e 3
+                                    string resposta1 = respostas[0];
+                                    string resposta2 = respostas[1];
+                                    string resposta3 = respostas[2];
 
-                                textChoice1.text = resposta1;
-                                textChoice2.text = resposta2;
-                                textChoice3.text = resposta3;
+                                    textChoice1.text = resposta1;
+                                    textChoice2.text = resposta2;
+                                    textChoice3.text = resposta3;
 
+                                }
+                                else
+                                {
+                                    // colocar botão de continuar
+                                    buttonChoice1.SetActive(false);
+                                    buttonChoice2.SetActive(false);
+                                    buttonChoice3.SetActive(false);
+                                    buttonChoicesContinue.SetActive(true);
+
+                                }
                             }
                             else
                             {
-                                // colocar botão de continuar
-                                buttonChoice1.SetActive(false);
-                                buttonChoice2.SetActive(false);
-                                buttonChoice3.SetActive(false);
-                                buttonChoicesContinue.SetActive(true);
-
+                                continueChoices();
                             }
-                        }
-                        else
-                        {
-                            continueChoices();
-                        }
 
+                        }
+                    } else
+                    {
+                        if (dialogoHomemMisteriosoAto1.Count > 0)
+                        {
+                            Debug.Log(dialogoAux + " " + dialogoHomemMisteriosoAto1.Count);
+                            if (dialogoAux < dialogoHomemMisteriosoAto1.Count)
+                            {
+                                int dialogueToRun = dialogoAux;
+                                if (dialogo != -1)
+                                {
+                                    dialogueToRun = dialogo;
+                                }
+
+
+                                int activeQuests = dataGen.activeQuests;
+                                bool foundSecret = dataGen.foundSecret;
+
+                                KeyValuePair<string, List<string>> primeiroDialogo = dialogoHomemMisteriosoAto1.ElementAt(dialogueToRun);
+
+                                List<string> respostas = primeiroDialogo.Value;
+                                textDialogue.text = primeiroDialogo.Key;
+
+                                if (respostas.Count > 0)
+                                {
+                                    buttonChoice1.SetActive(true);
+                                    buttonChoice2.SetActive(true);
+                                    buttonChoice3.SetActive(true);
+                                    buttonChoicesContinue.SetActive(false);
+
+                                    // ativar botões de decisões 1, 2 e 3
+                                    string resposta1 = respostas[0];
+                                    string resposta2 = respostas[1];
+                                    string resposta3 = respostas[2];
+
+                                    textChoice1.text = resposta1;
+                                    textChoice2.text = resposta2;
+                                    textChoice3.text = resposta3;
+
+                                }
+                                else
+                                {
+                                    // colocar botão de continuar
+                                    buttonChoice1.SetActive(false);
+                                    buttonChoice2.SetActive(false);
+                                    buttonChoice3.SetActive(false);
+                                    buttonChoicesContinue.SetActive(true);
+
+                                }
+                            }
+                            else
+                            {
+                                continueChoices();
+                            }
+
+                        }
                     }
+ 
                     break;
                 case 2:
                     if (dialogoHomemMisteriosoAto2.Count > 0)
@@ -626,7 +707,13 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         switch (dataGen.ato)
         {
             case 1:
-                countProxDialogo = dialogoHomemMisteriosoAto1.Count;
+                if (SceneManager.GetActiveScene().name.ToString() != "Game")
+                {
+                    countProxDialogo = dialogoHomemMisteriosoAto1Cave.Count;
+                } else
+                {
+                    countProxDialogo = dialogoHomemMisteriosoAto1.Count;
+                }
                 break;
             case 2:
                 countProxDialogo = dialogoHomemMisteriosoAto2.Count;
