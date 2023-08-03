@@ -10,11 +10,15 @@ public class DialogueMarket : MonoBehaviour
     [SerializeField]
     public GameObject HudMarket;
 
+    AudioManager audioManager;
+
     PlayerScript playerScript;
 
     void Start()
     {
         playerScript = FindObjectOfType<PlayerScript>();
+
+        audioManager = FindObjectOfType<AudioManager>();
     }
 
     // Update is called once per frame
@@ -67,9 +71,11 @@ public class DialogueMarket : MonoBehaviour
             Debug.Log("Jogador quer coins");
             playerScript.UpgradeHealth(25);
             playerScript.coins--;
+            audioManager.PlayUnrestricted("CashRegister");
             Debug.Log("Upgrade de vida");
         } else
         {
+            audioManager.PlayUnrestricted("CashDenied");
             Debug.Log("Não tem dinheiro");
         }
         numberOfCoins.text = playerScript.coins.ToString();
@@ -80,11 +86,14 @@ public class DialogueMarket : MonoBehaviour
         if (playerScript.coins >= 1)
         {
             Debug.Log("Jogador gosta de explorar");
+            playerScript.speed = playerScript.speed + 2;
             playerScript.coins--;
+            audioManager.PlayUnrestricted("CashRegister");
             Debug.Log("Upgrade de vida");
         }
         else
         {
+            audioManager.PlayUnrestricted("CashDenied");
             Debug.Log("Não tem dinheiro");
         }
         numberOfCoins.text = playerScript.coins.ToString();
@@ -95,12 +104,14 @@ public class DialogueMarket : MonoBehaviour
         if (playerScript.coins >= 1)
         {
             Debug.Log("Jogador gosta de combate.");
-            playerScript.UpgradeHealth(25);
+            playerScript.damage++;
             playerScript.coins--;
-            Debug.Log("Upgrade de vida");
+            audioManager.PlayUnrestricted("CashRegister");
+            Debug.Log("Upgrade de força");
         }
         else
         {
+            audioManager.PlayUnrestricted("CashDenied");
             Debug.Log("Não tem dinheiro");
         }
         numberOfCoins.text = playerScript.coins.ToString();

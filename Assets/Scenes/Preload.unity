@@ -468,3 +468,15 @@ MonoBehaviour:
     pitch: 1
     source: {fileID: 0}
     loop: 0
+  - name: CashRegister
+    clip: {fileID: 8300000, guid: b965d98fab364bc41871dec06db2e0fb, type: 3}
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+    loop: 0
+  - name: CashDenied
+    clip: {fileID: 8300000, guid: 6e56267abfda3d74d9e65065fef1a97f, type: 3}
+    volume: 1
+    pitch: 1
+    source: {fileID: 0}
+    loop: 0

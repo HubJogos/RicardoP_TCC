@@ -12,6 +12,11 @@ public class EndStage : MonoBehaviour
     MapGenAutomata mapReference;
     PlayerScript player;
     bool finished;
+
+
+    [SerializeField]
+    public GameObject spawnPlayerInBoss;
+
     private void Start()
     {
         player = FindObjectOfType<PlayerScript>();
@@ -32,9 +37,33 @@ public class EndStage : MonoBehaviour
         if (other.gameObject.CompareTag("Player")){
 
             dataGen.SaveAsCSV();
-            dataGen.ato = 2;
-            SceneManager.LoadScene("Game2");//volta para a cidade inicial
+            dataGen.ato++;
+
+            switch (dataGen.ato)
+            {
+                case 1:
+                    SceneManager.LoadScene("Game");
+                    break;
+                case 2:
+                    SceneManager.LoadScene("Game2");
+                    break;
+                case 3:
+                    //SceneManager.LoadScene("Game");
+                    StartCoroutine(WaitForTransport(1, other));
+                    break;
+                default:
+                    SceneManager.LoadScene("Game"); //mudar
+                    break;
+            }
+
         }
+    }
+
+    IEnumerator WaitForTransport(int secs, Collider2D other)
+    {
+        yield return new WaitForSeconds(secs);
+        other.gameObject.transform.position = spawnPlayerInBoss.transform.position;
+        //StartCoroutine(uiManager.FadeOut("", false, 1));
     }
 
     Vector2 FindSpawningPoint()

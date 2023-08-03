@@ -659,42 +659,26 @@ public class DialogueManagerStoryTelling : MonoBehaviour
 
     }
 
+
     void OnTriggerStay2D(Collider2D other)
     {
 
         if (other.gameObject.CompareTag("Player"))
         {
-            //Debug.Log("Entrou.....");
             if (Input.GetKeyUp(KeyCode.E))
             {
                 Debug.Log("iniciou dialogo 1");
                 dialogueStarted = true;
                 HudDialogue.SetActive(true);
                 rodaDialogo();
-                //TriggerDialogue();
             }
         }
     }
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            //Debug.Log("Entrou ############");
-            //soundEnviroment.Pause();
-            if (Input.GetKeyDown(KeyCode.E))
-            {
 
-                //Debug.Log("Iniciou dialogo 2");
-                //TriggerDialogue();
-            }
-            //interactionText.SetActive(true);
-        }
-    }
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            Debug.Log("Saiu");
             dialogueStarted = false;
             HudDialogue.SetActive(false);
         }
@@ -749,5 +733,27 @@ public class DialogueManagerStoryTelling : MonoBehaviour
             transform.parent.gameObject.SetActive(false);
         } 
     }
+
+    public void adicionaInimigos()
+    {
+
+    }
+
+    public void adicionaMoedas()
+    {
+
+    }
+
+    public void aumentaMapa()
+    {
+
+    }
+
+    public void diminuiMapa()
+    {
+
+    }
+
+
 
 }
