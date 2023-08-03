@@ -24,6 +24,9 @@ public class QuestGiver : MonoBehaviour
     PlayerScript player;
     bool thisDialogueActive;
 
+    [SerializeField]
+    public GameObject NpcPortal;
+
     private void Start()
     {
         dataGen = FindObjectOfType<DataGenerator>();
@@ -76,6 +79,17 @@ public class QuestGiver : MonoBehaviour
         }
         else if(tracker.quest[0].goal != quest.goal) tracker.quest[1] = quest;
         dataGen.activeQuests += 1;
+
+
+        
+        if (NpcPortal) //homem portal está referenciado
+        {
+            if (!NpcPortal.active)
+            {
+                NpcPortal.SetActive(true);
+            }
+        }
+
     }
     public void RefuseQuest()
     {

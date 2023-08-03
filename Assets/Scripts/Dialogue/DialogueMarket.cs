@@ -86,7 +86,7 @@ public class DialogueMarket : MonoBehaviour
         if (playerScript.coins >= 1)
         {
             Debug.Log("Jogador gosta de explorar");
-            playerScript.speed = playerScript.speed + 2;
+            playerScript.speed++;
             playerScript.coins--;
             audioManager.PlayUnrestricted("CashRegister");
             Debug.Log("Upgrade de vida");
