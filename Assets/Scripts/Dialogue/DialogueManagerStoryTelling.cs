@@ -370,8 +370,16 @@ public class DialogueManagerStoryTelling : MonoBehaviour
 
     public string getFraseAleatoriaBasica()
     {
-        int index = Random.Range(0, dialogosAleatoriosBasicos.Length-1);
-        return dialogosAleatoriosBasicos[index];
+        if (dataGen.deathCounter == 0)
+        {
+            int index = Random.Range(0, dialogosAleatoriosBasicos.Length - 1);
+            return dialogosAleatoriosBasicos[index];
+        } else
+        {
+            int index = Random.Range(0, dialogosNpcsJogadorMorreu.Length - 1);
+            return dialogosNpcsJogadorMorreu[index];
+        }
+        
     }
 
     void Start()
@@ -387,6 +395,13 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         {
             fraseNPC = getFraseAleatoriaBasica();
         }
+
+        //stats.width = 300;
+        //stats.height = 0;
+        //stats.maxEnemies = 999;
+        //stats.minEnemyDistance = 15;
+
+        //minEnemyDistance deve ser 10% do width
 
     }
 
@@ -840,8 +855,15 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         Debug.Log("itemDensity: " + stats.itemDensity);
         Debug.Log("maxEnemies: " + stats.maxEnemies);
         Debug.Log("maxItems: " + stats.maxItems);
-        Debug.Log("seed: " + dataGen.seed);
+        Debug.Log("seed: " + dataGen.seed.ToString());
 
+        Debug.Log("Encontrou item secreto: " + dataGen.foundSecret.ToString());
+        Debug.Log("interações: " + dataGen.interactions);
+        Debug.Log("quests ativas: " + dataGen.activeQuests);
+        Debug.Log("Mortes contador: " + dataGen.deathCounter);
+        Debug.Log("Mortes: " + dataGen.deaths);
+        Debug.Log("Playthroughs: " + dataGen.playthroughs);
+        Debug.Log("Time: " + dataGen.time);
 
         HudDialogue.SetActive(false);
         firstTime = false;
@@ -934,7 +956,9 @@ public class DialogueManagerStoryTelling : MonoBehaviour
 
     public void adicionaInimigos()
     {
-
+        // Gera um número aleatório entre 5 e 10
+        int maxEnemies = Random.Range(5, 11);
+        dataGen.maxEnemies = maxEnemies.ToString();
     }
 
     public void adicionaMoedas()
