@@ -48,8 +48,8 @@ public class EndStage : MonoBehaviour
                     SceneManager.LoadScene("Game");
                     break;
                 case 2:
-                    //SceneManager.LoadScene("Game2");
-                    SceneManager.LoadScene("Questionario");
+                    SceneManager.LoadScene("Game2");
+                    //SceneManager.LoadScene("Questionario");
                     break;
                 case 3:
                     // vai enfrentar o boss

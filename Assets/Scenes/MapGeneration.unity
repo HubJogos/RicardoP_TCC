@@ -4800,6 +4800,7 @@ GameObject:
   - component: {fileID: 1638283792}
   - component: {fileID: 1638283794}
   - component: {fileID: 1638283793}
+  - component: {fileID: 1638283795}
   m_Layer: 0
   m_Name: Tilemap
   m_TagString: Untagged
@@ -5167,6 +5168,23 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!114 &1638283795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1638283791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d255ceef4d204d945bfa1c6f3325c496, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tilemap: {fileID: 0}
+  colors: []
+  colorChangeInterval: 0
+  floorStageBoss: {fileID: 373493610}
+  floorStageHomemEncapuzado: {fileID: 1007026670}
 --- !u!1 &1687119400
 GameObject:
   m_ObjectHideFlags: 0
@@ -6678,6 +6696,11 @@ PrefabInstance:
       objectReference: {fileID: 372169664}
     - target: {fileID: 3721048921035433191, guid: 697d251b021e8a442aa545d48a28c15e,
         type: 3}
+      propertyPath: NomeNPC
+      value: Homem encapuzado
+      objectReference: {fileID: 0}
+    - target: {fileID: 3721048921035433191, guid: 697d251b021e8a442aa545d48a28c15e,
+        type: 3}
       propertyPath: dialogoAux
       value: 0
       objectReference: {fileID: 0}
@@ -6704,6 +6727,35 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 7113216609366280238, guid: 697d251b021e8a442aa545d48a28c15e, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 697d251b021e8a442aa545d48a28c15e, type: 3}
+--- !u!1 &2074752206 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7311210762926763222, guid: 697d251b021e8a442aa545d48a28c15e,
+    type: 3}
+  m_PrefabInstance: {fileID: 2074752205}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2074752207
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2074752206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a9ea2a17373e4c45bb75fb148cfba53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
 --- !u!1 &2085238052
 GameObject:
   m_ObjectHideFlags: 0
@@ -6821,6 +6873,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Boss+HUD
       objectReference: {fileID: 0}
+    - target: {fileID: 4248544364503358272, guid: 876e1f90786009e468d47bbcf553b255,
+        type: 3}
+      propertyPath: damage
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 4248544364503358275, guid: 876e1f90786009e468d47bbcf553b255,
         type: 3}
       propertyPath: target
@@ -6859,7 +6916,17 @@ PrefabInstance:
     - target: {fileID: 4248544364503358276, guid: 876e1f90786009e468d47bbcf553b255,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -44
+      value: -39.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4248544364503358287, guid: 876e1f90786009e468d47bbcf553b255,
+        type: 3}
+      propertyPath: maxHealth
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 4248544364503358287, guid: 876e1f90786009e468d47bbcf553b255,
+        type: 3}
+      propertyPath: currentHealth
+      value: 100
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 876e1f90786009e468d47bbcf553b255, type: 3}

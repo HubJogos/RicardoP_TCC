@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.Networking;
 
 
 public class DialogueManagerStoryTelling : MonoBehaviour
@@ -55,29 +56,32 @@ public class DialogueManagerStoryTelling : MonoBehaviour
     public Dictionary<string, int> Dialogo;
     public int dialogoAux = 0;
 
+    private CallAI callAI;
+    public string[] answers = new string[8];
 
     Dictionary<string, List<string>> dialogoHomemMisteriosoAto1 = new Dictionary<string, List<string>>
     {
         { "Você me lembra alguém que entrou nesse mesmo portal a uns anos atrás…", new List<string> { "Era o meu pai.", "E o que aconteceu com este homem?", "..." } },
         { "Ele nunca voltou de lá. Por que você acha que está preparado para entrar lá também?", new List<string> { "Treinei durante anos para este dia. Minha espada será o suficiente", "Sei me cuidar muito bem em uma caverna", "Cale-se e deixe eu passar logo." } },
-        { "Você não viria de tão longe apenas para isso… Você com certeza já ouviu falar das riquezas que tem lá dentro... E você pode não ter tempo suficiente para encontrar o que está procurando e ainda sair com riquezas… MUAHAHAHAHAHA ", new List<string> { "Vim para encontrar o meu pai, é só isso que importa", "Também estou precisando de dinheiro.", "Está vendo essa espada? Ela pode conquistar o que eu quiser." } },
-        { "Você lembra mesmo muito a pessoa que entrou antes aqui neste portal, talvez seja por esse motivo que ele nunca voltou, ou falta de tempo. Muahahaha Entre, mas lembre-se, todas as suas ações terão consequências… muahahahahaha", new List<string>()},
+        { "Você não viria de tão longe apenas para isso… Você com certeza já ouviu falar das riquezas que tem lá dentro... E você pode não ter tempo suficiente para encontrar o que está procurando e ainda sair com riquezas… (?) ", new List<string> { "Vim para encontrar o meu pai, é só isso que importa", "Também estou precisando de dinheiro.", "Está vendo essa espada? Ela pode conquistar o que eu quiser." } },
+        { "Você lembra mesmo muito a pessoa que entrou antes aqui neste portal, talvez seja por esse motivo que ele nunca voltou, ou falta de tempo. Entre, mas lembre-se, todas as suas ações terão consequências… muahahahahaha", new List<string>()},
         { "O o portal está liberado, não perca tempo. Encontre o que você procura... ou não... MUAHAHAHAH ", new List<string>()},
     };
 
     Dictionary<string, List<string>> dialogoHomemMisteriosoAto1Cave = new Dictionary<string, List<string>>
     {
-        { "Olá querido aventureiro... Tenho algumas coisas para conversar com você.", new List<string> () },
+        { "Olá querido viajante... Tenho algumas coisas para conversar com você.", new List<string> () },
         { "Primeiro de tudo, muitas respostas suas serão respondidas em breve... ", new List<string>() },
         { "Vamos falar como foi lá dentro... antes de tudo, você achou dificil? Muahahahah", new List<string> { "Achei fácil, pensava que seria mais difícil", "Foi mais ou menos, tive algumas dificuldades.", "Achei difícil, saí lá de dentro por pouco." } },
         { "E você achou divertido?", new List<string>{"Bastante divertido, a caverna realmente é interessante.", "Não sei dizer.", "Não achei divertido, foi chato." } },
         { "Você ter atacado os inimigos e levado seus tesouros pode ter gerado algumas consequências... ", new List<string>()},
         { "As riquezas e tesouros dentro das cavernas são tentadores, mas o verdadeiro perigo está no poder que elas podem conceder. Um poder que pode levar à dominação ", new List<string>()},
-        { "Estou curioso... Qual era o tamanho da caverna que você esteve?", new List<string>{"Achei grande!", "Era de tamanho normal, ok", "Pequena, foi fácil percorrer ela toda." } },
+        { "Estou curioso... Qual era o tamanho da caverna que você esteve?", new List<string>{"Era grande! Levei um tempo para percorrer toda e me encontrar.", "Era de tamanho normal, ok", "Pequena, foi fácil percorrer ela toda." } },
         { "Essas cavernas mágicas são apenas a ponta do iceberg. Seu potencial para o caos é inigualável, e um dia, elas se espalharão como uma praga ", new List<string>()},
         { "Você se mostrou habilidoso lá dentro das cavernas e passou na sua provação... ", new List<string>()},
         { "E os inimigos? Soube que você detonou com eles... Muahahahaha Eram muitos?", new List<string>{"Tinha bastante inimigos, tive um pouco de dificuldade.", "Tinha a quantidade ideal para as minhas habilidades e o poder da minha espada.", "Poucos inimigos. Esperava mais. Detonei com eles facilmente." } },
         { "Interessante... ", new List<string>()},
+        { " ... (suspiro e olhar maléfico) ", new List<string>()},
         { "Você está pronto! Junte-se a mim! Não faça como seu pai fez! MUAHAHAHAHAH ", new List<string>{"Como assim? O que meu pai tem a ver com isso?", "Nunca! Jamais me unirei a você Explique-se!", "Meu pai? Dominação do mundo mágico? Quê?" } },
         { "As sombras que habitam nas profundezas das cavernas mágicas são apenas o começo. Logo, elas se espalharão e dominarão tudo. ", new List<string>{"Você é louco!", "Esse mundo mágico não vai dominar nada!", "O que você fez com meu pai?" } },
         { "Sofra as consequências então! Não ouse entrar nas cavernas nunca mais ou será exterminado assim como o seu pai foi.", new List<string>() },
@@ -85,12 +89,12 @@ public class DialogueManagerStoryTelling : MonoBehaviour
 
     Dictionary<string, List<string>> dialogoHomemMisteriosoAto2 = new Dictionary<string, List<string>>
     {
-        { "Sua ambição fez com que causasse uma guerra do mundo mágico com o nosso, parabéns. MUAHAHAHAHAH", new List<string> { "Você armou para mim, era tudo que você queria.", "Eu não tive culpa de nada, a culpa é sua!", "?????? (espanto irônico)" } },
-        { "O mundo que você conhece não existirá mais em breve, o mundo mágico irá dominar todo ele", new List<string>() },
-        { "Desde que você entrou na caverna, passaram 7 anos de guerra entre o seu mundo e o mundo mágico. Claramente o seu mundo está perdendo...", new List<string>() },
-        { "Não, você não pode entrar, não permitirei.", new List<string>()},
-        { "Se você entrar irá enfrentar consequências! Não permitirei! Não ouse! ", new List<string>()},
-        { "Nos encontraremos novamente mais tarde. Muahahahahaah ", new List<string>()},
+        { "O que você quer? Vá embora! acabará morrendo aqui. Muahahahaha", new List<string> { "Você armou para mim, era tudo que você queria. Por culpa disso tudo foi arruinado.", "Explique-se!", "O que você fez????" } },
+        { "O mundo que você conhece não existirá mais em breve, este vilarejo por exemplo foi exterminado. O mundo mágico irá dominar tudo e eu serei seu imperador!", new List<string>() },
+        { "Desde que você entrou na caverna, passaram-se anos de guerra entre o seu mundo e o mundo mágico. O seu mundo não aguenta a vazão de inimigos que saem desse portal.", new List<string>() },
+        { "Vá embora, acabou de chegar um barco para busca de refugiados. Pelo visto esse mundo ainda acredita que pode vencer, mas não podem!", new List<string>()},
+        { "Se você voltar a entrar neste portal, irá enfrentar consequências! Não ouse ou te destruirei assim como fiz com seu pai! ", new List<string>()},
+        { "A escolha é sua, vá embora ou nos encontraremos novamente mais tarde e colocaremos um fim nisso. ", new List<string>()},
     };
 
     Dictionary<string, List<string>> dialogoHomemMisteriosoAto2Cave = new Dictionary<string, List<string>>
@@ -375,6 +379,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
 
         dataGen = FindObjectOfType<DataGenerator>();
         stats = FindObjectOfType<PersistentStats>();
+        callAI = FindObjectOfType<CallAI>();
 
         soundStoryTelling = FindObjectOfType<AudioManager>();
 
@@ -388,15 +393,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (dialogueStarted)
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                //print("The Left mouse button was pressed");
-                //rodaDialogo();
-            }
-        }
-
+        
     }
 
 
@@ -413,7 +410,6 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                     {
                         if (dialogoHomemMisteriosoAto1Cave.Count > 0)
                         {
-                            Debug.Log(dialogoAux + " " + dialogoHomemMisteriosoAto1Cave.Count);
                             if (dialogoAux < dialogoHomemMisteriosoAto1Cave.Count)
                             {
                                 int dialogueToRun = dialogoAux;
@@ -468,7 +464,6 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                     {
                         if (dialogoHomemMisteriosoAto1.Count > 0)
                         {
-                            Debug.Log(dialogoAux + " " + dialogoHomemMisteriosoAto1.Count);
                             if (dialogoAux < dialogoHomemMisteriosoAto1.Count)
                             {
                                 int dialogueToRun = dialogoAux;
@@ -476,7 +471,6 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                                 {
                                     dialogueToRun = dialogo;
                                 }
-
 
                                 int activeQuests = dataGen.activeQuests;
                                 bool foundSecret = dataGen.foundSecret;
@@ -523,58 +517,108 @@ public class DialogueManagerStoryTelling : MonoBehaviour
  
                     break;
                 case 2:
-                    if (dialogoHomemMisteriosoAto2.Count > 0)
+                    if (SceneManager.GetActiveScene().name.ToString() == "MapGeneration")
                     {
-                        if (dialogoAux < dialogoHomemMisteriosoAto2.Count)
+                        if (dialogoHomemMisteriosoAto2Cave.Count > 0)
                         {
-                            int dialogueToRun = dialogoAux;
-                            if (dialogo != -1)
+                            if (dialogoAux < dialogoHomemMisteriosoAto2Cave.Count)
                             {
-                                dialogueToRun = dialogo;
-                            }
+                                int dialogueToRun = dialogoAux;
+                                if (dialogo != -1)
+                                {
+                                    dialogueToRun = dialogo;
+                                }
 
+                                KeyValuePair<string, List<string>> primeiroDialogo = dialogoHomemMisteriosoAto2Cave.ElementAt(dialogueToRun);
 
-                            int activeQuests = dataGen.activeQuests;
-                            bool foundSecret = dataGen.foundSecret;
+                                List<string> respostas = primeiroDialogo.Value;
+                                textDialogue.text = primeiroDialogo.Key;
 
-                            KeyValuePair<string, List<string>> primeiroDialogo = dialogoHomemMisteriosoAto2.ElementAt(dialogueToRun);
+                                if (respostas.Count > 0)
+                                {
+                                    buttonChoice1.SetActive(true);
+                                    buttonChoice2.SetActive(true);
+                                    buttonChoice3.SetActive(true);
+                                    buttonChoicesContinue.SetActive(false);
 
-                            List<string> respostas = primeiroDialogo.Value;
-                            textDialogue.text = primeiroDialogo.Key;
+                                    // ativar botões de decisões 1, 2 e 3
+                                    string resposta1 = respostas[0];
+                                    string resposta2 = respostas[1];
+                                    string resposta3 = respostas[2];
 
-                            if (respostas.Count > 0)
-                            {
-                                buttonChoice1.SetActive(true);
-                                buttonChoice2.SetActive(true);
-                                buttonChoice3.SetActive(true);
-                                buttonChoicesContinue.SetActive(false);
+                                    textChoice1.text = resposta1;
+                                    textChoice2.text = resposta2;
+                                    textChoice3.text = resposta3;
 
-                                // ativar botões de decisões 1, 2 e 3
-                                string resposta1 = respostas[0];
-                                string resposta2 = respostas[1];
-                                string resposta3 = respostas[2];
+                                }
+                                else
+                                {
+                                    // colocar botão de continuar
+                                    buttonChoice1.SetActive(false);
+                                    buttonChoice2.SetActive(false);
+                                    buttonChoice3.SetActive(false);
+                                    buttonChoicesContinue.SetActive(true);
 
-                                textChoice1.text = resposta1;
-                                textChoice2.text = resposta2;
-                                textChoice3.text = resposta3;
-
+                                }
                             }
                             else
                             {
-                                // colocar botão de continuar
-                                buttonChoice1.SetActive(false);
-                                buttonChoice2.SetActive(false);
-                                buttonChoice3.SetActive(false);
-                                buttonChoicesContinue.SetActive(true);
-
+                                continueChoices();
                             }
-                        }
-                        else
-                        {
-                            continueChoices();
-                        }
 
+                        }
+                    } else
+                    {
+                        if (dialogoHomemMisteriosoAto2.Count > 0)
+                        {
+                            if (dialogoAux < dialogoHomemMisteriosoAto2.Count)
+                            {
+                                int dialogueToRun = dialogoAux;
+                                if (dialogo != -1)
+                                {
+                                    dialogueToRun = dialogo;
+                                }
+
+                                KeyValuePair<string, List<string>> primeiroDialogo = dialogoHomemMisteriosoAto2.ElementAt(dialogueToRun);
+
+                                List<string> respostas = primeiroDialogo.Value;
+                                textDialogue.text = primeiroDialogo.Key;
+
+                                if (respostas.Count > 0)
+                                {
+                                    buttonChoice1.SetActive(true);
+                                    buttonChoice2.SetActive(true);
+                                    buttonChoice3.SetActive(true);
+                                    buttonChoicesContinue.SetActive(false);
+
+                                    // ativar botões de decisões 1, 2 e 3
+                                    string resposta1 = respostas[0];
+                                    string resposta2 = respostas[1];
+                                    string resposta3 = respostas[2];
+
+                                    textChoice1.text = resposta1;
+                                    textChoice2.text = resposta2;
+                                    textChoice3.text = resposta3;
+
+                                }
+                                else
+                                {
+                                    // colocar botão de continuar
+                                    buttonChoice1.SetActive(false);
+                                    buttonChoice2.SetActive(false);
+                                    buttonChoice3.SetActive(false);
+                                    buttonChoicesContinue.SetActive(true);
+
+                                }
+                            }
+                            else
+                            {
+                                continueChoices();
+                            }
+
+                        }
                     }
+                    
                     break;
             }
                 
@@ -588,6 +632,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
     public void playerChoice(int decisao)
     {
         string escolha = textDialogue.text;
+        Debug.Log("Momento da história: "+escolha);
 
         switch (escolha)
         {
@@ -595,16 +640,87 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                 switch (decisao)
                 {
                     case 1:
-                        string texto = "Seu pai? Então isso envolve sentimentalismo? ahahaha Acho que você pode se arrepender disso no final...";
+                        string texto = "Seu pai??? Hmm... Talvez você não esteja preparado para isso, você pode se arrepender disso no final de estar aqui... (olhar ironico)";
                         adicionaNovoTextoDuranteFala(texto);
                         break;
                     case 2:
-                        string texto2 = "Você está bem interessado para alguém que não conhece, não é mesmo? muahahahaha";
+                        string texto2 = "Você está bem interessado para alguém que 'não conhece', não é mesmo? muahahahaha (olhar desconfiado)";
                         adicionaNovoTextoDuranteFala(texto2);
                         break;
                     case 3:
-                        string texto3 = "Você tem poucas palavras... misterioso você... Vamos ver quanto tempo isso irá durar.";
+                        string texto3 = "Você tem poucas palavras... misterioso você... Vamos ver quanto tempo isso irá durar. (olhar soberano como o Snape fazia)";
                         adicionaNovoTextoDuranteFala(texto3);
+                        break;
+                }
+                break;
+            case ("Vamos falar como foi lá dentro... antes de tudo, você achou dificil? Muahahahah"):
+                switch (decisao)
+                {
+                    case 1:
+                        string texto = "Interessante... Tenho certeza que a próxima vez que você voltar vai estar mais dificil.";
+                        adicionaNovoTextoDuranteFala(texto);
+                        answers[6] = "0";
+                        //jogador achou fácil
+                        break;
+                    case 2:
+                        string texto2 = "Se você ficou em cima do muro, quer dizer que não achou fácil. Ou será que você ficou se escondendo? Hehe";
+                        adicionaNovoTextoDuranteFala(texto2);
+                        answers[6] = "2";
+                        //jogador achou médio
+                        break;
+                    case 3:
+                        string texto3 = "Se você achou difícil, é melhorar se preparar para o que o futuro reserva para você.";
+                        adicionaNovoTextoDuranteFala(texto3);
+                        answers[6] = "4";
+                        //jogador achou dificil
+                        break;
+                }
+                break;
+            case ("E você achou divertido?"):
+                switch (decisao)
+                {
+                    case 1: // não achou divertido
+                        string texto = "";
+                        if (dataGen.playerData.percentKills > 0) //jogador matou inimigos
+                        {
+                            if (dataGen.playerData.percentItemsCollected > 0) //jogador coletou moedas e matou inimigos
+                            {
+                                texto = "Você matou inimigos e coletou moedas pelo o que chegou até mim, pelo visto você tem um desejo sanguinário... você o usará em breve! Muahahaha";
+                                // ativa muito mais inimigos na próxima fase
+                            }
+                            else //jogador não coletou moedas e matou inimigos
+                            {
+                                texto = "Não coletou nenhuma moeda e apenas matou inimigos? Sei bem o que você busca! vingança? Respostas? Não. Inimigos. E você os terá mais cedo que pensa! Muahahahaha";
+                                // ativa muito muito mais inimigos na próxima fase
+                            }
+                        } else // jogador não matou inimigos
+                        {
+                            if (dataGen.playerData.percentItemsCollected > 0) //jogador coletou moedas e não matou inimigos
+                            {
+                                texto = "Como você acharia divertido se não matou nenhum inimigo e apenas ficou coletando moedas? Talvez nem exista um mercado quando você voltar... MUAHAHAHAH";
+                                // jogador gosta de coletar moedas apenas
+                            }
+                            else // jogador não coletou moedas e não matou inimigos - entrou no portal direto
+                            {
+                                texto = "Não coletou nenhuma moeda e tampouco matou nenhum inimigo. Eu também não acharia divertido. Você quer respostas sem fazer nada? Você terá problemas depois de atravessar esse portal.";
+                                // jogador passou reto pelo jogo e entrou direto no portal. pouco inimigos ou portal gerado muito próximo?
+                            }
+                        }
+                        
+                        adicionaNovoTextoDuranteFala(texto);
+                        answers[7] = "0";
+
+                        break;
+                    case 2: // não sabe dizer se foi divertido ou não
+                        string texto2 = "";
+                        adicionaNovoTextoDuranteFala(texto2);
+                        answers[7] = "2";
+                        break;
+                    case 3: // achou divertido
+                        string texto3 = "Se você achou difícil, é melhorar se preparar para o que o futuro reserva para você.";
+                        adicionaNovoTextoDuranteFala(texto3);
+                        answers[7] = "4";
+    
                         break;
                 }
                 break;
@@ -616,36 +732,95 @@ public class DialogueManagerStoryTelling : MonoBehaviour
     {
         KeyValuePair<string, List<string>> novoDialogo = new KeyValuePair<string, List<string>>(texto, new List<string>());
         Dictionary<string, List<string>> novoDicionario = new Dictionary<string, List<string>>();
-        if (dialogoAux + 1 >= 0 && dialogoAux + 1 < dialogoHomemMisteriosoAto1.Count)
+        switch (ato)
         {
-            // Copia os diálogos existentes até chegar à posição desejada
-            int contador = 0;
-            foreach (var dialogo in dialogoHomemMisteriosoAto1)
-            {
-                if (contador == dialogoAux + 1)
+            case 1:
+                if (SceneManager.GetActiveScene().name.ToString() == "MapGeneration")
                 {
-                    novoDicionario.Add(novoDialogo.Key, novoDialogo.Value); // Insere o novo diálogo
+                    if (dialogoAux + 1 >= 0 && dialogoAux + 1 < dialogoHomemMisteriosoAto1Cave.Count)
+                    {
+                        // Copia os diálogos existentes até chegar à posição desejada
+                        int contador = 0;
+                        foreach (var dialogo in dialogoHomemMisteriosoAto1Cave)
+                        {
+                            if (contador == dialogoAux + 1)
+                            {
+                                novoDicionario.Add(novoDialogo.Key, novoDialogo.Value); // Insere o novo diálogo
+                            }
+
+                            novoDicionario.Add(dialogo.Key, dialogo.Value);
+                            contador++;
+                        }
+                    }
+                    else
+                    {
+                        // Caso o índice desejado seja maior ou igual ao número de diálogos existentes,
+                        // o novo diálogo será adicionado no final do dicionário
+                        novoDicionario = new Dictionary<string, List<string>>(dialogoHomemMisteriosoAto1Cave);
+                        novoDicionario.Add(novoDialogo.Key, novoDialogo.Value);
+                    }
+
+                    dialogoHomemMisteriosoAto1Cave = novoDicionario;
+                } else {
+                    if (dialogoAux + 1 >= 0 && dialogoAux + 1 < dialogoHomemMisteriosoAto1.Count)
+                    {
+                        // Copia os diálogos existentes até chegar à posição desejada
+                        int contador = 0;
+                        foreach (var dialogo in dialogoHomemMisteriosoAto1)
+                        {
+                            if (contador == dialogoAux + 1)
+                            {
+                                novoDicionario.Add(novoDialogo.Key, novoDialogo.Value); // Insere o novo diálogo
+                            }
+
+                            novoDicionario.Add(dialogo.Key, dialogo.Value);
+                            contador++;
+                        }
+                    }
+                    else
+                    {
+                        // Caso o índice desejado seja maior ou igual ao número de diálogos existentes,
+                        // o novo diálogo será adicionado no final do dicionário
+                        novoDicionario = new Dictionary<string, List<string>>(dialogoHomemMisteriosoAto1);
+                        novoDicionario.Add(novoDialogo.Key, novoDialogo.Value);
+                    }
+
+                    dialogoHomemMisteriosoAto1 = novoDicionario;
+                }
+                    
+                break;
+            case 2:
+                if (dialogoAux + 1 >= 0 && dialogoAux + 1 < dialogoHomemMisteriosoAto2.Count)
+                {
+                    // Copia os diálogos existentes até chegar à posição desejada
+                    int contador = 0;
+                    foreach (var dialogo in dialogoHomemMisteriosoAto2)
+                    {
+                        if (contador == dialogoAux + 1)
+                        {
+                            novoDicionario.Add(novoDialogo.Key, novoDialogo.Value); // Insere o novo diálogo
+                        }
+
+                        novoDicionario.Add(dialogo.Key, dialogo.Value);
+                        contador++;
+                    }
+                }
+                else
+                {
+                    // Caso o índice desejado seja maior ou igual ao número de diálogos existentes,
+                    // o novo diálogo será adicionado no final do dicionário
+                    novoDicionario = new Dictionary<string, List<string>>(dialogoHomemMisteriosoAto2);
+                    novoDicionario.Add(novoDialogo.Key, novoDialogo.Value);
                 }
 
-                novoDicionario.Add(dialogo.Key, dialogo.Value);
-                contador++;
-            }
+                dialogoHomemMisteriosoAto2 = novoDicionario;
+                break;
         }
-        else
-        {
-            // Caso o índice desejado seja maior ou igual ao número de diálogos existentes,
-            // o novo diálogo será adicionado no final do dicionário
-            novoDicionario = new Dictionary<string, List<string>>(dialogoHomemMisteriosoAto1);
-            novoDicionario.Add(novoDialogo.Key, novoDialogo.Value);
-        }
-
-        dialogoHomemMisteriosoAto1 = novoDicionario;
+        
     }
 
     public void liberaPortal()
     {
-
-        // se for a segunda passagem, checa se o mapa veio gerado pela regressão
 
         // verifica se o jogador é combatente, velocista ou explorador
 
@@ -653,6 +828,19 @@ public class DialogueManagerStoryTelling : MonoBehaviour
 
         // Presets de várias variáveis que mudam em tempo real com a história
 
+        Debug.Log("::::::::::Variáveis de mapa gerado::::::::::");
+        Debug.Log("width: " + stats.width);
+        Debug.Log("height: " + stats.height);
+        Debug.Log("smooth: " + stats.smooth);
+        Debug.Log("minRegionSize: " + stats.minRegionSize);
+        Debug.Log("randomFillPercent: " + stats.randomFillPercent);
+        Debug.Log("minEnemyDistance: " + stats.minEnemyDistance);
+        Debug.Log("minItemDistance: " + stats.minItemDistance);
+        Debug.Log("enemyDensity: " + stats.enemyDensity);
+        Debug.Log("itemDensity: " + stats.itemDensity);
+        Debug.Log("maxEnemies: " + stats.maxEnemies);
+        Debug.Log("maxItems: " + stats.maxItems);
+        Debug.Log("seed: " + dataGen.seed);
 
 
         HudDialogue.SetActive(false);
@@ -670,7 +858,6 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         {
             if (Input.GetKeyUp(KeyCode.E))
             {
-                Debug.Log("iniciou dialogo 1");
                 dialogueStarted = true;
                 HudDialogue.SetActive(true);
                 rodaDialogo();
@@ -703,7 +890,14 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                 }
                 break;
             case 2:
-                countProxDialogo = dialogoHomemMisteriosoAto2.Count;
+                if (SceneManager.GetActiveScene().name.ToString() != "Game")
+                {
+                    countProxDialogo = dialogoHomemMisteriosoAto2Cave.Count;
+                } else
+                {
+                    countProxDialogo = dialogoHomemMisteriosoAto2.Count;
+                }
+                
                 break;
             case 3:
                 break;
@@ -733,6 +927,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         gameObject.SetActive(false);
         if (transform.parent != null)
         {
+            soundStoryTelling.PlayUnrestricted("BossAttacking");
             transform.parent.gameObject.SetActive(false);
         } 
     }
@@ -755,6 +950,128 @@ public class DialogueManagerStoryTelling : MonoBehaviour
     public void diminuiMapa()
     {
 
+    }
+
+    private void BuildRegressionSample()
+    {
+        callAI.data[0] = (float)dataGen.playerData.totalLifeLost;
+        callAI.data[1] = (float)dataGen.playerData.timeSpent;
+        //callAI.data[2]   = (float)dataGen.playerData.steps; 
+        callAI.data[2] = (float)2.0; // valor para funcionar por enquanto
+        callAI.data[3] = (float)dataGen.playerData.deaths;
+        callAI.data[4] = (float)dataGen.playerData.percentKills;
+        callAI.data[5] = (float)dataGen.playerData.percentItemsCollected;
+        callAI.data[6] = float.Parse(answers[1]); // complexety
+        callAI.data[7] = float.Parse(answers[6]); // difficulty
+        callAI.data[8] = (float)dataGen.genData.averageEnemyDistance;
+        callAI.data[9] = (float)dataGen.genData.averageItemDistance;
+
+        Dictionary<string, float> variableDictionary = new Dictionary<string, float>();
+        float totalLifeLost = (float)dataGen.playerData.totalLifeLost;
+        float timeSpent = (float)dataGen.playerData.timeSpent;
+        float steps = (float)2.0;//(float)dataGen.playerData.steps;
+        float deaths = (float)dataGen.playerData.deaths;
+        float percentKills = (float)dataGen.playerData.percentKills;
+        float percentItemsCollected = (float)dataGen.playerData.percentItemsCollected;
+        float complexity = float.Parse(answers[1]);
+        float difficulty = float.Parse(answers[6]);
+        float averageEnemyDistance = (float)dataGen.genData.averageEnemyDistance;
+        float averageItemDistance = (float)dataGen.genData.averageItemDistance;
+        // Armazena as variáveis e seus respectivos valores no dicionário
+        variableDictionary.Add("totalLifeLost", totalLifeLost);
+        variableDictionary.Add("timeSpent", timeSpent);
+        variableDictionary.Add("steps", steps);
+        variableDictionary.Add("deaths", deaths);
+        variableDictionary.Add("percentKills", percentKills);
+        variableDictionary.Add("percentItemsCollected", percentItemsCollected);
+        variableDictionary.Add("complexity", complexity);
+        variableDictionary.Add("difficulty", difficulty);
+        variableDictionary.Add("averageEnemyDistance", averageEnemyDistance);
+        variableDictionary.Add("averageItemDistance", averageItemDistance);
+
+        // Mostra os valores no console usando um loop
+        foreach (var kvp in variableDictionary)
+        {
+            Debug.Log(kvp.Key + ": " + kvp.Value);
+        }
+    }
+
+    public void Send()
+    {
+        StartCoroutine(Post(dataGen));
+        //Analytics.CustomEvent("LifeLost", new Dictionary<string, object> { { "TotalLifeLost", dataGen.playerData.totalLifeLost } });
+    }
+
+
+    IEnumerator Post(DataGenerator data)
+    {
+
+        string url = "https://docs.google.com/forms/d/e/1FAIpQLSf5Jp4HtbpZWZPxRPRxZZqgvVAZjFk5ZYqKJqhBpInbMwNitA/formResponse";
+        WWWForm form = new WWWForm();
+
+        //player data to forms
+        form.AddField("entry.1129405122", data.playerData.interactions);//interactions
+        form.AddField("entry.1565504169", data.playerData.percentQuests.ToString().Replace(",", "."));//percentQuests
+
+        //one playthrough info-------------------------------------------------------------------------------------
+        form.AddField("entry.243107409", data.totalLifeLost);//lifelost
+        form.AddField("entry.1462353102", data.runLevel);//nível nas runs
+        form.AddField("entry.1326127552", data.time);//time
+        form.AddField("entry.1710124973", data.steps);//steps
+        form.AddField("entry.1411949559", data.playerData.deaths.ToString());//deaths
+        form.AddField("entry.823628511", data.precision);//precision
+        form.AddField("entry.1989127704", data.percentKills);//percentKills
+        form.AddField("entry.1295511642", data.percentItemPickup);//percentItems
+        form.AddField("entry.153510353", data.percentAmmoPickup);//percentAmmo
+
+        form.AddField("entry.201828663", data.playthroughs);//playthroughs
+        form.AddField("entry.744182287", data.runVictory);//victorious
+        form.AddField("entry.780342899", data.playerData.foundSecret.ToString());//foundSecret
+        form.AddField("entry.952918269", data.playerData.finalPosition.ToString().Replace(",", "."));//finalPosition
+
+        //genData
+        form.AddField("entry.1014127927", data.width);//width
+        form.AddField("entry.663182150", data.height);//height
+
+        form.AddField("entry.1397100487", data.playerStartPos);//playerStart
+        form.AddField("entry.1428732229", data.exitDoorPos);//exitDoor
+
+        form.AddField("entry.1753551012", data.itemPositions);//itemPos
+        form.AddField("entry.267469238", data.enemyPositions);//EnemyPos
+        form.AddField("entry.1555329560", data.seed);//seed
+
+        form.AddField("entry.177556040", data.smooth);//smooth
+        form.AddField("entry.1838180293", data.minRegionSize);//minRegionSize
+        form.AddField("entry.527601752", data.randomFillPercent);//randomFillPercent
+
+        form.AddField("entry.66114686", data.minEnemyDistance);//minEnemyDistance
+        form.AddField("entry.1814962338", data.minItemDistance);//minItemDistance
+        form.AddField("entry.194656318", data.averageEnemyDistance);//averageEnemyDistance
+        form.AddField("entry.1578609904", data.averageItemDistance);//averageItemDistance
+
+        form.AddField("entry.462206930", data.enemyDensity);//EnemyDensity
+        form.AddField("entry.1182551679", data.itemDensity);//ItemDensity
+        form.AddField("entry.1503070918", data.maxEnemies);//MaxEnemies
+        form.AddField("entry.212415700", data.maxItems);//MaxItems
+        form.AddField("entry.638872648", data.currentEnemies);//GeneratedEnemies
+        form.AddField("entry.1135456508", data.currentItems);//GeneratedItems
+
+        //playerInput
+        form.AddField("entry.1151053099", answers[0]);//mapSize
+        form.AddField("entry.1779334571", answers[1]);//complexity
+        form.AddField("entry.968548155", answers[2]);//enemyAmount
+        form.AddField("entry.20587696", answers[3]);//enemyDensity
+
+        form.AddField("entry.1862005822", answers[4]);//interactionAmount
+        form.AddField("entry.1906391024", answers[5]);//conversationMaterial
+
+        form.AddField("entry.374425141", answers[6]);//difficulty
+        form.AddField("entry.1632273714", answers[7]);//fun
+
+        //end one playthrough info--------------------------------------------------------------------------------------------------
+
+        UnityWebRequest www = UnityWebRequest.Post(url, form);
+        yield return www.SendWebRequest();
     }
 
 

@@ -86,21 +86,7 @@ public class Questionario : MonoBehaviour
         StartCoroutine(Post(dataGen));
         //Analytics.CustomEvent("LifeLost", new Dictionary<string, object> { { "TotalLifeLost", dataGen.playerData.totalLifeLost } });
     }
-    public void Replay()
-    {
-        Send();
-        SceneManager.LoadScene("Game2");
-    }
-    public void QuitGame()
-    {
-        StartCoroutine(Quit());
-    }
-    public IEnumerator Quit()
-    {
-        Send();
-        yield return new WaitForSeconds(2);
-        Application.Quit();
-    }
+    
 
     IEnumerator Post(DataGenerator data)
     {
@@ -188,6 +174,22 @@ public class Questionario : MonoBehaviour
             BuildRegressionSample();
             callAI.CallAPI();
         }
+    }
+
+    public void Replay()
+    {
+        Send();
+        SceneManager.LoadScene("Game2");
+    }
+    public void QuitGame()
+    {
+        StartCoroutine(Quit());
+    }
+    public IEnumerator Quit()
+    {
+        Send();
+        yield return new WaitForSeconds(2);
+        Application.Quit();
     }
 
 }
