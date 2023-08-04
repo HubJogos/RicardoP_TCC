@@ -17,6 +17,9 @@ public class EndStage : MonoBehaviour
     [SerializeField]
     public GameObject spawnPlayerInBoss;
 
+    [SerializeField]
+    public AudioSource musicAmbience;
+
     private void Start()
     {
         player = FindObjectOfType<PlayerScript>();
@@ -45,11 +48,19 @@ public class EndStage : MonoBehaviour
                     SceneManager.LoadScene("Game");
                     break;
                 case 2:
-                    SceneManager.LoadScene("Game2");
+                    //SceneManager.LoadScene("Game2");
+                    SceneManager.LoadScene("Questionario");
                     break;
                 case 3:
-                    //SceneManager.LoadScene("Game");
-                    StartCoroutine(WaitForTransport(1, other));
+                    // vai enfrentar o boss
+                    AudioClip novoAudioClip = Resources.Load<AudioClip>("Sounds/Orochimaru's Full Theme");
+                    if (novoAudioClip != null)
+                    {
+                        musicAmbience.Stop();
+                        musicAmbience.clip = novoAudioClip;
+                        musicAmbience.Play();
+                    }
+                    StartCoroutine(WaitForTransport(0, other));
                     break;
                 default:
                     SceneManager.LoadScene("Game"); //mudar

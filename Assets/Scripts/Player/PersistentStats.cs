@@ -57,7 +57,9 @@ public class PersistentStats : MonoBehaviour
 
         var num = Random.Range(0,8);
 
-        if((int)predictions.predictions[0][11] >= 2){
+        //if((int)predictions.predictions[0][11] >= 1){
+        if (predictions != null)
+        {
             int[] map           = new int[11];
             map[0]              = (int)predictions.predictions[0][0];
             map[1]              = (int)predictions.predictions[0][1];

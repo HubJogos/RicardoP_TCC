@@ -218,10 +218,10 @@ public class PlayerScript : MonoBehaviour
         }
 
         
-        var outputStats = JsonUtility.ToJson(stats, true);
-        var outputDataGen = JsonUtility.ToJson(dataGen, true);
-        Debug.Log("Stats: " + outputStats);
-        Debug.Log("DataGen: " + outputDataGen);
+        //var outputStats = JsonUtility.ToJson(stats, true);
+        //var outputDataGen = JsonUtility.ToJson(dataGen, true);
+        //Debug.Log("Stats: " + outputStats);
+        //Debug.Log("DataGen: " + outputDataGen);
 
     }
 

@@ -186,13 +186,13 @@ public class NecroBoss : MonoBehaviour
         switch (decider)
         {
             case 0:
-                //ChargeAttack();
+                ChargeAttack();
                 break;
             case 1:
-                //ProjectileAttack();
+                ProjectileAttack();
                 break;
             case 2:
-                //GroundAttack();
+                GroundAttack();
                 break;
         }
     }
@@ -334,11 +334,11 @@ public class NecroBoss : MonoBehaviour
         Time.timeScale = 1;//despausa jogo após seleção
         dataGen.ato = 2;
 
-        StartCoroutine(uiManager.FadeOut("Game2", true, 1));//retorna para a cena da cidade inicial
-        StartCoroutine(WaitToDie(2));
+        //StartCoroutine(uiManager.FadeOut("Game2", true, 1));//retorna para a cena da cidade inicial
+        //StartCoroutine(WaitToDie(2));
 
-        SceneManager.LoadScene("Game2");
-        Debug.Log("Ué?");
+        SceneManager.LoadScene("Questionario");
+
     }
     IEnumerator WaitToDie(int secs)
     {
