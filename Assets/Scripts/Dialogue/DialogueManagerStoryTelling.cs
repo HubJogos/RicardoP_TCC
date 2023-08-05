@@ -433,10 +433,6 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                                     dialogueToRun = dialogo;
                                 }
 
-
-                                int activeQuests = dataGen.activeQuests;
-                                bool foundSecret = dataGen.foundSecret;
-
                                 KeyValuePair<string, List<string>> primeiroDialogo = dialogoHomemMisteriosoAto1Cave.ElementAt(dialogueToRun);
 
                                 List<string> respostas = primeiroDialogo.Value;
@@ -486,9 +482,6 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                                 {
                                     dialogueToRun = dialogo;
                                 }
-
-                                int activeQuests = dataGen.activeQuests;
-                                bool foundSecret = dataGen.foundSecret;
 
                                 KeyValuePair<string, List<string>> primeiroDialogo = dialogoHomemMisteriosoAto1.ElementAt(dialogueToRun);
 
