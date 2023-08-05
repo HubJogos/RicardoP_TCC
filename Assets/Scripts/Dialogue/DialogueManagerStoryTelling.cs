@@ -56,6 +56,11 @@ public class DialogueManagerStoryTelling : MonoBehaviour
     public Dictionary<string, int> Dialogo;
     public int dialogoAux = 0;
 
+    [SerializeField]
+    public TextMeshProUGUI missaoPrincipalGui;
+
+
+
     private CallAI callAI;
     public string[] answers = new string[8];
 
@@ -394,12 +399,23 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         if (npcNormal == true && fraseNPC == "")
         {
             fraseNPC = getFraseAleatoriaBasica();
+        } else
+        {
+            if (dataGen.playthroughs > 0 && dataGen.ato == 1 && SceneManager.GetActiveScene().name.ToString() == "Game")
+            {
+                Debug.Log("Portal liberado pois o jogador está repetindo a cena.");
+                liberaPortal();
+            } 
         }
 
-        //stats.width = 300;
-        //stats.height = 0;
-        //stats.maxEnemies = 999;
-        //stats.minEnemyDistance = 15;
+        
+        stats.width = 50; //50
+        stats.height = 50; //50
+        stats.minRegionSize = 5; //3 (demorou um pouco) //5 //10 //15 //20 //50% width (2 salas)
+        stats.maxEnemies = 30;
+        stats.minEnemyDistance = 5;
+
+        //liberaPortal();
 
         //minEnemyDistance deve ser 10% do width
 
@@ -408,7 +424,13 @@ public class DialogueManagerStoryTelling : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
+    }
+
+
+    public void atualizaMissaoPrincipal(string missaoPrincipal)
+    {
+        dataGen.missaoPrincipal = missaoPrincipal;
     }
 
 
@@ -836,6 +858,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
 
         // Presets de várias variáveis que mudam em tempo real com a história
 
+
         Debug.Log("::::::::::Variáveis de mapa gerado::::::::::");
         Debug.Log("width: " + stats.width);
         Debug.Log("height: " + stats.height);
@@ -861,7 +884,9 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         HudDialogue.SetActive(false);
         firstTime = false;
 
+        homemEncapuzadoSome();
         portal.SetActive(true);
+        dataGen.missaoPrincipal = "Entre no portal e conheça as cavernas mágicas";
 
     }
 
@@ -928,7 +953,6 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         {
             dialogoAux++;
             liberaPortal();
-            homemEncapuzadoSome();
             fechaHud();
         }
     }

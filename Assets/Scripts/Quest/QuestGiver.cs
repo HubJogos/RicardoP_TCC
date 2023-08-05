@@ -70,25 +70,30 @@ public class QuestGiver : MonoBehaviour
 
     public void AcceptQuest()
     {
-        questWindow.SetActive(false);
-        thisDialogueActive = false;
-        quest.isActive = true;
-        if (!tracker.quest[0].isActive)
+        if (dataGen.activeQuests < 2)
         {
-            tracker.quest[0] = quest;
-        }
-        else if(tracker.quest[0].goal != quest.goal) tracker.quest[1] = quest;
-        dataGen.activeQuests += 1;
-
-
-        
-        if (NpcPortal) //homem portal está referenciado
-        {
-            if (!NpcPortal.active)
+            questWindow.SetActive(false);
+            thisDialogueActive = false;
+            quest.isActive = true;
+            if (!tracker.quest[0].isActive)
             {
-                NpcPortal.SetActive(true);
+                tracker.quest[0] = quest;
+            }
+            else if (tracker.quest[0].goal != quest.goal) tracker.quest[1] = quest;
+            dataGen.activeQuests += 1;
+
+
+
+            if (NpcPortal) //homem portal está referenciado
+            {
+                if (!NpcPortal.active)
+                {
+                    NpcPortal.SetActive(true);
+                    dataGen.missaoPrincipal = "Fale com o homem encapuzado. Ele está na parte de cima do vilarejo.";
+                }
             }
         }
+        
 
     }
     public void RefuseQuest()

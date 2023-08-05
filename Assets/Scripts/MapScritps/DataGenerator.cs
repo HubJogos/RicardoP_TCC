@@ -87,7 +87,7 @@ public class DataGenerator : MonoBehaviour
     //Partial questions answers for multiple plays
     public string[] answers = new string[6];
 
-
+    public string missaoPrincipal = "Fale com os moradores para encontrar um jeito de encontrar um portal";
 
     private void FixedUpdate()
     {

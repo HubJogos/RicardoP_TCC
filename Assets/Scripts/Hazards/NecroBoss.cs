@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class NecroBoss : MonoBehaviour
 {
@@ -32,6 +33,12 @@ public class NecroBoss : MonoBehaviour
     bool targetAcquired = false;
     int prevDamage;//usado para trocar entre dano de contato e dano de carga(ver ataques)
 
+    [SerializeField]
+    public float tempoInicial = 120f; // Tempo inicial em segundos (2 minutos)
+    private float tempoRestante;
+    [SerializeField]
+    public TextMeshProUGUI textoTempoRestante;
+
     //movimentação errática
     [SerializeField] float moveSpeed;
     [SerializeField] float moveDuration;
@@ -60,6 +67,9 @@ public class NecroBoss : MonoBehaviour
     float attackCounter;
     bool isAttacking;
 
+
+    
+
     //---------------
     void Start()
     {
@@ -76,11 +86,30 @@ public class NecroBoss : MonoBehaviour
         lineRenderer.enabled = false;
 
         dataGen = FindObjectOfType<DataGenerator>();
+
+        tempoRestante = tempoInicial;
     }
 
 
     void Update()
     {
+
+        if (textoTempoRestante != null)
+        {
+            if (textoTempoRestante.isActiveAndEnabled)
+            {
+                if (FindObjectOfType<PlayerScript>().currentHealth > 0)
+                {
+                    AtualizarCronometro();
+
+                    // Atualizar o texto do tempo restante
+                    textoTempoRestante.text = "Tempo restante: " + Mathf.Ceil(tempoRestante);
+                    Debug.Log("Tempo restante: " + tempoRestante);
+                } 
+            }
+
+        }
+
         if (!targetAcquired)
         {
             target = FindObjectOfType<PlayerScript>().transform;
@@ -142,7 +171,25 @@ public class NecroBoss : MonoBehaviour
                 isAttacking = false;
             }
         }//se não se move, nem ataca, somente decrementa contadores
+
+
         
+        
+
+    }
+
+    // Função para atualizar o cronômetro e verificar se o tempo acabou
+    private void AtualizarCronometro()
+    {
+        tempoRestante -= Time.deltaTime;
+
+        // Verificar se o tempo acabou
+        if (tempoRestante <= 0)
+        {
+            tempoRestante = 0;
+            Time.timeScale = 0;
+            FindObjectOfType<PlayerScript>().HurtPlayer(100);
+        }
     }
 
     public void UpdateHealthBar()//não está no Update por ser chamado a partir do "EnemyHealthManager" somente quando necessário, servindo somente para atualizar a barra de HP

@@ -139,6 +139,9 @@ public class PlayerScript : MonoBehaviour
     #region ExternalSetups
     [HideInInspector] public NecroBoss boss;
     #endregion
+
+    [SerializeField]
+    public TextMeshProUGUI missaoPrincipalGui;
     void Start()
     {
 
@@ -237,6 +240,14 @@ public class PlayerScript : MonoBehaviour
 
     void Update()//atualiza comandos de movimento o mais rápido possível
     {
+        if (missaoPrincipalGui != null && dataGen.missaoPrincipal != null)
+        {
+            if (missaoPrincipalGui.text != dataGen.missaoPrincipal)
+            {
+                missaoPrincipalGui.text = dataGen.missaoPrincipal;
+            }
+        }
+
         if (Input.GetKeyDown(KeyCode.I)) inventoryUI.SetActive(!inventoryUI.activeSelf);//toggle inventory
 
 
