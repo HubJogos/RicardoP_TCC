@@ -83,6 +83,11 @@ public class DataGenerator : MonoBehaviour
     public int playthroughs = 0;
     public int ato = 1;
     public int deaths = 0;
+    public bool visitouMercado = false;
+    public bool comprouVida = false;
+    public bool comprouVelocidade = false;
+    public bool comprouForca = false;
+
     [Header("Questions")]
     //Partial questions answers for multiple plays
     public string[] answers = new string[6];

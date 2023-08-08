@@ -384,7 +384,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
             int index = Random.Range(0, dialogosNpcsJogadorMorreu.Length - 1);
             return dialogosNpcsJogadorMorreu[index];
         }
-        
+
     }
 
     void Start()
@@ -401,25 +401,37 @@ public class DialogueManagerStoryTelling : MonoBehaviour
             fraseNPC = getFraseAleatoriaBasica();
         } else
         {
-            if (dataGen.playthroughs > 0 && dataGen.ato == 1 && SceneManager.GetActiveScene().name.ToString() == "Game")
+            if (dataGen.playthroughs > 0 && SceneManager.GetActiveScene().name.ToString() == "Game")
             {
                 Debug.Log("Portal liberado pois o jogador está repetindo a cena.");
                 liberaPortal();
-            } 
+            } else
+            {
+                Debug.Log("Portal não liberado. "+ dataGen.playthroughs+" "+ SceneManager.GetActiveScene().name.ToString());
+            }
         }
 
-        
-        stats.width = 50; //50
-        stats.height = 50; //50
-        stats.minRegionSize = 5; //3 (demorou um pouco) //5 //10 //15 //20 //50% width (2 salas)
-        stats.maxEnemies = 30;
-        stats.minEnemyDistance = 5;
 
-        //liberaPortal();
+        stats.width += Random.Range(1, 5); //50
+        stats.height += Random.Range(1, 5); ; //50
+        stats.minRegionSize += Random.Range(5, 20); //3 (demorou um pouco) //5 //10 //15 //20 //50% width (2 salas)
+        stats.maxEnemies += Random.Range(15, 35);
+        stats.minEnemyDistance = Random.Range(5, 15);
+        //stats.smooth = Random.Range(2, 4);//grau de suavização dos quadrados gerados, "escava" as paredes do mapa
+        stats.randomFillPercent = 55;//porcentagem de terreno/parede
+        stats.enemyDensity = 50; //medidor de frequência de posicionamento de inimigos e itens
+        stats.itemDensity = 20;
 
-        //minEnemyDistance deve ser 10% do width
+        stats.minEnemyDistance = 15;
+        stats.minItemDistance = 25;
 
-    }
+        stats.maxEnemies = 30; //garante maior eficácia nos parâmetros de posicionamento
+        stats.maxItems = 10; //
+
+
+    //minEnemyDistance deve ser 10% do width
+
+}
 
     // Update is called once per frame
     void Update()
@@ -544,7 +556,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
 
                         }
                     }
- 
+
                     break;
                 case 2:
                     if (SceneManager.GetActiveScene().name.ToString() == "MapGeneration")
@@ -648,21 +660,21 @@ public class DialogueManagerStoryTelling : MonoBehaviour
 
                         }
                     }
-                    
+
                     break;
             }
-                
+
         } else
         {
             textDialogue.text = fraseNPC;
         }
-        
+
     }
 
     public void playerChoice(int decisao)
     {
         string escolha = textDialogue.text;
-        Debug.Log("Momento da história: "+escolha);
+        Debug.Log("Momento da história: " + escolha);
 
         switch (escolha)
         {
@@ -689,6 +701,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                     case 1:
                         string texto = "Interessante... Tenho certeza que a próxima vez que você voltar vai estar mais dificil.";
                         adicionaNovoTextoDuranteFala(texto);
+                        stats.maxEnemies = 99;
                         answers[6] = "0";
                         //jogador achou fácil
                         break;
@@ -702,6 +715,8 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                         string texto3 = "Se você achou difícil, é melhorar se preparar para o que o futuro reserva para você.";
                         adicionaNovoTextoDuranteFala(texto3);
                         answers[6] = "4";
+                        diminuiMapa();
+                        diminuiInimigos();
                         //jogador achou dificil
                         break;
                 }
@@ -736,7 +751,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                                 // jogador passou reto pelo jogo e entrou direto no portal. pouco inimigos ou portal gerado muito próximo?
                             }
                         }
-                        
+
                         adicionaNovoTextoDuranteFala(texto);
                         answers[7] = "0";
 
@@ -750,7 +765,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                         string texto3 = "Se você achou difícil, é melhorar se preparar para o que o futuro reserva para você.";
                         adicionaNovoTextoDuranteFala(texto3);
                         answers[7] = "4";
-    
+
                         break;
                 }
                 break;
@@ -817,7 +832,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
 
                     dialogoHomemMisteriosoAto1 = novoDicionario;
                 }
-                    
+
                 break;
             case 2:
                 if (dialogoAux + 1 >= 0 && dialogoAux + 1 < dialogoHomemMisteriosoAto2.Count)
@@ -846,7 +861,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                 dialogoHomemMisteriosoAto2 = novoDicionario;
                 break;
         }
-        
+
     }
 
     public void liberaPortal()
@@ -859,27 +874,106 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         // Presets de várias variáveis que mudam em tempo real com a história
 
 
-        Debug.Log("::::::::::Variáveis de mapa gerado::::::::::");
-        Debug.Log("width: " + stats.width);
-        Debug.Log("height: " + stats.height);
-        Debug.Log("smooth: " + stats.smooth);
-        Debug.Log("minRegionSize: " + stats.minRegionSize);
-        Debug.Log("randomFillPercent: " + stats.randomFillPercent);
-        Debug.Log("minEnemyDistance: " + stats.minEnemyDistance);
-        Debug.Log("minItemDistance: " + stats.minItemDistance);
-        Debug.Log("enemyDensity: " + stats.enemyDensity);
-        Debug.Log("itemDensity: " + stats.itemDensity);
-        Debug.Log("maxEnemies: " + stats.maxEnemies);
-        Debug.Log("maxItems: " + stats.maxItems);
-        Debug.Log("seed: " + dataGen.seed.ToString());
-
+        Debug.Log("::::::::::Variáveis de interações de usuário::::::::::");
         Debug.Log("Encontrou item secreto: " + dataGen.foundSecret.ToString());
         Debug.Log("interações: " + dataGen.interactions);
         Debug.Log("quests ativas: " + dataGen.activeQuests);
-        Debug.Log("Mortes contador: " + dataGen.deathCounter);
-        Debug.Log("Mortes: " + dataGen.deaths);
+        Debug.Log("Mortes do jogador: " + dataGen.deathCounter);
         Debug.Log("Playthroughs: " + dataGen.playthroughs);
+        Debug.Log("Visitou mercado:: " + dataGen.visitouMercado);
         Debug.Log("Time: " + dataGen.time);
+
+        if (dataGen.foundSecret)
+        {
+            adicionaMoedas();
+        } else
+        {
+            Debug.Log("Não tem found secret");
+        }
+
+        if (dataGen.interactions > 0)
+        {
+            aumentaMapa();
+        } else
+        {
+            adicionaMoedas();
+        }
+
+        if (dataGen.activeQuests > 0)
+        {
+            if (dataGen.activeQuests > 1)
+            { // 2 quest
+                adicionaMoedas();
+                adicionaInimigos();
+            } else
+            { // 1 quests
+
+            }
+        } else
+        {
+            // não fez nenhuma quest
+        }
+
+        if (dataGen.deathCounter > 0)
+        { // jogador já morreu
+            diminuiInimigos();
+        } else
+        {
+
+        }
+
+        if (dataGen.playthroughs > 0)
+        { // vezes que o jogador já entrou na caverna
+            adicionaInimigos();
+        } else
+        {
+
+        }
+
+        if (dataGen.visitouMercado)
+        { // tem um pouco de exploração só por visitar o mercado
+            adicionaMoedas();
+        } else
+        { // não se importou em comprar no mercado ou estava na caverna ? 
+
+        }
+
+        if (dataGen.comprouForca)
+        { // quer combate
+            adicionaInimigos();
+        }
+
+        if (dataGen.comprouVida)
+        { // mais inimigos
+            adicionaInimigos();
+        } 
+
+        if (dataGen.comprouVelocidade)
+        { // aumentar mapa e moedas 
+            aumentaMapa();
+            adicionaMoedas();
+        } 
+
+
+        if (stats.height > 70)
+        {
+            stats.height = 70 - Random.Range(2, 11);
+        }
+
+        //Debug.Log("::::::::::Variáveis de mapa gerado::::::::::");
+        //Debug.Log("width: " + stats.width);
+        //Debug.Log("height: " + stats.height);
+        //Debug.Log("smooth: " + stats.smooth);
+        //Debug.Log("minRegionSize: " + stats.minRegionSize);
+        //Debug.Log("randomFillPercent: " + stats.randomFillPercent);
+        //Debug.Log("minEnemyDistance: " + stats.minEnemyDistance);
+        //Debug.Log("minItemDistance: " + stats.minItemDistance);
+        //Debug.Log("enemyDensity: " + stats.enemyDensity);
+        //Debug.Log("itemDensity: " + stats.itemDensity);
+        //Debug.Log("maxEnemies: " + stats.maxEnemies);
+        //Debug.Log("maxItems: " + stats.maxItems);
+
+
 
         HudDialogue.SetActive(false);
         firstTime = false;
@@ -937,7 +1031,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                 {
                     countProxDialogo = dialogoHomemMisteriosoAto2.Count;
                 }
-                
+
                 break;
             case 3:
                 break;
@@ -957,7 +1051,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         }
     }
 
-    public void fechaHud(){
+    public void fechaHud() {
         HudDialogue.SetActive(false);
     }
 
@@ -968,30 +1062,104 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         {
             soundStoryTelling.PlayUnrestricted("BossAttacking");
             transform.parent.gameObject.SetActive(false);
-        } 
+        }
     }
 
-    public void adicionaInimigos()
+    public void adicionaInimigos(int valor = -1)
     {
-        // Gera um número aleatório entre 5 e 10
-        int maxEnemies = Random.Range(5, 11);
-        dataGen.maxEnemies = maxEnemies.ToString();
+        stats.maxEnemies += Random.Range(5, 11);
+        stats.minEnemyDistance--;
     }
 
-    public void adicionaMoedas()
+    public void diminuiInimigos(int valor = -1)
     {
-
+        stats.maxEnemies -= Random.Range(5, 11);
+        stats.minEnemyDistance++;
     }
 
-    public void aumentaMapa()
+    public void adicionaMoedas(int valor = -1)
     {
-
+        if (valor == -1)
+        {
+            int randomValue = Random.Range(1, 11);
+            stats.maxItems += randomValue;
+            stats.minItemDistance--;
+            Debug.Log("Aumentou moedas em " + randomValue);
+        }
+        else
+        {
+            stats.maxItems += valor;
+            stats.minItemDistance--;
+        }
     }
 
-    public void diminuiMapa()
+    public void diminuiMoedas(int valor = -1)
     {
+        if (valor == -1)
+        {
+            int randomValue = Random.Range(1, 11);
+            stats.maxItems -= randomValue;
+            stats.minItemDistance++;
+            Debug.Log("diminuiu moedas em " + randomValue);
+        }
+        else
+        {
+            stats.maxItems += valor;
+            stats.minItemDistance++;
+        }
+    }
+
+    public void aumentaMapa(int valor = -1)
+    {
+        int moreWidth;
+        int moreHeight;
+
+        if (valor == -1)
+        {
+            moreWidth = Random.Range(1, 20);
+            moreHeight = Random.Range(1, 3);
+
+            stats.width += moreWidth;
+            stats.height += moreHeight;
+        }
+        else
+        {
+            moreWidth = valor;
+            moreHeight = valor;
+
+            stats.width += moreWidth;
+            stats.height += moreHeight;
+        }
+
 
     }
+
+    public void diminuiMapa(int valor = -1)
+    {
+        int moreWidth;
+        int moreHeight;
+
+        if (valor == -1)
+        {
+            moreWidth = Random.Range(1, 20);
+            moreHeight = Random.Range(1, 3);
+
+            stats.width -= moreWidth;
+            stats.height -= moreHeight;
+        }
+        else
+        {
+            moreWidth = valor;
+            moreHeight = valor;
+
+            stats.width -= moreWidth;
+            stats.height -= moreHeight;
+        }
+    }
+
+
+
+
 
     private void BuildRegressionSample()
     {

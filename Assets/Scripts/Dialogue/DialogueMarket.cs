@@ -11,13 +11,16 @@ public class DialogueMarket : MonoBehaviour
     public GameObject HudMarket;
 
     AudioManager audioManager;
+    DataGenerator dataGen;
+    PersistentStats stats;
 
     PlayerScript playerScript;
 
     void Start()
     {
         playerScript = FindObjectOfType<PlayerScript>();
-
+        dataGen = FindObjectOfType<DataGenerator>();
+        stats = FindObjectOfType<PersistentStats>();
         audioManager = FindObjectOfType<AudioManager>();
     }
 
@@ -35,7 +38,8 @@ public class DialogueMarket : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.E))
             {
-                numberOfCoins.text = playerScript.coins.ToString();
+                numberOfCoins.text = stats.coins.ToString();
+                dataGen.visitouMercado = true;
                 HudMarket.SetActive(true);
             }
             //interactionText.SetActive(true);
@@ -48,7 +52,7 @@ public class DialogueMarket : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.E))
             {
-                numberOfCoins.text = playerScript.coins.ToString();
+                numberOfCoins.text = stats.coins.ToString();
                 HudMarket.SetActive(true);
             }
 
@@ -59,60 +63,57 @@ public class DialogueMarket : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             //interactionText.SetActive(false);
-            numberOfCoins.text = playerScript.coins.ToString();
+            numberOfCoins.text = stats.coins.ToString();
             HudMarket.SetActive(false);
         }
     }
 
     public void comprarVida()
     {
-        if (playerScript.coins >= 1)
+        if (stats.coins >= 1)
         {
-            Debug.Log("Jogador quer coins");
             playerScript.UpgradeHealth(25);
-            playerScript.coins--;
+            stats.coins--;
             audioManager.PlayUnrestricted("CashRegister");
+            dataGen.comprouVida = true;
             Debug.Log("Upgrade de vida");
         } else
         {
             audioManager.PlayUnrestricted("CashDenied");
-            Debug.Log("Não tem dinheiro");
         }
         numberOfCoins.text = playerScript.coins.ToString();
     }
 
     public void comprarVelocidade()
     {
-        if (playerScript.coins >= 1)
+        if (stats.coins >= 1)
         {
-            Debug.Log("Jogador gosta de explorar");
             playerScript.speed++;
-            playerScript.coins--;
+            stats.coins--;
             audioManager.PlayUnrestricted("CashRegister");
-            Debug.Log("Upgrade de vida");
+            dataGen.comprouVelocidade = true;
+            Debug.Log("Upgrade de velocidade");
         }
         else
         {
             audioManager.PlayUnrestricted("CashDenied");
-            Debug.Log("Não tem dinheiro");
         }
         numberOfCoins.text = playerScript.coins.ToString();
     }
 
     public void comprarForca()
     {
-        if (playerScript.coins >= 1)
+        if (stats.coins >= 1)
         {
-            Debug.Log("Jogador gosta de combate.");
             playerScript.damage++;
-            playerScript.coins--;
+            stats.coins--;
             audioManager.PlayUnrestricted("CashRegister");
+            dataGen.comprouForca = true;
             Debug.Log("Upgrade de força");
         }
         else
         {
             audioManager.PlayUnrestricted("CashDenied");
-            Debug.Log("Não tem dinheiro");
         }
         numberOfCoins.text = playerScript.coins.ToString();
     }

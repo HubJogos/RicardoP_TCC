@@ -68,7 +68,13 @@ public class NecroBoss : MonoBehaviour
     bool isAttacking;
 
 
-    
+    private float recoveryTimer = 5f;
+    private bool recovering = false;
+    private int minRecoveryAmount = 5;
+    private int maxRecoveryAmount = 10;
+
+
+
 
     //---------------
     void Start()
@@ -104,8 +110,9 @@ public class NecroBoss : MonoBehaviour
 
                     // Atualizar o texto do tempo restante
                     textoTempoRestante.text = "Tempo restante: " + Mathf.Ceil(tempoRestante);
-                    Debug.Log("Tempo restante: " + tempoRestante);
-                } 
+                    //Debug.Log("Tempo restante: " + tempoRestante);
+                }
+                else return;
             }
 
         }
@@ -126,6 +133,8 @@ public class NecroBoss : MonoBehaviour
             healthBar.gameObject.SetActive(true);
         }//ativa luta do chefe quando jogador estiver perto suficiente
         else return;
+
+
         //return acima cancela a execução do código abaixo enquanto o jogador não ativar a luta
 
         if (lineRenderer.enabled)
@@ -173,8 +182,39 @@ public class NecroBoss : MonoBehaviour
         }//se não se move, nem ataca, somente decrementa contadores
 
 
-        
-        
+        // Recuperação de vida a cada 5 segundos
+        if (!recovering)
+        {
+            recoveryTimer -= Time.deltaTime;
+
+            if (recoveryTimer <= 0f)
+            {
+                recovering = true;
+
+                // Recupera uma quantidade aleatória de vida entre minRecoveryAmount e maxRecoveryAmount
+                int recoveryAmount = Random.Range(minRecoveryAmount, maxRecoveryAmount + 1);
+                health.currentHealth += recoveryAmount;
+
+                // Limite de vida para não exceder o máximo (se necessário)
+                if (health.currentHealth > health.maxHealth)
+                {
+                    health.currentHealth = health.maxHealth;
+                }
+
+                // Redefine o timer para o próximo intervalo de recuperação
+                recoveryTimer = Random.Range(5f, 10f);
+            }
+        }
+        else
+        {
+            // Tempo de recuperação
+            recoveryTimer -= Time.deltaTime;
+            if (recoveryTimer <= 0f)
+            {
+                recovering = false;
+            }
+        }
+
 
     }
 
@@ -384,7 +424,7 @@ public class NecroBoss : MonoBehaviour
         //StartCoroutine(uiManager.FadeOut("Game2", true, 1));//retorna para a cena da cidade inicial
         //StartCoroutine(WaitToDie(2));
 
-        SceneManager.LoadScene("Questionario");
+        SceneManager.LoadScene("Game");
 
     }
     IEnumerator WaitToDie(int secs)

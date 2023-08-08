@@ -248,222 +248,231 @@ public class PlayerScript : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.I)) inventoryUI.SetActive(!inventoryUI.activeSelf);//toggle inventory
-
-
-        moveX = Input.GetAxisRaw("Horizontal");//receives directional inputs
-        moveY = Input.GetAxisRaw("Vertical");
-        mousePosition = cam.ScreenToWorldPoint(Input.mousePosition);//recebe posição do mouse na tela
-        mouseDirection = -((Vector2)transform.position - mousePosition).normalized;//calcula vetor direcional do ataque, com valor absoluto = 1
-
-        #region Movement and rolling
-        if (!isRolling)
+        if (currentHealth > 0)
         {
-            rb.velocity = new Vector2(moveX, moveY).normalized * speed;//actually does the moving part
-            if(rb.velocity.magnitude > 0 && !audioManager.isPlaying("PlayerStep"))
+            if (Input.GetKeyDown(KeyCode.I)) inventoryUI.SetActive(!inventoryUI.activeSelf);//toggle inventory
+
+
+            moveX = Input.GetAxisRaw("Horizontal");//receives directional inputs
+            moveY = Input.GetAxisRaw("Vertical");
+            mousePosition = cam.ScreenToWorldPoint(Input.mousePosition);//recebe posição do mouse na tela
+            mouseDirection = -((Vector2)transform.position - mousePosition).normalized;//calcula vetor direcional do ataque, com valor absoluto = 1
+
+            #region Movement and rolling
+            if (!isRolling)
             {
-                audioManager.Play("PlayerStep");
-            }
-        }//controla movimento
-        else
-        {
-            canRoll = false;
-            rb.velocity = new Vector2(moveX, moveY).normalized * rollSpeed;
-        }//gerencia troca de movimentos de rolamento/caminhada  
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            if (canRoll)
-            {
-                canRoll = false;
-                isRolling = true;
-                animator.SetBool("IsRolling", true);
-                audioManager.Play("PlayerDash");
-                rollSpeed = defaultRollSpeed;
-            }
-        }//starts rolling
-        if (!canRoll)
-        {
-            rollCounter -= Time.deltaTime;
-            if (rollCounter <= 0)
-            {
-                canRoll = true;
-            }
-        }//resets rolling
-        else
-        {
-            rollCounter = dashTime;
-        }//regulates rolling timers
-        if (isRolling)
-        {
-            float dashSlowForce = 3f;
-            float minDashSpeed = speed;
-
-            GetComponent<TrailRenderer>().enabled = true;
-            rollSpeed -= rollSpeed * dashSlowForce * Time.deltaTime;
-
-            if ((rollSpeed < minDashSpeed))
-            {
-                isRolling = false;
-                GetComponent<TrailRenderer>().enabled = false;
-                animator.SetBool("IsRolling", false);
-            }//stops rolling animation
-        }//actually does the rolling part
-        if (moveX == 1 || moveX == -1 || moveY == 1 || moveY == -1)
-        {
-            animator.SetFloat("lastMoveX", moveX);//required for correcting idle direction
-            animator.SetFloat("lastMoveY", moveY);
-        }//idle look direction
-        #endregion
-
-
-        if (isAttacking)
-        {
-            canRoll = false;
-            rb.velocity = Vector2.zero;//blocks movement when attacking
-            attackCounter -= Time.deltaTime;//counts down attack timer
-            if (attackCounter <= 0)
-            {
-                animator.SetBool("IsAttacking", false);
-                isAttacking = false;//resets attack
-                slashHitbox.SetActive(false);
-                swordTrail.SetActive(false);
-                canRoll = true;
-            }
-        }//regulates attack timer and resets
-        if (Input.GetKeyDown(KeyCode.Mouse0))//attack button is set to left mouse button
-        {
-            if (!isAttacking)//checks if player is not attacking already
-            {
-                attackCounter = attackTime;//resets attack timer
-                isAttacking = true;//sets attack variables
-                slashHitbox.SetActive(true);
-                swordTrail.SetActive(true);
-                if (Time.timeScale != 0)
+                rb.velocity = new Vector2(moveX, moveY).normalized * speed;//actually does the moving part
+                if (rb.velocity.magnitude > 0 && !audioManager.isPlaying("PlayerStep"))
                 {
-                    attacksAttempted++;
+                    audioManager.Play("PlayerStep");
                 }
-                animator.SetBool("IsAttacking", true);
-                audioManager.PlayUnrestricted("PlayerSlash");
-            }//actually does the attacking
-        }//regulates attacking
-
-
-        if (flashActive)
-        {
-            if (flashCounter > flashLength * .99f)//flashes player in and out
-            {
-                playerSprite.color = red;
-            }
-            else if (flashCounter > flashLength * .82f)
-            {
-                playerSprite.color = normal;
-            }
-            else if (flashCounter > flashLength * .66f)
-            {
-                playerSprite.color = red;
-            }
-            else if (flashCounter > flashLength * .49f)
-            {
-                playerSprite.color = normal;
-            }
-            else if (flashCounter > flashLength * .33f)
-            {
-                playerSprite.color = red;
-            }
-            else if (flashCounter > flashLength * .16f)
-            {
-                playerSprite.color = normal;
-            }
-            else if (flashCounter > 0)
-            {
-                playerSprite.color = red;
-            }
+            }//controla movimento
             else
             {
-                playerSprite.color = normal;
-                flashActive = false;//resets flashing
-            }
-            flashCounter -= Time.deltaTime;//counts down on flash times
-        }//controls flashing when taking damage
-        if (isTouching)
-        {
-            waitToDamage -= Time.deltaTime;//counts down damage instance timer
-            if (waitToDamage <= 0)
+                canRoll = false;
+                rb.velocity = new Vector2(moveX, moveY).normalized * rollSpeed;
+            }//gerencia troca de movimentos de rolamento/caminhada  
+            if (Input.GetKeyDown(KeyCode.Space))
             {
-                HurtPlayer(damage);//causa dano ao permanecer encostado na hitbox
-                GameObject damageTextInstance = Instantiate(damageTextPrefab, transform);
-                damageTextInstance.transform.GetChild(0).GetComponent<TextMeshPro>().color = new Color32(200, 100, 100, 255);
-                damageTextInstance.transform.GetChild(0).GetComponent<TextMeshPro>().SetText(damage.ToString());
-
-                waitToDamage = 2f;//resets counter
-            }
-        }//controla recepção de dano ao permanecer tocando um inimigo
-        
-        animator.SetFloat("moveX", rb.velocity.x);//sets movement animation variables to animate correctly
-        animator.SetFloat("moveY", rb.velocity.y);
-        animator.SetFloat("mousePosX", mouseDirection.x);//variáveis direcionais de ataque
-        animator.SetFloat("mousePosY", mouseDirection.y);//ataca na direção do mouse, não do movimento
-
-        if (activeScene.name == "MapGeneration")
-        {
-            precision = successfulAttacks / attacksAttempted;
-            ammoPickupRate = ammoPickup / shotsFired;
-            percentItemsCollected = itemsCollected / itemsGenerated;
-            percentKills = enemiesDefeated / mapReference.currentEnemies;
-            playerX = Mathf.FloorToInt(transform.position.x + mapReference.width / 2);//conversão da posição global para a posição no mapa do jogador
-            playerY = Mathf.FloorToInt(transform.position.y + mapReference.height / 2);
-            if (playerX != currPlayerX || playerY != currPlayerY)//se mudar de posição
+                if (canRoll)
+                {
+                    canRoll = false;
+                    isRolling = true;
+                    animator.SetBool("IsRolling", true);
+                    audioManager.Play("PlayerDash");
+                    rollSpeed = defaultRollSpeed;
+                }
+            }//starts rolling
+            if (!canRoll)
             {
-                steps++;
-            }
-        }//controla dados do jogador no mapa gerado
+                rollCounter -= Time.deltaTime;
+                if (rollCounter <= 0)
+                {
+                    canRoll = true;
+                }
+            }//resets rolling
+            else
+            {
+                rollCounter = dashTime;
+            }//regulates rolling timers
+            if (isRolling)
+            {
+                float dashSlowForce = 3f;
+                float minDashSpeed = speed;
+
+                GetComponent<TrailRenderer>().enabled = true;
+                rollSpeed -= rollSpeed * dashSlowForce * Time.deltaTime;
+
+                if ((rollSpeed < minDashSpeed))
+                {
+                    isRolling = false;
+                    GetComponent<TrailRenderer>().enabled = false;
+                    animator.SetBool("IsRolling", false);
+                }//stops rolling animation
+            }//actually does the rolling part
+            if (moveX == 1 || moveX == -1 || moveY == 1 || moveY == -1)
+            {
+                animator.SetFloat("lastMoveX", moveX);//required for correcting idle direction
+                animator.SetFloat("lastMoveY", moveY);
+            }//idle look direction
+            #endregion
+
+
+            if (isAttacking)
+            {
+                canRoll = false;
+                rb.velocity = Vector2.zero;//blocks movement when attacking
+                attackCounter -= Time.deltaTime;//counts down attack timer
+                if (attackCounter <= 0)
+                {
+                    animator.SetBool("IsAttacking", false);
+                    isAttacking = false;//resets attack
+                    slashHitbox.SetActive(false);
+                    swordTrail.SetActive(false);
+                    canRoll = true;
+                }
+            }//regulates attack timer and resets
+            if (Input.GetKeyDown(KeyCode.Mouse0))//attack button is set to left mouse button
+            {
+                if (!isAttacking)//checks if player is not attacking already
+                {
+                    attackCounter = attackTime;//resets attack timer
+                    isAttacking = true;//sets attack variables
+                    slashHitbox.SetActive(true);
+                    swordTrail.SetActive(true);
+                    if (Time.timeScale != 0)
+                    {
+                        attacksAttempted++;
+                    }
+                    animator.SetBool("IsAttacking", true);
+                    audioManager.PlayUnrestricted("PlayerSlash");
+                }//actually does the attacking
+            }//regulates attacking
+
+
+            if (flashActive)
+            {
+                if (flashCounter > flashLength * .99f)//flashes player in and out
+                {
+                    playerSprite.color = red;
+                }
+                else if (flashCounter > flashLength * .82f)
+                {
+                    playerSprite.color = normal;
+                }
+                else if (flashCounter > flashLength * .66f)
+                {
+                    playerSprite.color = red;
+                }
+                else if (flashCounter > flashLength * .49f)
+                {
+                    playerSprite.color = normal;
+                }
+                else if (flashCounter > flashLength * .33f)
+                {
+                    playerSprite.color = red;
+                }
+                else if (flashCounter > flashLength * .16f)
+                {
+                    playerSprite.color = normal;
+                }
+                else if (flashCounter > 0)
+                {
+                    playerSprite.color = red;
+                }
+                else
+                {
+                    playerSprite.color = normal;
+                    flashActive = false;//resets flashing
+                }
+                flashCounter -= Time.deltaTime;//counts down on flash times
+            }//controls flashing when taking damage
+            if (isTouching)
+            {
+                waitToDamage -= Time.deltaTime;//counts down damage instance timer
+                if (waitToDamage <= 0)
+                {
+                    HurtPlayer(damage);//causa dano ao permanecer encostado na hitbox
+                    GameObject damageTextInstance = Instantiate(damageTextPrefab, transform);
+                    damageTextInstance.transform.GetChild(0).GetComponent<TextMeshPro>().color = new Color32(200, 100, 100, 255);
+                    damageTextInstance.transform.GetChild(0).GetComponent<TextMeshPro>().SetText(damage.ToString());
+
+                    waitToDamage = 2f;//resets counter
+                }
+            }//controla recepção de dano ao permanecer tocando um inimigo
+
+            animator.SetFloat("moveX", rb.velocity.x);//sets movement animation variables to animate correctly
+            animator.SetFloat("moveY", rb.velocity.y);
+            animator.SetFloat("mousePosX", mouseDirection.x);//variáveis direcionais de ataque
+            animator.SetFloat("mousePosY", mouseDirection.y);//ataca na direção do mouse, não do movimento
+
+            if (activeScene.name == "MapGeneration")
+            {
+                precision = successfulAttacks / attacksAttempted;
+                ammoPickupRate = ammoPickup / shotsFired;
+                percentItemsCollected = itemsCollected / itemsGenerated;
+                percentKills = enemiesDefeated / mapReference.currentEnemies;
+                playerX = Mathf.FloorToInt(transform.position.x + mapReference.width / 2);//conversão da posição global para a posição no mapa do jogador
+                playerY = Mathf.FloorToInt(transform.position.y + mapReference.height / 2);
+                if (playerX != currPlayerX || playerY != currPlayerY)//se mudar de posição
+                {
+                    steps++;
+                }
+            }//controla dados do jogador no mapa gerado
+        }
+
+       
         
     }
 
     void FixedUpdate()//60 vezes por segundo, atualiza os comandos de mirar e atirar
     {
-        mousePosition = cam.ScreenToWorldPoint(Input.mousePosition);
-        shootDirection = (mousePosition - rb.position).normalized;
-        angle = Mathf.Atan2(shootDirection.y, shootDirection.x) * Mathf.Rad2Deg + 235f;
+        if (currentHealth > 0)
+        {
+            mousePosition = cam.ScreenToWorldPoint(Input.mousePosition);
+            shootDirection = (mousePosition - rb.position).normalized;
+            angle = Mathf.Atan2(shootDirection.y, shootDirection.x) * Mathf.Rad2Deg + 235f;
+
+            //controla rotação da espada ao atacar
+            if (attacksAttempted % 2 == 0)
+            {
+                targetRotation = swordRotation.transform.rotation;
+                targetRotation = Quaternion.AngleAxis(angle - swordAngleOffset - 15f, transform.forward);
+            }
+            else
+            {
+                targetRotation = swordRotation.transform.rotation;
+                targetRotation = Quaternion.AngleAxis(angle - swordAngleOffset + 105f, transform.forward);
+            }
+            swordRotation.transform.rotation = Quaternion.Lerp(swordRotation.transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            //-----------------------------------
+
+            if (isShooting)
+            {
+                canRoll = false;
+                rb.velocity = Vector2.zero;//blocks movement when shooting
+                shootingCounter -= Time.fixedDeltaTime;//counts down attack timer
+                if (shootingCounter <= 0)
+                {
+                    animator.SetBool("IsShooting", false);
+                    isShooting = false;//resets shooting
+                    canRoll = true;
+                }
+            }
+
+            if (Input.GetKeyDown(KeyCode.Mouse1))
+            {
+                if (!isShooting)
+                {
+                    shootingCounter = shootingTime;//resets attack timer
+                    isShooting = true;//sets attack variables
+                    animator.SetBool("IsShooting", true);
+                    Shoot();
+                }
+
+            }
+        }
         
-        //controla rotação da espada ao atacar
-        if (attacksAttempted % 2 == 0)
-        {
-            targetRotation = swordRotation.transform.rotation;
-            targetRotation = Quaternion.AngleAxis(angle - swordAngleOffset-15f, transform.forward);
-        }
-        else
-        {
-            targetRotation = swordRotation.transform.rotation;
-            targetRotation = Quaternion.AngleAxis(angle - swordAngleOffset + 105f, transform.forward);
-        }
-        swordRotation.transform.rotation = Quaternion.Lerp(swordRotation.transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-        //-----------------------------------
-
-        if (isShooting)
-        {
-            canRoll = false;
-            rb.velocity = Vector2.zero;//blocks movement when shooting
-            shootingCounter -= Time.fixedDeltaTime;//counts down attack timer
-            if (shootingCounter <= 0)
-            {
-                animator.SetBool("IsShooting", false);
-                isShooting = false;//resets shooting
-                canRoll = true;
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.Mouse1))
-        {
-            if (!isShooting)
-            {
-                shootingCounter = shootingTime;//resets attack timer
-                isShooting = true;//sets attack variables
-                animator.SetBool("IsShooting", true);
-                Shoot();
-            }
-
-        }
     }
 
     void LevelUp()
@@ -551,6 +560,7 @@ public class PlayerScript : MonoBehaviour
             }
         }
         coins++;
+        stats.coins++;
         itemsCollected++;
     }
 
@@ -618,6 +628,7 @@ public class PlayerScript : MonoBehaviour
         flashCounter = flashLength;//resets health timer
         currentHealth -= damageTaken;//decreases health
         totalLifeLost += damageTaken;
+        Debug.Log("Jogador tomou dano de "+damageTaken);
         playerUI.UpdateHealth();
         if (currentHealth <= 0)
         {

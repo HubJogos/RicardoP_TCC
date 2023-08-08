@@ -25,6 +25,7 @@ public class PersistentStats : MonoBehaviour
     [Header("Player Stats")]
     public int playerLevel = 1;
     public int currentExp = 0;
+    public int coins = 0;
 
     [Header("Health Variables")]
     public int maxHealth = 50;
