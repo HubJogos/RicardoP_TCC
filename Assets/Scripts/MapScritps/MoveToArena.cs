@@ -8,6 +8,7 @@ public class MoveToArena : MonoBehaviour
 {
     public GameObject arenaSpawnPos;//posição inicial do jogador na arena
     UIManager uiManager;
+    DataGenerator dataGen;
     bool loadedUI = false;
     private void Update()
     {
@@ -21,6 +22,10 @@ public class MoveToArena : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
+            dataGen = FindObjectOfType<DataGenerator>();
+
+            Debug.Log("Salvou dados de dataGen");
+            dataGen.SaveAsCSV();
             StartCoroutine(uiManager.FadeOut("", true, 1));
             StartCoroutine(WaitForTransport(1, other));
         }

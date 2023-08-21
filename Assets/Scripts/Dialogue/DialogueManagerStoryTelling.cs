@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.Networking;
-
+using Newtonsoft.Json;
 
 public class DialogueManagerStoryTelling : MonoBehaviour
 {
@@ -15,6 +15,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
 
     public string NomeNPC;
     public bool npcNormal = true;
+    public bool npcHistory = true;
 
     public bool firstTime = true;
     public bool backToThePortal = false;
@@ -71,6 +72,22 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         { "Você não viria de tão longe apenas para isso… Você com certeza já ouviu falar das riquezas que tem lá dentro... E você pode não ter tempo suficiente para encontrar o que está procurando e ainda sair com riquezas… (?) ", new List<string> { "Vim para encontrar o meu pai, é só isso que importa", "Também estou precisando de dinheiro.", "Está vendo essa espada? Ela pode conquistar o que eu quiser." } },
         { "Você lembra mesmo muito a pessoa que entrou antes aqui neste portal, talvez seja por esse motivo que ele nunca voltou, ou falta de tempo. Entre, mas lembre-se, todas as suas ações terão consequências… muahahahahaha", new List<string>()},
         { "O o portal está liberado, não perca tempo. Encontre o que você procura... ou não... MUAHAHAHAH ", new List<string>()},
+    };
+
+    Dictionary<string, List<string>> dialogoHomemHistoriaGame2 = new Dictionary<string, List<string>>
+    {
+        { "Como você está vivo? Estou chocado que conseguiu sair vivo de dentro de dentro das cavernas...", new List<string> { "O quê aconteceu aqui?", "Por que está tudo devastado no vilarejo?", "????" } },
+        { "Loucura que você não saiba. Aconteceu alguma coisa quando você entrou nas cavernas mágicas e as criaturas do mundo mágico entraram em guerra conosco", new List<string>() },
+        { "Preciso tirar algumas dúvidas com você que podem ser primordiais para conseguirmos vencer essa batalha contra as criaturas mágicas", new List<string> { "Faça as perguntas necessárias!", "Se for rápido, posso sim responder.", "Claro, responderei tudo para poder ajudar!" } },
+        { "Sobre essa caverna mágica que você visitou... Você diria que ela era um lugar aberto ou labirintica?", new List<string> { "Que eu me lembre, era um lugar aberto.", "Acho que era um pouco dos dois...", "Era bem labirintico, muito fácil de se perder, aliás." }},
+        { "Acredito que você esteve núcleo das cavernas e a sua ida lá desencadeou essa guerra. E a quantidade de inimigos que tinham lá? ", new List<string> { "Tinha bastante inimigos, tenha certeza disso.", "Era mediano, nada que me causasse muitos problemas.", "Tinham poucos inimigos. Não entendo como isso pode ter dado problema." }},
+        { "O homem encapuzado causou tudo isso, ele planejou que você entrasse lá e causasse isso tudo. Você foi tolo de cair naquela armadilha.", new List<string>() },
+        { "Um outro homem (seu pai) esteve aqui há muitos anos atrás, caiu na mesma armadilha, alguma coisa pegou ele lá dentro e nunca mais voltou. Acredito que você tenha que voltar lá e enfrentar isso.", new List<string>() },
+        { "O homem encapuzado através do portal está liberando as criaturas mágicas que estão entrando em guerra conosco, você precisa entrar lá e derrotá-lo onde o verdadeiro poder dele é revelado.", new List<string>() },
+        { "Aliás, mais algumas perguntinhas, são importantes para a nossa guerra enquanto você volta lá e resolve o que causou.", new List<string>() },
+        { "Esse lugar que você foi... o quão agrupados estavam os inimigos? é para as nossas defesas da vila!", new List<string> { "Pouco agrupados, eles lutam espalhados.", "Mais ou menos... não tinha um padrão.", "Achei que estavam bastante agrupados, eles lutam juntos." }},
+        { "E você tem tido muitas interações lá dentro e aqui fora?", new List<string> { "Estou sempre indo direto ao ponto.", "Estou tendo interações necessárias apenas.", "Estou interagindo bastante em tudo que posso. Preciso saber tudo!" }},
+        { "Boa sorte em sua jornada lá dentro. LEMBRE-SE: Você precisa aumentar suas skills no mercado, o que você irá enfrentar lá dentro não será fácil. Esta vila e o mundo depende de você!", new List<string>() },
     };
 
     Dictionary<string, List<string>> dialogoHomemMisteriosoAto1Cave = new Dictionary<string, List<string>>
@@ -666,7 +683,61 @@ public class DialogueManagerStoryTelling : MonoBehaviour
 
         } else
         {
-            textDialogue.text = fraseNPC;
+            if (npcHistory == true)
+            {
+                if (dialogoHomemHistoriaGame2.Count > 0)
+                {
+                    if (dialogoAux < dialogoHomemHistoriaGame2.Count)
+                    {
+                        int dialogueToRun = dialogoAux;
+                        if (dialogo != -1)
+                        {
+                            dialogueToRun = dialogo;
+                        }
+
+                        KeyValuePair<string, List<string>> primeiroDialogo = dialogoHomemHistoriaGame2.ElementAt(dialogueToRun);
+
+                        List<string> respostas = primeiroDialogo.Value;
+                        textDialogue.text = primeiroDialogo.Key;
+
+                        if (respostas.Count > 0)
+                        {
+                            buttonChoice1.SetActive(true);
+                            buttonChoice2.SetActive(true);
+                            buttonChoice3.SetActive(true);
+                            buttonChoicesContinue.SetActive(false);
+
+                            // ativar botões de decisões 1, 2 e 3
+                            string resposta1 = respostas[0];
+                            string resposta2 = respostas[1];
+                            string resposta3 = respostas[2];
+
+                            textChoice1.text = resposta1;
+                            textChoice2.text = resposta2;
+                            textChoice3.text = resposta3;
+
+                        }
+                        else
+                        {
+                            // colocar botão de continuar
+                            buttonChoice1.SetActive(false);
+                            buttonChoice2.SetActive(false);
+                            buttonChoice3.SetActive(false);
+                            buttonChoicesContinue.SetActive(true);
+
+                        }
+                    }
+                    else
+                    {
+                        continueChoices();
+                    }
+
+                }
+            } else
+            {
+                textDialogue.text = fraseNPC;
+            }
+            
         }
 
     }
@@ -674,7 +745,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
     public void playerChoice(int decisao)
     {
         string escolha = textDialogue.text;
-        Debug.Log("Momento da história: " + escolha);
+        //Debug.Log("Momento da história: " + escolha);
 
         switch (escolha)
         {
@@ -731,11 +802,13 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                             if (dataGen.playerData.percentItemsCollected > 0) //jogador coletou moedas e matou inimigos
                             {
                                 texto = "Você matou inimigos e coletou moedas pelo o que chegou até mim, pelo visto você tem um desejo sanguinário... você o usará em breve! Muahahaha";
+                                adicionaNovoTextoDuranteFala(texto);
                                 // ativa muito mais inimigos na próxima fase
                             }
                             else //jogador não coletou moedas e matou inimigos
                             {
                                 texto = "Não coletou nenhuma moeda e apenas matou inimigos? Sei bem o que você busca! vingança? Respostas? Não. Inimigos. E você os terá mais cedo que pensa! Muahahahaha";
+                                adicionaNovoTextoDuranteFala(texto);
                                 // ativa muito muito mais inimigos na próxima fase
                             }
                         } else // jogador não matou inimigos
@@ -743,21 +816,22 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                             if (dataGen.playerData.percentItemsCollected > 0) //jogador coletou moedas e não matou inimigos
                             {
                                 texto = "Como você acharia divertido se não matou nenhum inimigo e apenas ficou coletando moedas? Talvez nem exista um mercado quando você voltar... MUAHAHAHAH";
+                                adicionaNovoTextoDuranteFala(texto);
                                 // jogador gosta de coletar moedas apenas
                             }
                             else // jogador não coletou moedas e não matou inimigos - entrou no portal direto
                             {
                                 texto = "Não coletou nenhuma moeda e tampouco matou nenhum inimigo. Eu também não acharia divertido. Você quer respostas sem fazer nada? Você terá problemas depois de atravessar esse portal.";
+                                adicionaNovoTextoDuranteFala(texto);
                                 // jogador passou reto pelo jogo e entrou direto no portal. pouco inimigos ou portal gerado muito próximo?
                             }
                         }
 
-                        adicionaNovoTextoDuranteFala(texto);
                         answers[7] = "0";
 
                         break;
                     case 2: // não sabe dizer se foi divertido ou não
-                        string texto2 = "";
+                        string texto2 = "Não sabe o que dizer? Ah, vamos lá...";
                         adicionaNovoTextoDuranteFala(texto2);
                         answers[7] = "2";
                         break;
@@ -1012,43 +1086,74 @@ public class DialogueManagerStoryTelling : MonoBehaviour
     {
         int countProxDialogo = 0;
 
-        switch (dataGen.ato)
+        Debug.Log("npc history: "+npcHistory);
+        if (npcHistory == true)
         {
-            case 1:
-                if (SceneManager.GetActiveScene().name.ToString() != "Game")
-                {
-                    countProxDialogo = dialogoHomemMisteriosoAto1Cave.Count;
-                } else
-                {
-                    countProxDialogo = dialogoHomemMisteriosoAto1.Count;
-                }
-                break;
-            case 2:
-                if (SceneManager.GetActiveScene().name.ToString() != "Game")
-                {
-                    countProxDialogo = dialogoHomemMisteriosoAto2Cave.Count;
-                } else
-                {
-                    countProxDialogo = dialogoHomemMisteriosoAto2.Count;
-                }
+            countProxDialogo = dialogoHomemHistoriaGame2.Count;
+            if (dialogoAux <= countProxDialogo)
+            {
+                dialogoAux++;
+                rodaDialogo();
+            }
+            else
+            {
+                dialogoAux++;
+                //liberaPortal();
+                portal.SetActive(true);
+                fechaHud();
 
-                break;
-            case 3:
-                break;
-            default:
-                break;
-        }
-
-        if (dialogoAux <= countProxDialogo)
-        {
-            dialogoAux++;
-            rodaDialogo();
+            }
         } else
         {
-            dialogoAux++;
-            liberaPortal();
-            fechaHud();
+            switch (dataGen.ato)
+            {
+                case 1:
+                    if (SceneManager.GetActiveScene().name.ToString() != "Game")
+                    {
+                        countProxDialogo = dialogoHomemMisteriosoAto1Cave.Count;
+                    }
+                    else
+                    {
+                        countProxDialogo = dialogoHomemMisteriosoAto1.Count;
+                    }
+                    break;
+                case 2:
+                    if (SceneManager.GetActiveScene().name.ToString() != "Game")
+                    {
+                        countProxDialogo = dialogoHomemMisteriosoAto2Cave.Count;
+                    }
+                    else
+                    {
+                        countProxDialogo = dialogoHomemMisteriosoAto2.Count;
+                    }
+
+                    break;
+                case 3:
+                    break;
+                default:
+                    break;
+            }
+
+            if (dialogoAux <= countProxDialogo)
+            {
+                dialogoAux++;
+                rodaDialogo();
+            }
+            else
+            {
+                if (SceneManager.GetActiveScene().name.ToString() != "Game" && dataGen.ato == 1)
+                {
+                    Debug.Log("Enviou online");
+                    Send(); // envia dados gerados pro CSV online
+                }
+                dialogoAux++;
+                liberaPortal();
+                fechaHud();
+
+            }
         }
+
+        
     }
 
     public void fechaHud() {
@@ -1175,6 +1280,9 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         callAI.data[8] = (float)dataGen.genData.averageEnemyDistance;
         callAI.data[9] = (float)dataGen.genData.averageItemDistance;
 
+
+        callAI.CallAPI();
+
         Dictionary<string, float> variableDictionary = new Dictionary<string, float>();
         float totalLifeLost = (float)dataGen.playerData.totalLifeLost;
         float timeSpent = (float)dataGen.playerData.timeSpent;
@@ -1208,6 +1316,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
     public void Send()
     {
         StartCoroutine(Post(dataGen));
+        //BuildRegressionSample();
         //Analytics.CustomEvent("LifeLost", new Dictionary<string, object> { { "TotalLifeLost", dataGen.playerData.totalLifeLost } });
     }
 

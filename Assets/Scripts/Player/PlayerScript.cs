@@ -209,13 +209,13 @@ public class PlayerScript : MonoBehaviour
                         Debug.Log("Voltei tantas vezes que nem me importo mais. Essa caverna é bem dificil.");
                     } else
                     {
-                        Invoke("PlaySoundStartGame1", 0.5f);
+                        //Invoke("PlaySoundStartGame1", 0.5f);
                     }
 
                 }
                 break;
             case "Game2":
-                Invoke("PlaySoundStartGame2", 0.5f);
+                //Invoke("PlaySoundStartGame2", 0.5f);
                 Debug.Log("O mundo está devastado!");
                 break;
         }
