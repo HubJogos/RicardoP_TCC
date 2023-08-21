@@ -260,6 +260,10 @@ MonoBehaviour:
   playthroughs: 0
   ato: 1
   deaths: 0
+  visitouMercado: 0
+  comprouVida: 0
+  comprouVelocidade: 0
+  comprouForca: 0
   answers:
   - 
   - 
@@ -267,6 +271,10 @@ MonoBehaviour:
   - 
   - 
   - 
+  - 
+  - 
+  missaoPrincipal: Fale com os moradores para encontrar um jeito de encontrar um
+    portal
 --- !u!114 &461567153
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -314,6 +322,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerLevel: 1
   currentExp: 0
+  coins: 0
   maxHealth: 50
   closedTutorial: 0
   width: 100

@@ -745,7 +745,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
     public void playerChoice(int decisao)
     {
         string escolha = textDialogue.text;
-        //Debug.Log("Momento da história: " + escolha);
+        Debug.Log("Momento da história: " + escolha);
 
         switch (escolha)
         {
@@ -767,25 +767,29 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                 }
                 break;
             case ("Vamos falar como foi lá dentro... antes de tudo, você achou dificil? Muahahahah"):
+                Debug.Log(dataGen.answers.Length);
                 switch (decisao)
                 {
                     case 1:
-                        string texto = "Interessante... Tenho certeza que a próxima vez que você voltar vai estar mais dificil.";
+                        string texto = "Interessante. Tenho certeza que a próxima vez que você voltar vai estar mais dificil.";
                         adicionaNovoTextoDuranteFala(texto);
                         stats.maxEnemies = 99;
                         answers[6] = "0";
+                        dataGen.answers[6] = "0";
                         //jogador achou fácil
                         break;
                     case 2:
                         string texto2 = "Se você ficou em cima do muro, quer dizer que não achou fácil. Ou será que você ficou se escondendo? Hehe";
                         adicionaNovoTextoDuranteFala(texto2);
                         answers[6] = "2";
+                        dataGen.answers[6] = "2";
                         //jogador achou médio
                         break;
                     case 3:
                         string texto3 = "Se você achou difícil, é melhorar se preparar para o que o futuro reserva para você.";
                         adicionaNovoTextoDuranteFala(texto3);
                         answers[6] = "4";
+                        dataGen.answers[6] = "4";
                         diminuiMapa();
                         diminuiInimigos();
                         //jogador achou dificil
@@ -795,7 +799,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
             case ("E você achou divertido?"):
                 switch (decisao)
                 {
-                    case 1: // não achou divertido
+                    case 3: // não achou divertido
                         string texto = "";
                         if (dataGen.playerData.percentKills > 0) //jogador matou inimigos
                         {
@@ -828,17 +832,20 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                         }
 
                         answers[7] = "0";
+                        dataGen.answers[7] = "0";
 
                         break;
                     case 2: // não sabe dizer se foi divertido ou não
-                        string texto2 = "Não sabe o que dizer? Ah, vamos lá...";
+                        string texto2 = "Não sabe o que dizer? Ah, vamos lá... A indecisão não te ajuda nesses momentos.";
                         adicionaNovoTextoDuranteFala(texto2);
                         answers[7] = "2";
+                        dataGen.answers[7] = "2";
                         break;
-                    case 3: // achou divertido
-                        string texto3 = "Se você achou difícil, é melhorar se preparar para o que o futuro reserva para você.";
+                    case 1: // achou divertido
+                        string texto3 = "Interessante você achar divertido. Você é sanguinário e implacável!";
                         adicionaNovoTextoDuranteFala(texto3);
                         answers[7] = "4";
+                        dataGen.answers[7] = "4";
 
                         break;
                 }
@@ -1160,6 +1167,8 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                 //liberaPortal();
                 portal.SetActive(true);
                 fechaHud();
+                Debug.Log("Enviou online");
+                Send(); // envia dados gerados pro CSV online
                 BuildRegressionSample();
                 
 
@@ -1202,11 +1211,6 @@ public class DialogueManagerStoryTelling : MonoBehaviour
             }
             else
             {
-                if (SceneManager.GetActiveScene().name.ToString() != "Game" && dataGen.ato == 1)
-                {
-                    Debug.Log("Enviou online");
-                    Send(); // envia dados gerados pro CSV online
-                }
                 dialogoAux++;
                 liberaPortal();
                 fechaHud();
@@ -1341,7 +1345,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         callAI.data[8] = (float)dataGen.genData.averageEnemyDistance;
         callAI.data[9] = (float)dataGen.genData.averageItemDistance;
 
-
+        Debug.Log("Chamando AI...");
         callAI.CallAPI();
 
         Dictionary<string, float> variableDictionary = new Dictionary<string, float>();
@@ -1444,8 +1448,8 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         form.AddField("entry.1862005822", answers[4]);//interactionAmount
         form.AddField("entry.1906391024", answers[5]);//conversationMaterial
 
-        form.AddField("entry.374425141", answers[6]);//difficulty
-        form.AddField("entry.1632273714", answers[7]);//fun
+        form.AddField("entry.374425141", data.answers[6]);//difficulty
+        form.AddField("entry.1632273714", data.answers[7]);//fun
 
         //end one playthrough info--------------------------------------------------------------------------------------------------
 
