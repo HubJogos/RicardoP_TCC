@@ -1169,6 +1169,11 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                 fechaHud();
                 Debug.Log("Enviou online");
                 Send(); // envia dados gerados pro CSV online
+                gameObject.SetActive(false);
+                if (transform.parent != null)
+                {
+                    transform.parent.gameObject.SetActive(false);
+                }
                 BuildRegressionSample();
                 
 
