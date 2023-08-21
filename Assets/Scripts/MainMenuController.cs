@@ -22,6 +22,11 @@ public class MainMenuController : MonoBehaviour
         SceneManager.LoadScene("Preload");
     }
 
+    public void GoToMenu()
+    {
+        SceneManager.LoadScene("MainMenuCave");
+    }
+
     public void quitGame()
     {
         Application.Quit();

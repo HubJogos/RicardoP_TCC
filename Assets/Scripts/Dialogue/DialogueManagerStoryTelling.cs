@@ -1142,7 +1142,11 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             dialogueStarted = false;
-            HudDialogue.SetActive(false);
+            if (HudDialogue != null && HudDialogue.active == true)
+            {
+                HudDialogue.SetActive(false);
+            }
+                
         }
     }
 
@@ -1174,7 +1178,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                 {
                     transform.parent.gameObject.SetActive(false);
                 }
-                BuildRegressionSample();
+                //BuildRegressionSample();
                 
 
             }
@@ -1394,6 +1398,8 @@ public class DialogueManagerStoryTelling : MonoBehaviour
     IEnumerator Post(DataGenerator data)
     {
 
+        string corsAnywhereUrl = "https://cors-anywhere.herokuapp.com/";
+
         string url = "https://docs.google.com/forms/d/e/1FAIpQLSf5Jp4HtbpZWZPxRPRxZZqgvVAZjFk5ZYqKJqhBpInbMwNitA/formResponse";
         WWWForm form = new WWWForm();
 
@@ -1458,7 +1464,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
 
         //end one playthrough info--------------------------------------------------------------------------------------------------
 
-        UnityWebRequest www = UnityWebRequest.Post(url, form);
+        UnityWebRequest www = UnityWebRequest.Post(corsAnywhereUrl + url, form);
         yield return www.SendWebRequest();
     }
 

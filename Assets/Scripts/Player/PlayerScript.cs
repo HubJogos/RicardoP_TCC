@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.Analytics;
-
+using System;
 public class PlayerScript : MonoBehaviour
 {
     #region ControllerVariables
@@ -216,6 +216,7 @@ public class PlayerScript : MonoBehaviour
                 break;
             case "Game2":
                 //Invoke("PlaySoundStartGame2", 0.5f);
+                dataGen.descobriuHistoria = true;
                 Debug.Log("O mundo está devastado!");
                 break;
         }
@@ -637,7 +638,21 @@ public class PlayerScript : MonoBehaviour
             {
                 tracker.quest[i].goal.currentAmount = 0;
             }
-            FindObjectOfType<Continue>().GameOverScreen();
+            try
+            {
+                FindObjectOfType<Continue>().GameOverScreen();
+            }
+            catch(Exception e)
+            {
+                if (dataGen.enfrentouBoss == true || dataGen.descobriuHistoria == true)
+                {
+                    SceneManager.LoadScene(6);
+                } else
+                {
+                    SceneManager.LoadScene("MainMenuCave");
+                }
+            }
+            
         }
     }
 

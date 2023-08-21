@@ -121,6 +121,7 @@ public class NecroBoss : MonoBehaviour
         {
             target = FindObjectOfType<PlayerScript>().transform;
             targetAcquired = true;
+            dataGen.enfrentouBoss = true;
         }//recebe referência do jogador
         if (!loadedUI && uiManager == null)
         {
@@ -403,10 +404,11 @@ public class NecroBoss : MonoBehaviour
             projectileDamage = 0;
             tentacleDamage = 0;
             spriteRenderer.color = new Color(1f, 1f, 1f, 0f);//torna inimigo invisível
-            afterFightDrops.SetActive(true);//abre menu de seleção de recompensa
+            //afterFightDrops.SetActive(true);//abre menu de seleção de recompensa
             endingFight = true;//garante que essa função seja chamada somente uma vez
             audioManager.PlayUnrestricted("BossDeath");
             StopAllCoroutines();//para quaisquer execuções ativas
+            SceneManager.LoadScene(7);
         }
     }
     public void SelectReward(int slot)

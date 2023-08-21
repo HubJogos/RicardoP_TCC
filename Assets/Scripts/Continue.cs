@@ -36,7 +36,15 @@ public class Continue : MonoBehaviour
     {
         //dataGen.SaveAsCSV();
         //StartCoroutine(WaitToQuit());
-        SceneManager.LoadScene("MainMenuCave");
+
+        if (dataGen.descobriuHistoria == true)
+        {
+            SceneManager.LoadScene(6);
+        } else
+        {
+            SceneManager.LoadScene("MainMenuCave");
+        }
+        
     }
     public void Restart()//caso o jogador queira jogar novamente, recarrega a cidade inicial
     {

@@ -88,6 +88,9 @@ public class DataGenerator : MonoBehaviour
     public bool comprouVelocidade = false;
     public bool comprouForca = false;
 
+    public bool descobriuHistoria = false;
+    public bool enfrentouBoss = false;
+
     [Header("Questions")]
     //Partial questions answers for multiple plays
     public string[] answers = new string[8];
