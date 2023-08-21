@@ -15,7 +15,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
 
     public string NomeNPC;
     public bool npcNormal = true;
-    public bool npcHistory = true;
+    public bool npcHistory = false;
 
     public bool firstTime = true;
     public bool backToThePortal = false;
@@ -80,7 +80,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         { "Loucura que você não saiba. Aconteceu alguma coisa quando você entrou nas cavernas mágicas e as criaturas do mundo mágico entraram em guerra conosco", new List<string>() },
         { "Preciso tirar algumas dúvidas com você que podem ser primordiais para conseguirmos vencer essa batalha contra as criaturas mágicas", new List<string> { "Faça as perguntas necessárias!", "Se for rápido, posso sim responder.", "Claro, responderei tudo para poder ajudar!" } },
         { "Sobre essa caverna mágica que você visitou... Você diria que ela era um lugar aberto ou labirintica?", new List<string> { "Que eu me lembre, era um lugar aberto.", "Acho que era um pouco dos dois...", "Era bem labirintico, muito fácil de se perder, aliás." }},
-        { "Acredito que você esteve núcleo das cavernas e a sua ida lá desencadeou essa guerra. E a quantidade de inimigos que tinham lá? ", new List<string> { "Tinha bastante inimigos, tenha certeza disso.", "Era mediano, nada que me causasse muitos problemas.", "Tinham poucos inimigos. Não entendo como isso pode ter dado problema." }},
+        { "Acredito que você esteve núcleo das cavernas e a sua ida lá desencadeou essa guerra. E a quantidade de inimigos que tinham lá?", new List<string> { "Tinha bastante inimigos, tenha certeza disso.", "Era mediano, nada que me causasse muitos problemas.", "Tinham poucos inimigos. Não entendo como isso pode ter dado problema." }},
         { "O homem encapuzado causou tudo isso, ele planejou que você entrasse lá e causasse isso tudo. Você foi tolo de cair naquela armadilha.", new List<string>() },
         { "Um outro homem (seu pai) esteve aqui há muitos anos atrás, caiu na mesma armadilha, alguma coisa pegou ele lá dentro e nunca mais voltou. Acredito que você tenha que voltar lá e enfrentar isso.", new List<string>() },
         { "O homem encapuzado através do portal está liberando as criaturas mágicas que estão entrando em guerra conosco, você precisa entrar lá e derrotá-lo onde o verdadeiro poder dele é revelado.", new List<string>() },
@@ -843,8 +843,65 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                         break;
                 }
                 break;
+            case ("Sobre essa caverna mágica que você visitou... Você diria que ela era um lugar aberto ou labirintica?"):
+                switch (decisao)
+                {
+                    case 1:
+                        answers[1] = "0";
+                        break;
+                    case 2:
+                        answers[1] = "2";
+                        break;
+                    case 3:
+                        answers[1] = "4";
+                        break;
+                }
+                break;
+            case ("Acredito que você esteve núcleo das cavernas e a sua ida lá desencadeou essa guerra. E a quantidade de inimigos que tinham lá?"):
+                switch (decisao)
+                {
+                    case 1:
+                        answers[2] = "0";
+                        break;
+                    case 2:
+                        answers[2] = "2";
+                        break;
+                    case 3:
+                        answers[2] = "4";
+                        break;
+                }
+                break;
+            case ("Esse lugar que você foi... o quão agrupados estavam os inimigos? é para as nossas defesas da vila!"):
+                switch (decisao)
+                {
+                    case 1:
+                        answers[3] = "0";
+                        break;
+                    case 2:
+                        answers[3] = "2";
+                        break;
+                    case 3:
+                        answers[3] = "4";
+                        break;
+                }
+                break;
+            case ("E você tem tido muitas interações lá dentro e aqui fora?"):
+                switch (decisao)
+                {
+                    case 1:
+                        answers[4] = "0";
+                        break;
+                    case 2:
+                        answers[4] = "2";
+                        break;
+                    case 3:
+                        answers[4] = "4";
+                        break;
+                }
+                break;
         }
-        continueChoices();
+
+        continueChoices(); 
     }
 
     private void adicionaNovoTextoDuranteFala(string texto)
@@ -1086,21 +1143,25 @@ public class DialogueManagerStoryTelling : MonoBehaviour
     {
         int countProxDialogo = 0;
 
-        Debug.Log("npc history: "+npcHistory);
+        
         if (npcHistory == true)
         {
             countProxDialogo = dialogoHomemHistoriaGame2.Count;
             if (dialogoAux <= countProxDialogo)
             {
+                Debug.Log("roda dialogo");
                 dialogoAux++;
                 rodaDialogo();
             }
             else
             {
+                Debug.Log("fecha hud e aparece o homi do portal");
                 dialogoAux++;
                 //liberaPortal();
                 portal.SetActive(true);
                 fechaHud();
+                BuildRegressionSample();
+                
 
             }
         } else
