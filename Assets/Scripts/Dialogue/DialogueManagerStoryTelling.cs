@@ -429,26 +429,26 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         }
 
 
-        stats.width += Random.Range(1, 5); //50
-        stats.height += Random.Range(1, 5); ; //50
+        stats.width += Random.Range(-15, 30); //50
+        stats.height += Random.Range(-1, 5); ; //50
         stats.minRegionSize += Random.Range(5, 20); //3 (demorou um pouco) //5 //10 //15 //20 //50% width (2 salas)
-        stats.maxEnemies += Random.Range(15, 35);
+        stats.maxEnemies += Random.Range(15, 45);
         stats.minEnemyDistance = Random.Range(5, 15);
-        //stats.smooth = Random.Range(2, 4);//grau de suavização dos quadrados gerados, "escava" as paredes do mapa
-        stats.randomFillPercent = 55;//porcentagem de terreno/parede
-        stats.enemyDensity = 50; //medidor de frequência de posicionamento de inimigos e itens
-        stats.itemDensity = 20;
+        stats.smooth = Random.Range(2, 4);//grau de suavização dos quadrados gerados, "escava" as paredes do mapa
+        stats.randomFillPercent = 55; //Random.Range(55, 65); //porcentagem de terreno/parede
+        stats.enemyDensity = Random.Range(45, 70); //medidor de frequência de posicionamento de inimigos e itens
+        stats.itemDensity = Random.Range(18, 32);
 
-        stats.minEnemyDistance = 15;
-        stats.minItemDistance = 25;
+        stats.minEnemyDistance = Random.Range(13, 20); ;
+        stats.minItemDistance = Random.Range(20, 33);
 
-        stats.maxEnemies = 30; //garante maior eficácia nos parâmetros de posicionamento
-        stats.maxItems = 10; //
+        stats.maxEnemies = Random.Range(25, 55); //garante maior eficácia nos parâmetros de posicionamento
+        stats.maxItems = Random.Range(5, 28); //
 
 
-    //minEnemyDistance deve ser 10% do width
+        //minEnemyDistance deve ser 10% do width
 
-}
+    }
 
     // Update is called once per frame
     void Update()
@@ -903,6 +903,23 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                         break;
                     case 3:
                         answers[4] = "4";
+                        break;
+                }
+                break;
+            case ("Estou curioso... Qual era o tamanho da caverna que você esteve?"):
+                switch (decisao)
+                {
+                    case 1:
+                        answers[0] = "0";
+                        dataGen.answers[0] = "0";
+                        break;
+                    case 2:
+                        answers[0] = "2";
+                        dataGen.answers[0] = "2";
+                        break;
+                    case 3:
+                        answers[0] = "4";
+                        dataGen.answers[0] = "4";
                         break;
                 }
                 break;
@@ -1398,7 +1415,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
     IEnumerator Post(DataGenerator data)
     {
 
-        string corsAnywhereUrl = "https://cors-anywhere.herokuapp.com/";
+        //string corsAnywhereUrl = "https://cors-anywhere.herokuapp.com/";
 
         string url = "https://docs.google.com/forms/d/e/1FAIpQLSf5Jp4HtbpZWZPxRPRxZZqgvVAZjFk5ZYqKJqhBpInbMwNitA/formResponse";
         WWWForm form = new WWWForm();
@@ -1451,7 +1468,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         form.AddField("entry.1135456508", data.currentItems);//GeneratedItems
 
         //playerInput
-        form.AddField("entry.1151053099", answers[0]);//mapSize
+        form.AddField("entry.1151053099", data.answers[0]);//mapSize
         form.AddField("entry.1779334571", answers[1]);//complexity
         form.AddField("entry.968548155", answers[2]);//enemyAmount
         form.AddField("entry.20587696", answers[3]);//enemyDensity
@@ -1464,7 +1481,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
 
         //end one playthrough info--------------------------------------------------------------------------------------------------
 
-        UnityWebRequest www = UnityWebRequest.Post(corsAnywhereUrl + url, form);
+        UnityWebRequest www = UnityWebRequest.Post(url, form);
         yield return www.SendWebRequest();
     }
 
