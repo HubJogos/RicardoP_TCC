@@ -649,7 +649,7 @@ public class PlayerScript : MonoBehaviour
                     SceneManager.LoadScene(6);
                 } else
                 {
-                    SceneManager.LoadScene("MainMenuCave");
+                    SceneManager.LoadScene("Game");
                 }
             }
             

@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Globalization;
 using UnityEngine.Analytics;
 /* unity analytics é uma ferramenta de coleta e análise de dados mantido pela própria Unity, é o melhor método de coleta/visualização de dados
  * ao custo de maior complexidade de integração no jogo e menor flexibilidade de tratamento dos dados
@@ -194,11 +195,17 @@ public class DataGenerator : MonoBehaviour
         {
             precision = Double.NaN.ToString().Replace(",", ".");
 
-        }else precision = playerScript.precision.ToString().Replace(",",".");
+        }else precision = precision = playerScript.precision.ToString();
 
-        percentKills = playerScript.percentKills.ToString().Replace(",", ".");
-        percentItemPickup = playerScript.percentItemsCollected.ToString().Replace(",", ".");
-        percentAmmoPickup = playerScript.ammoPickupRate.ToString().Replace(",", ".");
+        percentKills = playerScript.percentKills.ToString();
+        percentItemPickup = playerScript.percentItemsCollected.ToString();
+        //percentAmmoPickup = playerScript.ammoPickupRate.ToString().Replace(",", ".");
+        percentAmmoPickup = playerScript.ammoPickupRate.ToString();
+
+        Debug.Log("percent kills: " + percentKills);
+        Debug.Log("precision: " + precision);
+        Debug.Log("percentItemPickup: " + percentItemPickup);
+        Debug.Log("percentAmmoPickup: " + percentAmmoPickup);
 
         runVictory = victory.ToString();
 
@@ -244,15 +251,15 @@ public class DataGenerator : MonoBehaviour
         randomFillPercent = genData.randomFillPercent.ToString();
         minEnemyDistance = genData.minEnemyDistance.ToString();
         minItemDistance = genData.minItemDistance.ToString();
-        averageEnemyDistance = genData.averageEnemyDistance.ToString().Replace(",", ".");
-        averageItemDistance = genData.averageItemDistance.ToString().Replace(",", ".");
+        averageEnemyDistance = genData.averageEnemyDistance.ToString();
+        averageItemDistance = genData.averageItemDistance.ToString();
         enemyDensity = genData.enemyDensity.ToString();
         itemDensity = genData.itemDensity.ToString();
         maxEnemies = genData.maxEnemies.ToString();
         maxItems = genData.maxItems.ToString();
         currentEnemies = genData.currentEnemies.ToString();
         currentItems = genData.currentItems.ToString();
-        seed = genData.seed.ToString().Replace(",", ".");
+        seed = genData.seed.ToString();
 
     }
 

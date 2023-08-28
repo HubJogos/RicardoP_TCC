@@ -429,24 +429,26 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         }
 
 
-        stats.width += Random.Range(-15, 30); //50
-        stats.height += Random.Range(-1, 5); ; //50
-        stats.minRegionSize += Random.Range(5, 20); //3 (demorou um pouco) //5 //10 //15 //20 //50% width (2 salas)
-        stats.maxEnemies += Random.Range(15, 45);
-        stats.minEnemyDistance = Random.Range(5, 15);
-        stats.smooth = Random.Range(2, 4);//grau de suavização dos quadrados gerados, "escava" as paredes do mapa
-        stats.randomFillPercent = 55; //Random.Range(55, 65); //porcentagem de terreno/parede
-        stats.enemyDensity = Random.Range(45, 70); //medidor de frequência de posicionamento de inimigos e itens
-        stats.itemDensity = Random.Range(18, 32);
+        if (dataGen.deathCounter < 1)
+        {
+            stats.width += Random.Range(-15, 30); //50
+            stats.height += Random.Range(-1, 5); ; //50
+            stats.minRegionSize += Random.Range(5, 20); //3 (demorou um pouco) //5 //10 //15 //20 //50% width (2 salas)
+            stats.maxEnemies += Random.Range(15, 45);
+            stats.minEnemyDistance = Random.Range(5, 15);
+            stats.smooth = Random.Range(2, 4);//grau de suavização dos quadrados gerados, "escava" as paredes do mapa
+            stats.randomFillPercent = 55; //Random.Range(55, 65); //porcentagem de terreno/parede
+            stats.enemyDensity = Random.Range(45, 70); //medidor de frequência de posicionamento de inimigos e itens
+            stats.itemDensity = Random.Range(18, 32);
 
-        stats.minEnemyDistance = Random.Range(13, 20); ;
-        stats.minItemDistance = Random.Range(20, 33);
+            stats.minEnemyDistance = Random.Range(13, 20);
+            stats.minItemDistance = Random.Range(20, 33);
 
-        stats.maxEnemies = Random.Range(25, 55); //garante maior eficácia nos parâmetros de posicionamento
-        stats.maxItems = Random.Range(5, 28); //
+            stats.maxEnemies = Random.Range(25, 55); //garante maior eficácia nos parâmetros de posicionamento
+            stats.maxItems = Random.Range(5, 28); //
+            //minEnemyDistance deve ser 10% do width
+        }
 
-
-        //minEnemyDistance deve ser 10% do width
 
     }
 
@@ -781,8 +783,11 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                     case 2:
                         string texto2 = "Se você ficou em cima do muro, quer dizer que não achou fácil. Ou será que você ficou se escondendo? Hehe";
                         adicionaNovoTextoDuranteFala(texto2);
-                        answers[6] = "2";
-                        dataGen.answers[6] = "2";
+                        int randomValue = Random.Range(1, 4); // Gera um valor aleatório entre 1, 2 ou 3
+                        answers[6] = randomValue.ToString(); // Converte o valor para string e atribui a answers[6]
+                        dataGen.answers[6] = randomValue.ToString(); // Converte o valor para string e atribui a dataGen.answers[6]
+                        //answers[6] = "2";
+                        //dataGen.answers[6] = "2";
                         //jogador achou médio
                         break;
                     case 3:
@@ -838,8 +843,11 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                     case 2: // não sabe dizer se foi divertido ou não
                         string texto2 = "Não sabe o que dizer? Ah, vamos lá... A indecisão não te ajuda nesses momentos.";
                         adicionaNovoTextoDuranteFala(texto2);
-                        answers[7] = "2";
-                        dataGen.answers[7] = "2";
+                        int randomValue = Random.Range(1, 4); // Gera um valor aleatório entre 1, 2 ou 3
+                        answers[7] = randomValue.ToString(); // Converte o valor para string e atribui
+                        dataGen.answers[7] = randomValue.ToString(); // Converte o valor para string e atribui a dataGen.answers[6]
+                        //answers[7] = "2";
+                        //dataGen.answers[7] = "2";
                         break;
                     case 1: // achou divertido
                         string texto3 = "Interessante você achar divertido. Você é sanguinário e implacável!";
@@ -857,7 +865,9 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                         answers[1] = "0";
                         break;
                     case 2:
-                        answers[1] = "2";
+                        int randomValue = Random.Range(1, 4); // Gera um valor aleatório entre 1, 2 ou 3
+                        answers[1] = randomValue.ToString(); // Converte o valor para string e atribui
+                        //answers[1] = "2";
                         break;
                     case 3:
                         answers[1] = "4";
@@ -871,7 +881,9 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                         answers[2] = "0";
                         break;
                     case 2:
-                        answers[2] = "2";
+                        int randomValue = Random.Range(1, 4); // Gera um valor aleatório entre 1, 2 ou 3
+                        answers[2] = randomValue.ToString(); // Converte o valor para string e atribui
+                        //answers[2] = "2";
                         break;
                     case 3:
                         answers[2] = "4";
@@ -885,7 +897,9 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                         answers[3] = "0";
                         break;
                     case 2:
-                        answers[3] = "2";
+                        int randomValue = Random.Range(1, 4); // Gera um valor aleatório entre 1, 2 ou 3
+                        answers[3] = randomValue.ToString(); // Converte o valor para string e atribui
+                        //answers[3] = "2";
                         break;
                     case 3:
                         answers[3] = "4";
@@ -899,7 +913,9 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                         answers[4] = "0";
                         break;
                     case 2:
-                        answers[4] = "2";
+                        int randomValue = Random.Range(1, 4); // Gera um valor aleatório entre 1, 2 ou 3
+                        answers[4] = randomValue.ToString(); // Converte o valor para string e atribui
+                        //answers[4] = "2";
                         break;
                     case 3:
                         answers[4] = "4";
@@ -914,8 +930,11 @@ public class DialogueManagerStoryTelling : MonoBehaviour
                         dataGen.answers[0] = "0";
                         break;
                     case 2:
-                        answers[0] = "2";
-                        dataGen.answers[0] = "2";
+                        int randomValue = Random.Range(1, 4); // Gera um valor aleatório entre 1, 2 ou 3
+                        answers[0] = randomValue.ToString(); // Converte o valor para string e atribui
+                        dataGen.answers[0] = randomValue.ToString();
+                        //answers[0] = "2";
+                        //dataGen.answers[0] = "2";
                         break;
                     case 3:
                         answers[0] = "4";
@@ -1072,6 +1091,7 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         if (dataGen.deathCounter > 0)
         { // jogador já morreu
             diminuiInimigos();
+            diminuiMapa();
         } else
         {
 
@@ -1457,6 +1477,10 @@ public class DialogueManagerStoryTelling : MonoBehaviour
 
         form.AddField("entry.66114686", data.minEnemyDistance);//minEnemyDistance
         form.AddField("entry.1814962338", data.minItemDistance);//minItemDistance
+
+        Debug.Log(data.averageEnemyDistance);
+        Debug.Log(data.averageItemDistance);
+
         form.AddField("entry.194656318", data.averageEnemyDistance);//averageEnemyDistance
         form.AddField("entry.1578609904", data.averageItemDistance);//averageItemDistance
 
@@ -1474,7 +1498,8 @@ public class DialogueManagerStoryTelling : MonoBehaviour
         form.AddField("entry.20587696", answers[3]);//enemyDensity
 
         form.AddField("entry.1862005822", answers[4]);//interactionAmount
-        form.AddField("entry.1906391024", answers[5]);//conversationMaterial
+        //form.AddField("entry.1906391024", answers[5]);//conversationMaterial Random.Range(0, 5)
+        form.AddField("entry.1906391024", Random.Range(0, 5).ToString());//conversationMaterial
 
         form.AddField("entry.374425141", data.answers[6]);//difficulty
         form.AddField("entry.1632273714", data.answers[7]);//fun
